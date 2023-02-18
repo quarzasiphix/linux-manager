@@ -8,6 +8,7 @@
 
 <p>
 // general nginx config for php7.4 
+``` nginx
 server {
     listen 80;
     server_name quarry;
@@ -30,6 +31,7 @@ server {
         return 404;
     }
 }
+```
 
 
 <p>
