@@ -1,4 +1,4 @@
---- install required dependencies ---
+--- <h1> install required dependencies </h1> ---
 <p>// update & upgrade is required to install mariadb and latest php </p>
 <h4>sudo apt update -y && sudo apt upgrade -y </h4>
 <p>// installs everything, default php on debian is 7.4 (matches with config)</p>
