@@ -1,11 +1,12 @@
 --- install required dependencies ---
 <p>// update & upgrade is required to install mariadb and latest php </p>
-<p>sudo apt update -y && sudo apt upgrade -y
-// installs everything, default php on debian is 7.4 (matches with config)
-sudo apt-get install ufw nginx mariadb-server mariadb-client curl php-fpm php-cli php-zip php-xml php-dom phpmyadmin
+<p>sudo apt update -y && sudo apt upgrade -y </p>
+<p>// installs everything, default php on debian is 7.4 (matches with config)</p>
+<p>sudo apt-get install ufw nginx mariadb-server mariadb-client curl php-fpm php-cli php-zip php-xml php-dom phpmyadmin</p>
 
 <h3> Laravel installation guide in vps.setup </h3>
 
+<p>
 // general nginx config for php7.4 
 server {
     listen 80;
@@ -31,5 +32,4 @@ server {
 }
 
 
-
-
+<p>
