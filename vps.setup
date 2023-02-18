@@ -23,8 +23,8 @@ sudo vim /root/.vimrc
 
 --- instal shi ---
 apt update -y && apt upgrade -y
-// installs everything
-sudo apt-get install ufw nginx mariadb-server mariadb-client curl php8.2-fpm php-cli php8.2-zip php8.2-xml php8.2-dom phpmyadmin
+// installs everything, default php on debian is 7.4 (matches with config)
+sudo apt-get install ufw nginx mariadb-server mariadb-client curl php-fpm php-cli php-zip php-xml php-dom phpmyadmin
 // each command 1 by 1
 sudo apt-get install nginx
 sudo apt-get install mariadb-server mariadb-client
