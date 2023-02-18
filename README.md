@@ -6,7 +6,6 @@
 
 <h3> Laravel installation guide in vps.setup </h3>
 
-<p>
 // general nginx config for php7.4 
 ``` nginx
 server {
@@ -33,5 +32,3 @@ server {
 }
 ```
 
-
-<p>
