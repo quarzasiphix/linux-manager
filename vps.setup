@@ -1,0 +1,78 @@
+--- setup acc ---
+
+// setup root password
+sudo passwd 
+// login to root
+su 
+// set password for account
+passwd *acc*
+// make selected user sudo
+sudo usermod -aG sudo *acc*
+// login to user
+su *acc*
+
+--- setup vim ---
+// setup vim with relative number row, makes it easier to math
+open vim :
+    :version === shows config file path
+          *acc*      
+sudo vim /root/.vimrc
+    - add 
+        set number
+        set relativenumber
+
+--- instal shi ---
+apt update -y && apt upgrade -y
+// installs everything
+sudo apt-get install ufw nginx mariadb-server mariadb-client curl php8.2-fpm php-cli php8.2-zip php8.2-xml php8.2-dom phpmyadmin
+// each command 1 by 1
+sudo apt-get install nginx
+sudo apt-get install mariadb-server mariadb-client
+sudo apt-get install curl
+sudo apt-get install php7.4-fpm php7.4-cli php7.4-zip
+sudo apt-get install phpmyadmin
+sudo apt-get install unzip
+sudo ln -s /usr/share/phpmyadmin /var/www/html/mybasebro === create shortcut
+
+-- composer ---
+curl -sS https://getcomposer.org/installer -o composer-setup.php
+
+//verify 
+HASH=$(curl -sS https://composer.github.io/installer.sig)
+php -r "if (hash_file('SHA384', 'composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+
+sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+-- setup laravel ---
+composer create-project --prefer-dist laravel/laravel www/-
+php artisan key:generate
+
+
+sudo ln -s /etc/nginx/sites-available/your-project-name /etc/nginx/sites-enabled/
+
+// login to root
+su 
+// allow ftp to read write
+chmod 777 -R /var/www/html
+su *acc*
+
+--- setup nginx config ---
+sudo vim /etc/nginx/sites-available/default
+    : replace server with nginx.conf  
+
+sudo nginx -t === test config syntax
+sudo systemctl restart nginx
+
+in /etc/nginx:
+    cp /etc/nginx/sites-available/larvy /etc/nginx/sites-enabled/larvy
+
+--- upgrading php to 8.2 from 7.4 --- 
+sudo apt-get install lsb-release apt-transport-https ca-certificates curl
+sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/php.list
+
+sudo apt-get update
+sudo apt-get install php8.2-fpm php8.2-cli php8.2-zip php8.2-xml php8.2-dom
+sudo apt-get install php8.2-xml php8.2-dom
+
+
