@@ -6,7 +6,7 @@
 
 <h3> Laravel installation guide in vps.setup </h3>
 
-// general nginx config for php7.4 
+// general nginx config for php7.4, hides .html/php extensions
 ``` nginx
 server {
     listen 80;
