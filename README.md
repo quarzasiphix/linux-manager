@@ -5,7 +5,7 @@
 <h4>sudo apt-get install ufw nginx mariadb-server mariadb-client curl php-fpm php-cli php-zip php-xml php-dom phpmyadmin</h4>
 
 <p>// create shortcut for phpmyadmin in nginx default dir </p>
-<h1>sudo ln -s /usr/share/phpmyadmin /var/www/html/mybasebro </h1>
+<h4>sudo ln -s /usr/share/phpmyadmin /var/www/html/mybasebro </h4>
 
 <h3> Laravel installation guide in vps.setup </h3>
 
