@@ -24,7 +24,7 @@ sudo vim /root/.vimrc
 
 --- install required dependencies ---
 // run this to install 
-apt update -y && apt upgrade -y
+sudo apt update -y && sudo apt upgrade -y
 // installs everything, default php on debian is 7.4 (matches with config)
 sudo apt-get install ufw nginx mariadb-server mariadb-client curl php-fpm php-cli php-zip php-xml php-dom phpmyadmin
 // each command 1 by 1
