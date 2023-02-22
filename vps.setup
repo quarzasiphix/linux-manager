@@ -80,3 +80,6 @@ sudo apt-get install php8.2-fpm php8.2-cli php8.2-zip php8.2-xml php8.2-dom
 sudo apt-get install php8.2-xml php8.2-dom
 
 
+--- setting up laravel with vite --- 
+// fixes error when using tsx
+npm install --save-dev @types/react 
