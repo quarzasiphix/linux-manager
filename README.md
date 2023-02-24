@@ -4,6 +4,7 @@
 <p>// installs everything, default php on debian is 7.4 (matches with config)</p>
 <h4>sudo apt-get install ufw nginx mariadb-server mariadb-client curl php-fpm php-cli php-zip php-xml php-dom phpmyadmin</h4>
 
+
 <h3> Laravel installation guide in vps.setup </h3>
 
 // general nginx config for php7.4 
