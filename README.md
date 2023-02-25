@@ -6,8 +6,8 @@
 
 <p>// create shortcut for phpmyadmin in nginx default dir </p>
 <h4>sudo ln -s /usr/share/phpmyadmin /var/www/mybasebro </h4>
+<hr/>
 
-<br/>
 <h2> Laravel installation guide in vps.setup </h2>
 
 // general nginx config for php7.4, hides .html/php extensions (required for laravel)
