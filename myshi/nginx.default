@@ -4,7 +4,7 @@ server {
     listen 80;
     server_name quarry;
     index index.php index.html;
-    root /var/www/html;
+    root /var/www;
     
     error_page 404 /index.php;
     error_log /var/log/nginx/quarza.error;
@@ -30,7 +30,7 @@ server {
     listen 80;
     server_name ismyshi;
     index index.php index.html;
-    root /var/www/html;
+    root /var/www/kane;
     
     error_page 404 /index.php;
 

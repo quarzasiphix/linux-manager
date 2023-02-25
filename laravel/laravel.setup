@@ -1,0 +1,38 @@
+
+-- composer ---
+curl -sS https://getcomposer.org/installer -o composer-setup.php
+
+//verify 
+HASH=$(curl -sS https://composer.github.io/installer.sig)
+php -r "if (hash_file('SHA384', 'composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+
+sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+--- upgrading php to 8.2 from 7.4 --- 
+sudo apt-get autoremove --purge php-fpm php-cli php-zip php-xml php-dom
+sudo dpkg -l | grep php | tee packages.txt
+
+sudo apt install apt-transport-https lsb-release ca-certificates wget -y
+sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
+sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+sudo apt update
+sudo apt-get install php8.2-fpm php8.2-cli php8.2-zip php8.2-xml php8.2-dom php8.2-curl
+
+
+-- setup laravel ---
+composer create-project --prefer-dist laravel/laravel www/-
+php artisan key:generate
+
+--- sum other dependancy --- 
+sudo apt-get install lsb-release apt-transport-https ca-certificates curl
+sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/php.list
+
+// vite/vite.setup for vite setup with laravel
+
+sudo ln -s /etc/nginx/sites-available/your-project-name /etc/nginx/sites-enabled/
+
+--- setting up laravel with vite --- 
+// fixes error when using tsx
+npm install --save-dev @types/react 
+
