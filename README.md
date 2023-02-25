@@ -1,13 +1,15 @@
 <h1> install required dependencies </h1> 
+<hr/>
 <p>// update & upgrade is required to install mariadb and latest php </p>
 <h4>sudo apt update -y && sudo apt upgrade -y </h4>
 <p>// installs everything, default php on debian is 7.4 (matches with config)</p>
 <h4>sudo apt-get install ufw nginx mariadb-server mariadb-client curl php-fpm php-cli php-zip php-xml php-dom phpmyadmin</h4>
 
 <p>// create shortcut for phpmyadmin in nginx default dir </p>
-<h4>sudo ln -s /usr/share/phpmyadmin /var/www/html/mybasebro </h4>
+<h4>sudo ln -s /usr/share/phpmyadmin /var/www/mybasebro </h4>
+<hr/>
 
-<h3> Laravel installation guide in vps.setup </h3>
+<h2> Laravel installation guide in vps.setup </h2>
 
 // general nginx config for php7.4, hides .html/php extensions (required for laravel)
 ``` nginx
