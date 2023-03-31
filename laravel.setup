@@ -34,3 +34,32 @@ sudo ln -s /etc/nginx/sites-available/your-project-name /etc/nginx/sites-enabled
 --- setting up laravel with vite --- 
 // fixes error when using tsx
 npm install --save-dev @types/react 
+
+
+---- MY CONFIG -----
+
+```nginx
+server {
+    listen 80;
+    index index.php index.html;
+    server_name api.quarza.online;
+    root /var/www/quarza/public;
+
+    error_page 404 /index;
+    error_log /var/log/nginx/api.quarza.error;
+    access_log /var/log/nginx/api.quarza.access;
+
+    location ~ [^/].php(/|$) {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ ^/(\.user.ini|\.htaccess|\.git|\.svn|\.project|LICENSE|README.md)
+    {
+        return 404;
+    }
+}```

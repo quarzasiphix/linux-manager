@@ -11,6 +11,18 @@ sudo usermod -aG sudo *acc*
 // login to user
 su *acc*
 
+// if no home gets created
+sudo mkdir /home/*acc*
+sudo chown *acc*:*acc* /home/*acc*
+
+//create ssh key
+// from home
+mkdir ~/.ssh
+chmod 700 ~/.ssh
+
+vim ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+
 --- setup vim ---
 // setup vim with relative number row, makes it easier to math
 open vim :
