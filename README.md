@@ -21,6 +21,11 @@ server {
     
     error_page 404 /index.php;
 
+    
+    error_page 404 /index;
+    error_log /var/log/nginx/quarza.error;
+    access_log /var/log/nginx/quarza.access;
+
     location ~ [^/].php(/|$) {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/run/php/php7.4-fpm.sock;

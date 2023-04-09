@@ -35,6 +35,10 @@ sudo ln -s /etc/nginx/sites-available/your-project-name /etc/nginx/sites-enabled
 // fixes error when using tsx
 npm install --save-dev @types/react 
 
+--- install sqlite ---
+sudo apt-get install php-sqlite3
+sudo systemctl restart php8.2-fpm
+php -m | grep sqlite
 
 ---- MY CONFIG -----
 
