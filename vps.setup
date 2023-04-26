@@ -37,18 +37,19 @@ sudo vim /root/.vimrc
 --- install required dependencies ---
 // run this to install 
 sudo apt update -y && sudo apt upgrade -y
-// installs everything, default php on debian is 7.4 (matches with config)
-sudo apt-get install ufw nginx mariadb-server mariadb-client curl php-fpm php-cli php-zip php-xml php-dom phpmyadmin unzip
-// each command 1 by 1
-sudo apt-get install nginx
-sudo apt-get install mariadb-server mariadb-client
-sudo apt-get install curl
-sudo apt-get install php7.4-fpm php7.4-cli php7.4-zip
-sudo apt-get install phpmyadmin
-sudo apt-get install unzip
+
+// installs everything
+
+sudo dpkg -l | grep php | tee packages.txt
+
+sudo apt install apt-transport-https lsb-release ca-certificates wget -y
+sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
+sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+sudo apt update
+sudo apt-get install ufw nginx mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-zip php8.2-xml php8.2-dom php8.2-curl
+
 // create shortcut for phpmyadmin in nginx default dir
 sudo ln -s /usr/share/phpmyadmin /var/www/mybasebro 
-
 
 // login to root
 su 
