@@ -4,13 +4,11 @@
 <h4>sudo apt update -y && sudo apt upgrade -y </h4>
 <p>// installs everything</p>
 
-<h4>
-sudo apt install apt-transport-https lsb-release ca-certificates wget -y
-sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
-sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
-sudo apt update
-sudo apt-get install ufw nginx mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-zip php8.2-xml php8.2-dom php8.2-curl
-</h4>
+<h4> sudo apt install apt-transport-https lsb-release ca-certificates wget -y </h4>
+<h4> sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg </h4>
+<h4> sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list' </h4>
+<h4> sudo apt update </h4>
+<h4> sudo apt-get install ufw nginx mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-zip php8.2-xml php8.2-dom php8.2-curl </h4>
 
 <p>// create shortcut for phpmyadmin in nginx default dir </p>
 <h4>sudo ln -s /usr/share/phpmyadmin /var/www/mybasebro </h4>
