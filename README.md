@@ -15,20 +15,17 @@
 ``` nginx
 server {
     listen 80;
-    server_name name;
+    server_name **;
     index index.php index.html;
-    root /var/www;
-    
-    error_page 404 /index.php;
-
+    root /var/www/**;
     
     error_page 404 /index;
-    error_log /var/log/nginx/quarza.error;
-    access_log /var/log/nginx/quarza.access;
+    error_log /var/log/nginx/**.error;
+    access_log /var/log/nginx/**.access;
 
     location ~ [^/].php(/|$) {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
         #change to your php version  ^^^ 
     }
 
