@@ -29,6 +29,9 @@ echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /et
 
 // vite/vite.setup for vite setup with laravel
 
+sudo apt-get install php8.2-sqlite3
+sudo apt-get install php8.2-pdo-sqlite
+
 sudo ln -s /etc/nginx/sites-available/your-project-name /etc/nginx/sites-enabled/
 
 --- setting up laravel with vite --- 
