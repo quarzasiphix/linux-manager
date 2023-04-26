@@ -33,8 +33,7 @@ server {
         try_files $uri $uri/ $uri.html $uri.php$is_args$query_string;
     }
 
-    location ~ ^/(\.user.ini|\.htaccess|\.git|\.svn|\.project|LICENSE|README.md)
-    {
+    location ~ ^/(\.user.ini|\.htaccess|\.git|\.svn|\.project|LICENSE|README.md) {
         return 404;
     }
 }
