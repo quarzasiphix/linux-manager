@@ -13,6 +13,9 @@ GRANT ALL PRIVILEGES ON **.* TO '**'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
 
+// to reset db - 
+DROP DATABASE IF EXISTS **;
+
 server {
     listen 80;
     server_name **;
