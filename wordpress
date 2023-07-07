@@ -1,0 +1,37 @@
+// setup wordpress - 
+
+sudo wget https://wordpress.org/latest.tar.gz
+sudo mkdir ** 
+sudo tar -xvzf /path/to/latest.tar.gz --strip-components=1 -C ./**
+sudo chmod -R 777 **
+
+// setup db -
+sudo mysql -u root -p
+CREATE DATABASE **;
+CREATE USER '**'@'localhost' IDENTIFIED BY '*pass*';
+GRANT ALL PRIVILEGES ON **.* TO '**'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+
+server {
+    listen 80;
+    server_name **;
+
+    root /var/www/**;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+
+
