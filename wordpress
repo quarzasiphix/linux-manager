@@ -3,7 +3,7 @@
 sudo wget https://wordpress.org/latest.tar.gz
 sudo mkdir ** 
 sudo tar -xvzf latest.tar.gz --strip-components=1 -C ./**
-sudo chmod -R 777 **
+sudo chmod -R 755 **
 
 // setup db -
 sudo mysql -u root -p
