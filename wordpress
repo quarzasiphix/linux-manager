@@ -24,6 +24,10 @@ server {
     root /var/www/**dir**;
     index index.php;
 
+    error_page 404 /index;
+    error_log /var/log/nginx/kane.error;
+    access_log /var/log/nginx/kane.access;
+
     location / {
         try_files $uri $uri/ /index.php?$args;
     }
