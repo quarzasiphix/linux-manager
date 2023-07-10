@@ -25,8 +25,8 @@ server {
     index index.php;
 
     error_page 404 /index;
-    error_log /var/log/nginx/kane.error;
-    access_log /var/log/nginx/kane.access;
+    error_log /var/log/nginx/**.error;
+    access_log /var/log/nginx/**.access;
 
     location / {
         try_files $uri $uri/ /index.php?$args;
