@@ -1,9 +1,9 @@
 put the setupwp.sh file into /var/www/
 
 // run these commands first:
-sudo apt-get install dos2unix
-dos2unix setupwp.sh
-chmod +x setupwp.sh
+<p> sudo apt-get install dos2unix </p>
+<p>dos2unix setupwp.sh </p>
+<p>chmod +x setupwp.sh </p>
 
 // then u can run the script:
-./setupwp.sh
+<p>./setupwp.sh</p>
