@@ -17,13 +17,13 @@ read -sp "Enter password: " dbpasss
 echo
 
 # Download WordPress
-sudo wget https://wordpress.org/latest.tar.gz
 
 # Create directory
 sudo mkdir "$name"
 
 echo deleting previous wordpress tar
 sudo rm latest.tar.gz
+sudo wget https://wordpress.org/latest.tar.gz
 
 # Extract files
 sudo tar -xvzf latest.tar.gz --strip-components=1 -C "./$name"
