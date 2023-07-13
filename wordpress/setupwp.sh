@@ -17,27 +17,28 @@ read -sp "Enter password: " dbpasss
 echo
 
 # Download WordPress
-
-# Create directory
-sudo mkdir "$name"
-
-echo deleting previous wordpress tar
+echo "Deleting previous WordPress tar"
 sudo rm latest.tar.gz
 sudo wget https://wordpress.org/latest.tar.gz
+
+sudo rm -R "$name"
+# Create directory
+sudo mkdir "$name"
 
 # Extract files
 sudo tar -xvzf latest.tar.gz --strip-components=1 -C "./$name"
 
 # Set ownership
-sudo chown -R www-data:www-data "/$name"
+sudo chown -R www-data:www-data "$name"
 
 # Set permissions
-sudo chmod -R 755 "/$name"
+sudo chmod -R 755 "$name"
 
 # Setup database
 mysql -u root -p$mysql_password <<EOF
 DROP DATABASE IF EXISTS $name;
 CREATE DATABASE $name;
+DROP USER IF EXISTS '$name'@'localhost';
 CREATE USER '$name'@'localhost' IDENTIFIED BY '$dbpasss';
 GRANT ALL PRIVILEGES ON $name.* TO '$name'@'localhost';
 FLUSH PRIVILEGES;
@@ -45,11 +46,12 @@ FLUSH PRIVILEGES;
 EOF
 
 echo
-echo setting up nginx config 
+echo "Setting up Nginx config"
 echo
 
 # Create Nginx configuration file
 nginx_config="/etc/nginx/sites-available/$name"
+sudo rm "$nginx_config"
 sudo tee "$nginx_config" > /dev/null <<EOT
 server {
     listen 80;
@@ -87,5 +89,20 @@ sudo ln -s "$nginx_config" "/etc/nginx/sites-enabled/$name"
 sudo systemctl restart nginx
 
 echo
-echo created wordpress project $name
+echo "Created WordPress project $name"
+echo
 
+# Wait until wp-config.php has <?php tag on the first line
+echo "waiting on user to initialise project on $domain/admin"
+echo
+while ! head -n 1 "$name/wp-config.php" 2>/dev/null | grep -q "^<?php"; do
+    sleep 1
+done
+
+
+# Add $_SERVER["HTTPS"] = "on"; on the second line
+sudo sed -i '2i$_SERVER["HTTPS"] = "on";' "$name/wp-config.php"
+
+echo
+echo initialised https, project $name setup succesfully
+echo
