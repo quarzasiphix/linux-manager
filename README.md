@@ -13,7 +13,7 @@
 <p>// create shortcut for phpmyadmin in nginx default dir </p>
 <h4>sudo ln -s /usr/share/phpmyadmin /var/www/phpmyadmin </h4>
 <hr/>
-
+<h3> wordpress setup guide in wordpress/ </h3>
 <h2> Laravel installation guide in vps.setup </h2>
 
 // general nginx config for php8.2, hides .html/php extensions
