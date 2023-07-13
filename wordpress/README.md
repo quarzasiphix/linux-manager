@@ -11,19 +11,19 @@
 
 the script installs latest wordpress, sets up nginx config for the domain and sql database and username. 
 
-<br>
+<hr>
 
-<h3> ngixnx config </h3>
+// nginx config
 ``` nginx
 server {
     listen 80;
-    server_name $domain;
-    root /var/www/$name;
+    server_name *domain*;
+    root /var/www/*name*;
     index index.php;
 
     error_page 404 /index;
-    error_log /var/log/nginx/$name.error;
-    access_log /var/log/nginx/$name.access;
+    error_log /var/log/nginx/*name*.error;
+    access_log /var/log/nginx/*name*.access;
 
     location / {
         try_files \$uri \$uri/ /index.php?\$args;
