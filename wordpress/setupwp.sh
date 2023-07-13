@@ -1,4 +1,4 @@
-    #!/bin/bash
+#!/bin/bash
 
 # Get MySQL root password
 read -sp "Enter MySQL root password: " mysql_password
