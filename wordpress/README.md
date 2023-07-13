@@ -7,3 +7,5 @@
 
 <h4>// then u can run the script:</h4>
 <p>./setupwp.sh</p>
+
+the script installs latest wordpress, sets up nginx config for the domain and sql database and username. 
