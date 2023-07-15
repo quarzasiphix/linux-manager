@@ -1,8 +1,8 @@
 <h2> put the setupwp.sh file into /var/www/ </h2>
 
 <h4>// run these commands first:</h4>
-<p>sudo apt-get install dos2unix </p>
 <p>sudo curl -O https://github.com/quarzasiphix/server-setup/blob/master/wordpress/setupwp.sh -o setupwp.sh </p>
+<p>sudo apt-get install dos2unix </p>
 <p>sudo dos2unix setupwp.sh </p>
 <p>sudo chmod +x setupwp.sh </p>
 
