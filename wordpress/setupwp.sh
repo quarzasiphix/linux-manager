@@ -35,7 +35,7 @@ sudo chown -R www-data:www-data "$name"
 sudo chmod -R 755 "$name"
 
 # Setup database
-mysql -u root -p$mysql_password <<EOF
+sudo mysql -u root -p$mysql_password <<EOF
 DROP DATABASE IF EXISTS $name;
 CREATE DATABASE $name;
 DROP USER IF EXISTS '$name'@'localhost';
