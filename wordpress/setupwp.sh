@@ -55,7 +55,7 @@ sudo rm "$nginx_config"
 sudo tee "$nginx_config" > /dev/null <<EOT
 server {
     listen 80;
-    server_name $domain;
+    server_name $domain www.$domain;
     root /var/www/$name;
     index index.php;
 
