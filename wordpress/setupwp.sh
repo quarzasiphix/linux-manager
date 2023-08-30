@@ -50,7 +50,7 @@ echo "Setting up Nginx config"
 echo
 
 # Create Nginx configuration file
-nginx_config="/etc/nginx/sites-available/$name"
+nginx_config="/etc/nginx/sites-available/$name.nginx"
 sudo rm "$nginx_config"
 sudo tee "$nginx_config" > /dev/null <<EOT
 server {
@@ -83,7 +83,7 @@ server {
 EOT
 
 # Enable the site by creating a symbolic link
-sudo ln -s "$nginx_config" "/etc/nginx/sites-enabled/$name"
+sudo ln -s "$nginx_config" "/etc/nginx/sites-enabled/$name.nginx"
 
 # Restart Nginx
 sudo systemctl restart nginx
