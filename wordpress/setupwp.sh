@@ -21,18 +21,18 @@ echo "Deleting previous WordPress tar"
 sudo rm latest.tar.gz
 sudo wget https://wordpress.org/latest.tar.gz
 
-sudo rm -R "$name"
+sudo rm -R "../sites/$name"
 # Create directory
-sudo mkdir "$name"
+sudo mkdir "../sites/$name"
 
 # Extract files
 sudo tar -xvzf latest.tar.gz --strip-components=1 -C "./$name"
 
 # Set ownership
-sudo chown -R www-data:www-data "$name"
+sudo chown -R www-data:www-data "../sites/$name"
 
 # Set permissions
-sudo chmod -R 755 "$name"
+sudo chmod -R 755 "../sites/$name"
 
 # Setup database
 sudo mysql -u root -p$mysql_password <<EOF
