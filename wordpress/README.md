@@ -11,6 +11,8 @@
 
 the script installs latest wordpress, sets up nginx config for the domain and sql database and username. 
 
+<hr>
+
 <h3> Backup - put createwpbackup.sh /var/www </h3>
 <h5> Run this command first: </h5>
 <p> sudo chmod +x createwpbackup.sh </p>
