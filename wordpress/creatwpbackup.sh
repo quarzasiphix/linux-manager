@@ -21,8 +21,6 @@ sudo mkdir -p "$backupdir" > /dev/null
 sudo mkdir -p "$tempdir" > /dev/null
 sudo chmod -R 777 "$tempdir"
 
-echo "Backing up Nginx, SQL, and WordPress files."
-
 # Perform MySQL database backup.
 echo "Backing up MySQL database..."
 sudo mysqldump -u root -p"$mysql_password" --single-transaction "$name" > "$tempdir/$name-backup.sql"
