@@ -45,7 +45,7 @@ sudo mv "$name-$(date +%F).zip" "$backupdir/"
 echo ...
 
 # Remove the temporary directory.
-#sudo rm -r "$tempdir"
+sudo rm -r "$tempdir"
 
 echo 
 echo "Backup completed. Files are stored in $backupdir."
