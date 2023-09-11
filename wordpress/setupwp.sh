@@ -101,7 +101,7 @@ while ! head -n 1 "$name/wp-config.php" 2>/dev/null | grep -q "^<?php"; do
     sleep 1
 done
 
-sudo cp /var/www/libs/elementor-pro /var/www/sites/$name/wp-content/plugins/
+#sudo cp /var/www/libs/elementor-pro /var/www/sites/$name/wp-content/plugins/
 
 # Add $_SERVER["HTTPS"] = "on"; on the second line
 sudo sed -i '2i$_SERVER["HTTPS"] = "on";' "$name/wp-config.php"
