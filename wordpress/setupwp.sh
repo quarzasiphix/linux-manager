@@ -97,14 +97,14 @@ echo
 # Wait until wp-config.php has <?php tag on the first line
 echo "waiting on user to initialise project on $domain/admin"
 echo
-while ! head -n 1 "$name/wp-config.php" 2>/dev/null | grep -q "^<?php"; do
+while ! head -n 1 "$dir/wp-config.php" 2>/dev/null | grep -q "^<?php"; do
     sleep 1
 done
 
-#sudo cp /var/www/libs/elementor-pro /var/www/sites/$name/wp-content/plugins/
+sudo cp -R /var/www/libs/elementor-pro $dir/wp-content/plugins/
 
 # Add $_SERVER["HTTPS"] = "on"; on the second line
-sudo sed -i '2i$_SERVER["HTTPS"] = "on";' "$name/wp-config.php"
+sudo sed -i '2i$_SERVER["HTTPS"] = "on";' "$dir/wp-config.php"
 
 echo
 echo initialised https, project $name setup succesfully
