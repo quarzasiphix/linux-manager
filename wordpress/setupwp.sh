@@ -21,18 +21,20 @@ echo "Deleting previous WordPress tar"
 sudo rm latest.tar.gz
 sudo wget https://wordpress.org/latest.tar.gz
 
-sudo rm -R "../sites/$name"
+dir="/var/www/sites/$name"
+
+sudo rm -R "$dir"
 # Create directory
-sudo mkdir "../sites/$name"
+sudo mkdir "$dir"
 
 # Extract files
-sudo tar -xvzf latest.tar.gz --strip-components=1 -C "./$name"
+sudo tar -xvzf latest.tar.gz --strip-components=1 -C "$dir"
 
 # Set ownership
-sudo chown -R www-data:www-data "../sites/$name"
+sudo chown -R www-data:www-data "$dir"
 
 # Set permissions
-sudo chmod -R 755 "../sites/$name"
+sudo chmod -R 755 "$dir"
 
 # Setup database
 sudo mysql -u root -p$mysql_password <<EOF
@@ -56,7 +58,7 @@ sudo tee "$nginx_config" > /dev/null <<EOT
 server {
     listen 80;
     server_name $domain www.$domain;
-    root /var/www/$name;
+    root $dir;
     index index.php;
 
     error_page 404 /index;
@@ -99,6 +101,7 @@ while ! head -n 1 "$name/wp-config.php" 2>/dev/null | grep -q "^<?php"; do
     sleep 1
 done
 
+sudo cp /var/www/libs/elementor-pro /var/www/sites/$name/wp-content/plugins/
 
 # Add $_SERVER["HTTPS"] = "on"; on the second line
 sudo sed -i '2i$_SERVER["HTTPS"] = "on";' "$name/wp-config.php"
