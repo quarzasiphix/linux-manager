@@ -1,6 +1,6 @@
-<h2> put the setupwp.sh file into /var/www/ </h2>
+<h3> Setup script - put setupwp.sh file into /var/www/ </h3>
 
-<h4>// run these commands first:</h4>
+<h5>// run these commands first:</h5>
 <p>sudo curl -O https://github.com/quarzasiphix/server-setup/blob/master/wordpress/setupwp.sh -o setupwp.sh </p>
 <p>sudo apt-get install dos2unix </p>
 <p>sudo dos2unix setupwp.sh </p>
@@ -11,6 +11,10 @@
 
 the script installs latest wordpress, sets up nginx config for the domain and sql database and username. 
 
+<h3> Backup - put createwpbackup.sh /var/www </h3>
+<h5> Run this command first: </h5>
+<p> sudo chmod +x createwpbackup.sh </p>
+<p> dumps database, nginx config and wordpress files </p>
 <hr>
 
 // nginx config
