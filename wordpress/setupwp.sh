@@ -107,5 +107,13 @@ sudo cp -R /var/www/libs/elementor-pro $dir/wp-content/plugins/
 sudo sed -i '2i$_SERVER["HTTPS"] = "on";' "$dir/wp-config.php"
 
 echo
+echo setting permissions
+echo 
+
+sudo chmod 600 "$dir/wp-config.php" > /dev/null
+sudo chmod -R 755 "$dir/wp-content/uploads" > /dev/null
+
+
+echo
 echo initialised https, project $name setup succesfully
 echo
