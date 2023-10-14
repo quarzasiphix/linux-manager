@@ -18,7 +18,7 @@ sudo mkdir "$tempdir" > /dev/null
 sudo chmod -R 777 "$tempdir" > /dev/null
 
 # Perform MySQL database backup.
-sudo mysqldump -u root -p"$mysql_password" --single-transaction "$name" > "$tempdir/$name-backup.sql"
+sudo mysqldump -u root -p"$mysql_password" --single-transaction "$name" > "$tempdir/$name.sql"
 
 # Backup Nginx configuration.
 sudo cp "$nginx_config" "$tempdir/"
