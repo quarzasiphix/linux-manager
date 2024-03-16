@@ -4,9 +4,6 @@ nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
 
 DeleteWp() {
-    #!/bin/bash
-    read -p "Enter project to delete: " name
-
     # Confirm deletion
     echo "Are you sure you want to delete project '$name'?"
     echo "Deleting the project will delete the database"
@@ -97,13 +94,157 @@ GraphLog() {
 
 EditConf() {
     sudo vim $nginxconfdir/$name.nginx
-
+    clear
     echo
     echo "edited config for $name"
     echo
     echo "restarting nginx to confirm changes"
     echo
     sudo systemctl restart nginx
+}
+
+SetupWP() {
+    # Get domain
+    read -p "Enter domain: " domain
+    echo
+
+    # Get database password
+    read -sp "Enter database password: " dbpasss
+    echo
+
+    echo "setting up wordpress"
+    # Download WordPress
+    sudo rm latest.tar.gz
+    echo "downloading wordpress files... "
+    echo
+    sudo wget https://wordpress.org/latest.tar.gz
+    dir="/var/www/sites/$name"
+    sudo rm -R "$dir"
+    sudo mkdir "$dir"
+    echo
+    echo "extracting wordpress files... "
+    echo
+    sudo tar -xvzf latest.tar.gz --strip-components=1 -C "$dir" 2>&1
+    sudo chown -R www-data:www-data "$dir"
+    sudo chmod -R 755 "$dir"
+
+    echo
+    echo "setting up database"
+    echo
+
+    # Setup database
+    sudo mysql -u root <<EOF
+    DROP DATABASE IF EXISTS $name;
+    CREATE DATABASE $name;
+    DROP USER IF EXISTS '$name'@'localhost';
+    CREATE USER '$name'@'localhost' IDENTIFIED BY '$dbpasss';
+    GRANT ALL PRIVILEGES ON $name.* TO '$name'@'localhost';
+    FLUSH PRIVILEGES;
+    \q
+EOF
+    echo
+    echo "Setting up Nginx"
+    echo
+
+    # Create Nginx configuration file
+    nginx_log_dir="/var/www/logs/$name"
+    sudo mkdir $nginx_log_dir > /dev/null
+
+    nginx_config="/etc/nginx/sites-available/$name.nginx"
+    sudo rm "$nginx_config" > /dev/null
+    sudo tee "$nginx_config" > /dev/null <<EOT
+    server {
+        listen 80;
+        server_name $domain www.$domain;
+        root $dir;
+        index index.php;
+
+        error_page 404 /index;
+        error_log $nginx_log_dir/error.nginx;
+        access_log $nginx_log_dir/access.nginx;
+
+        location / {
+            try_files \$uri \$uri/ /index.php?\$args;
+        }
+
+        location ~* /uploads/.*\.php$ {
+            return 503;
+        }
+
+        location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+            fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+        }
+
+        location ~ /\.ht {
+            deny all;
+        }
+    }
+EOT
+
+    # Enable the site by creating a symbolic link
+    sudo ln -s "$nginx_config" "/etc/nginx/sites-enabled/$name.nginx" > /dev/null
+
+    # Restart Nginx
+    sudo systemctl restart nginx
+
+    echo
+    echo "Created WordPress project $name"
+    echo
+
+    # Wait until wp-config.php has <?php tag on the first line
+    echo "waiting on user to initialise project on $domain/admin"
+    echo
+    while ! head -n 1 "$dir/wp-config.php" 2>/dev/null | grep -q "^<?php"; do
+        sleep 1
+    done
+
+    sudo cp -R /var/www/libs/elementor-pro $dir/wp-content/plugins/
+    sudo cp -R /var/www/libs/kera $dir/wp-content/themes/
+
+
+    # Force https and allow 512mb file size
+    sudo sed -i '2i$_SERVER["HTTPS"] = "on";' "$dir/wp-config.php"
+    sudo sed -i '4i define('"'"'WP_MEMORY_LIMIT'"'"', '"'"'512M'"'"');' "$dir/wp-config.php"
+    echo
+    echo "setting permissions"
+    echo 
+
+    sudo chmod 644 	"$dir/wp-admin/index.php" > /dev/null
+    sudo chmod 600 "$dir/wp-config.php" > /dev/null
+    sudo chmod -R 755 "$dir/wp-content/uploads" > /dev/null
+
+    echo
+    echo "initialised https, project $name setup succesfully"
+    echo
+}
+
+DisableConf() {
+    echo
+    echo
+    echo
+
+    grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
+    echo
+    echo "setting up config for $name on $grabbeddomain to disabled page"
+    echo
+    echo ...
+    sudo mv $nginxconfdir/$name.nginx $nginxdisabled 
+    sudo tee "$nginxconfdir/$name.disabled" > /dev/null << EOT
+server {
+    listen 80;
+    server_name $grabbeddomain www.$grabbeddomain;
+    root /var/www/sites/disabled;
+    index index.html;
+}
+EOT
+    echo
+    echo "Made config for $name to disabled route"
+    echo
+    echo "restarting nginx..."
+    sudo systemctl restart nginx
+    echo
+    echo "Disabled! $name"
 }
 
 clear
@@ -158,7 +299,7 @@ if [ -d "$source" ]; then
         4)
             clear
             echo "Deleting project..."
-            # Add commands for deleting project
+            DeleteWp
             ;;
         11)
             clear
@@ -185,29 +326,21 @@ if [ -d "$source" ]; then
             echo "Invalid choice. Please enter a number between 1 and 4."
             ;;
         esac
-    if [ -f "/etc/nginx/sites-enabled/$name.nginx" ]; then
+    if [ -f "$nginxconfdir/$name.nginx" ]; then
         case $choice in
             5)
                 clear
-                echo
-                echo "Disabling site.."
-                echo
-                sudo mv $nginxconfdir/$name.nginx $nginxdisabled
-                echo
-                echo "restarting nginx..."
-                echo
-                sudo systemctl restart nginx
-                echo
-                echo "Disabled! $name"
+                DisableConf
                 ;;
         esac
-    elif [ -f "$nginxdisabled/$name.nginx" ]; then
+    elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
         case $choice in
             5)
                 clear
                 echo 
                 echo "Enabling site.."
                 echo
+                sudo rm $nginxconfdir/$name.disabled
                 sudo mv $nginxdisabled/$name.nginx $nginxconfdir
                 echo
                 echo "restarting nginx..."
@@ -221,13 +354,17 @@ if [ -d "$source" ]; then
     fi
 else
     echo 
-    echo "project doesnt exist"
+    echo "project $name doesnt exist"
     echo
-    read -p "create new project? (yes or no)" create
-    
-    case $choice in
+    read -p "setup new project for $name? (yes or no): " create
+    case $create in
         yes)
+            echo "setup wordpress project for $name"
+            echo
             SetupWP
+            clear
+            echo "successfully setup project $name"
+            echo
             ;;
         no) 
             exit
