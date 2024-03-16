@@ -1,5 +1,8 @@
 #!/bin/bash
 
+nginxconfdir="/etc/nginx/sites-enabled"
+nginxdisabled="/etc/nginx/disabled"
+
 DeleteWp() {
     #!/bin/bash
     read -p "Enter project to delete: " name
@@ -43,7 +46,7 @@ GraphLog() {
     nginxdir="/etc/nginx/sites-enabled"
     logdir="/var/www/logs/$name"
 
-    outputfile="$pubdir/logs/$name/report-$(date +%F)"
+    outputfile="$pubdir/logs/$name-report-$(date +%F)"
     inputfile="$logdir/access.nginx"
 
     sudo mkdir $pubdir > /dev/null 2>&1
@@ -56,12 +59,11 @@ GraphLog() {
     sudo chmod -R 755 $pubdir/logs > /dev/null 2>&1
 
     counter=1
-    while [ -f "$pubdir/$name-$(date +%F)-$counter.zip" ]; do
+    while [ -f "$inputfile.html" ]; do
         ((counter++))
     done
 
-    if [ -f "$outputfile" ]; 
-    then
+    if [ -f "$outputfile" ]; then
         echo
         echo "$counter graph made on $(date +%F) "
         echo
@@ -83,8 +85,8 @@ GraphLog() {
     echo "backing up current log"
     echo
 
-    sudo mv $inputfile $inputfile-$(date +%F)
-    sudo mv $inputfile-$(date +%F) $logdir/archive
+    #sudo mv $inputfile $inputfile-$(date +%F)
+    #sudo mv $inputfile-$(date +%F) $logdir/archive
     sudo touch $inputfile
     sudo systemctl restart nginx
 
@@ -94,9 +96,7 @@ GraphLog() {
 }
 
 EditConf() {
-    configdir="/etc/nginx/sites-enabled/"
-
-    sudo vim $configdir/$name.nginx
+    sudo vim $nginxconfdir/$name.nginx
 
     echo
     echo "edited config for $name"
@@ -123,11 +123,19 @@ if [ -d "$source" ]; then
     echo
     echo "1. Graph log"
     echo "2. Edit nginx config"
-    echo "3. Reset/Create project"
+    echo "3. Reset project"
     echo "4. Delete project"
-    echo
+    if [ -f "$nginxconfdir/$name.nginx" ]; then
+        echo "5. Disble site"
+    elif [ -f "$nginxdisabled/$name.nginx" ]; then
+        echo "5. Enable site"
+    else
+        echo
+        echo "  :site status unknown:  "
+        echo
+    fi
     # Read user's choice
-    read -p "Enter your choice (1-4): " choice
+    read -p "Enter your choice (1-5): " choice
 
     # Perform action based on user's choice
     case $choice in
@@ -152,10 +160,65 @@ if [ -d "$source" ]; then
             echo "Deleting project..."
             # Add commands for deleting project
             ;;
+        11)
+            clear
+            echo "Going to $names's plugins..."
+            echo
+            cd /var/www/sites/$name/wp-content/plugins 
+            exit
+            ;;
+        22)
+            clear
+            echo "Going to $name's source..."
+            echo
+            cd /var/www/sites/$name 
+            exit
+            ;;
+        33)
+            clear
+            echo "Going to $name's logs..."
+            echo
+            cd /var/www/logs/$name 
+            exit
+            ;;
         *)
             echo "Invalid choice. Please enter a number between 1 and 4."
             ;;
-    esac
+        esac
+    if [ -f "/etc/nginx/sites-enabled/$name.nginx" ]; then
+        case $choice in
+            5)
+                clear
+                echo
+                echo "Disabling site.."
+                echo
+                sudo mv $nginxconfdir/$name.nginx $nginxdisabled
+                echo
+                echo "restarting nginx..."
+                echo
+                sudo systemctl restart nginx
+                echo
+                echo "Disabled! $name"
+                ;;
+        esac
+    elif [ -f "$nginxdisabled/$name.nginx" ]; then
+        case $choice in
+            5)
+                clear
+                echo 
+                echo "Enabling site.."
+                echo
+                sudo mv $nginxdisabled/$name.nginx $nginxconfdir
+                echo
+                echo "restarting nginx..."
+                echo
+                sudo systemctl restart nginx
+                echo
+                echo "Enabled! $name"
+                echo
+                ;;
+        esac
+    fi
 else
     echo 
     echo "project doesnt exist"
@@ -173,4 +236,7 @@ else
             echo "Invalid choice. cancelling"
             exit
         ;;
+    esac
+fi
+
 done
