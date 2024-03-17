@@ -88,9 +88,8 @@ GraphLog() {
     echo "done graphing for $name"
     echo
     
-    echo "backing up current log"
-    echo
-
+    #echo "backing up current log"
+    #echo
     #sudo mv $inputfile $inputfile-$(date +%F)
     #sudo mv $inputfile-$(date +%F) $logdir/archive
     sudo touch $inputfile
@@ -810,13 +809,21 @@ while true; do
                 echo "Changing domain for project $name"
                 echo
                 read -p "Enter new domain: " new_domain
-                echo 
+                echo
+                GrabDomain 
+                if [ -f "$nginxconfdir/$name.nginx" ]; then
+                    sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxconfdir/$name.nginx"
+                elif [ -f "$nginxdisabled/$name.nginx" ]; then
+                    sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxdisabled/$name.nginx"
+                else
+                    $new_domain="unkown"
+                fi
                 echo "Changing domain.."
-                sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxconfdir/$name.nginx"
 
                 echo
                 echo "succesfully changed the domain for project $name from $grabbeddomain to $new_domain"
                 echo
+                GrabDomain
                 ;;
             7)
                 clear
