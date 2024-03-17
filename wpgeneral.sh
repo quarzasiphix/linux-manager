@@ -732,7 +732,11 @@ while true; do
             'reboot')
                 clear
                 echo
-                read -p " (Type 'yes' to confirm): " confirm
+                echo "Any UNSAVED changes Will be LOST"
+                echo
+                echo "are you sure you want to fully reboot the server"
+                echo
+                read -p " (Type 'yes' to confirm reboot): " confirm
 
                 if [[ $confirm == "yes" ]]; then
                     echo
