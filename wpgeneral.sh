@@ -684,7 +684,7 @@ while true; do
     while [ "$IsSetProject" == "false" ]; do 
         echo
         echo -e "    :Welcome \e[36m$USER\e[0m!!!"
-        echo -e "to the \e[38m project management tool!\e[0m"
+        echo -e "to the \e[95mproject management tool!\e[0m"
         echo
         echo "0. Select project"
         echo
@@ -695,6 +695,8 @@ while true; do
         echo "5. Backup All Active"
         echo
         echo "r. Restart nginx"
+        echo
+        echo "reboot - Fully reboot the server"
         echo
         read -p "What you wanna do?: " adminchoice
         case $adminchoice in 
@@ -726,6 +728,28 @@ while true; do
                 echo
                 echo "finished restarting nginx"
                 echo
+                ;;
+            'reboot')
+                clear
+                echo
+                read -p " (Type 'yes' to confirm): " confirm
+
+                if [[ $confirm == "yes" ]]; then
+                    echo
+                    echo "initiating full reboot of linux...."
+                    echo
+                    sudo reboot
+
+                    echo "rebooting...."
+                    echo
+
+                    while true; do
+                        echo "bye"
+                    done
+                else
+                    echo "cancelling reboot"
+                    echo
+                fi
                 ;;
             *)
                 clear
@@ -865,6 +889,7 @@ while true; do
                 cd /var/www/logs/$name 
                 exit
                 ;;
+       
             *)
                 echo "Invalid choice. Please enter a number between 1 and 4."
                 ;;
