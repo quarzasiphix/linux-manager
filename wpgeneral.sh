@@ -3,9 +3,18 @@
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
 
+# project info
+currentdomain=
+
+
 DeleteWp() {
     # Confirm deletion
-    echo "Are you sure you want to delete project '$name'?"
+    echo -e " \e[31m Permanent Erase,\e[0m there is no turnning back! "
+    echo
+    echo "make a backup before deleting"
+    echo
+    echo -e "Are you sure you want to delete project '$name'?"
+    echo
     echo "Deleting the project will delete the database"
     echo ", nginx config, source files and logs"
     echo 
@@ -92,6 +101,78 @@ GraphLog() {
     echo
 }
 
+GraphAllActive() {
+    file_names=()
+
+    # Iterate over each file in the directory
+    for file in "$nginxconfdir"/*.nginx; do
+        # Extract the filename without the extension
+        filename=$(basename "$file" .nginx)
+        # Add the modified filename to the array
+        file_names+=("$filename")
+    done
+
+    echo "\e[31mDisabled websites:\e[0m"
+    echo
+
+    # Define the maximum width for the filenames
+    max_width=20
+    pubdir="/var/www/sites/goaccess"
+    nginxdir="/etc/nginx/sites-enabled"
+
+    for names in "${file_names[@]}"; do
+        logdir="/var/www/logs/$names"
+
+        outputfile="$pubdir/logs/$names-report-$(date +%F)"
+        inputfile="$logdir/access.nginx"
+
+        sudo mkdir $pubdir > /dev/null 2>&1
+        sudo mkdir $pubdir/logs > /dev/null 2>&1
+        sudo mkdir $pubdir/logs/$name > /dev/null 2>&1
+
+        sudo mkdir $logdir/archive
+
+        sudo chown -R www-data:www-data $pubdir/logs > /dev/null 2>&1
+        sudo chmod -R 755 $pubdir/logs > /dev/null 2>&1
+
+        counter=1
+        while [ -f "$inputfile.html" ]; do
+            ((counter++))
+        done
+
+        if [ -f "$outputfile" ]; then
+            echo
+            echo "$counter graph made on $(date +%F) "
+            echo
+            echo "graphing...."
+            echo
+            sudo goaccess $inputfile -o $outputfile-$counter.html --log-format=COMBINED
+        else 
+            echo "first graph of today $(date +%F)"
+            echo
+            echo "graphing..."
+            echo
+            sudo goaccess $inputfile -o $outputfile.html --log-format=COMBINED
+        fi
+
+        echo
+        echo "done graphing for $name"
+        echo
+
+        echo "backing up current log"
+        echo
+
+        #sudo mv $inputfile $inputfile-$(date +%F)
+        #sudo mv $inputfile-$(date +%F) $logdir/archive
+        sudo touch $inputfile
+        sudo systemctl restart nginx
+
+        echo
+        echo "done backing up log"
+        echo 
+    done
+}
+
 EditConf() {
     sudo vim $nginxconfdir/$name.nginx
     clear
@@ -102,6 +183,7 @@ EditConf() {
     echo
     sudo systemctl restart nginx
 }
+
 
 SetupWP() {
     # Get domain
@@ -124,7 +206,9 @@ SetupWP() {
     echo
     echo "extracting wordpress files... "
     echo
-    sudo tar -xvzf latest.tar.gz --strip-components=1 -C "$dir" 2>&1
+    sudo tar -xvzf latest.tar.gz --strip-components=1 -C "$dir" > /dev/null
+    echo "finished extracting wp files.. setting up perms"
+    echo
     sudo chown -R www-data:www-data "$dir"
     sudo chmod -R 755 "$dir"
 
@@ -224,6 +308,8 @@ DisableConf() {
     echo
     echo
 
+    echo -e " \e[31m Disbling site... \e[0m"
+
     grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
     echo
     echo "setting up config for $name on $grabbeddomain to disabled page"
@@ -247,133 +333,584 @@ EOT
     echo "Disabled! $name"
 }
 
-clear
+BackupWP() {
+    # Define variables.
 
-echo "Welcome to the project management tool!"
+    nginx_config="/etc/nginx/sites-enabled/$name.nginx"
+    backupdir="/var/www/backups/$name"
+    tempdir="$backupdir/$name-temp"
 
-# Ask user to type in a name
-read -p "Project name: " name
+    # Create a temporary directory and set appropriate permissions.
+    sudo mkdir "$backupdir" > /dev/null 2>&1
+    sudo mkdir "$backupdir/archive/$(date +%F)" > /dev/null 2>&1
 
-source="/var/www/sites/$name"
-
-# Present options to the user
-while true; do
-if [ -d "$source" ]; then
+    echo "moving existing temp directory to archive"
     echo
-    echo "What would you like to do to $name?"
+    sudo mv "$tempdir" "$backupdir/archive/$(date +%F)" > /dev/null 2>&1
+    sudo mkdir "$tempdir" > /dev/null 2>&1
+
+    sudo chmod -R 777 "$tempdir" > /dev/null
+
+    # Perform MySQL database backup.
+    sudo mysqldump -u root --single-transaction "$name" > "$tempdir/$name.sql"
+
+    # Backup Nginx configuration.
+    sudo cp "$nginx_config" "$tempdir/"
+
+    # Backup Logs
+    sudo cp -R "/var/www/logs/$name" "$tempdir/logs/" > /dev/null
+    echo "Logs folder size: "
+    du -sh "/var/www/logs/$name"
+
     echo
-    echo "1. Graph log"
-    echo "2. Edit nginx config"
-    echo "3. Reset project"
-    echo "4. Delete project"
-    if [ -f "$nginxconfdir/$name.nginx" ]; then
-        echo "5. Disble site"
-    elif [ -f "$nginxdisabled/$name.nginx" ]; then
-        echo "5. Enable site"
+    echo "Backing up source files"
+    echo
+
+    echo "source folder size: "
+    du -sh "/var/www/sites/$name"
+
+    # Backup WordPress files.
+    sudo cp -R "/var/www/sites/$name" "$tempdir/$name" > /dev/null
+
+    # Copy existing backup
+    # Check if the file exists
+    counter=1
+    while [ -f "$backupdir/$name-$(date +%F)-$counter.zip" ]; do
+        ((counter++))
+    done
+
+    if [ -f "$backupdir/$name-$(date +%F).zip" ]; then
+        # If the file exists, copy it to the archive folder
+        #cp "$name-$(date +%F).zip" "$backupdir/archive"
+            #sudo mv "$backupdir/$name-$(date +%F).zip" "$backupdir/$name-$(date +%F)-$counter.zip
+
+            echo
+        echo "$counter backups made on $(date +%F) "
+            echo
+            echo "Zipping backup files"
+            echo
+            sudo zip -r "$name-$(date +%F)-$counter.zip" "$tempdir"  > /dev/null
+            sudo mv "$name-$(date +%F)-$counter.zip" "$backupdir/"
+            echo 
+            echo "Backup archive size: "
+            du -sh "$backupdir/$name-$(date +%F)-$counter.zip"
     else
-        echo
-        echo "  :site status unknown:  "
-        echo
+            echo
+        echo "First backup of today $(date +%F)"
+            echo
+            echo "Zipping backup files"
+            echo
+            sudo zip -r "$name-$(date +%F).zip" "$tempdir"  > /dev/null
+            sudo mv "$name-$(date +%F).zip" "$backupdir/"
+            echo 
+            echo "Backup archive size: "
+            du -sh "$backupdir/$name-$(date +%F).zip"
     fi
-    # Read user's choice
-    read -p "Enter your choice (1-5): " choice
+    echo
+    echo -e "\e[32m Backup completed. \e[0m  Files are stored in $backupdir."
 
-    # Perform action based on user's choice
-    case $choice in
-        1)
-            clear
-            echo "Graphing log..."
-            GraphLog
-            ;;
-        2)    
-            echo "Editing config..."
-            EditConf
-            ;;
-            
-        3)  
-            clear
-            echo "Resetting project..."
-            test
-            ;;
-            
-        4)
-            clear
-            echo "Deleting project..."
-            DeleteWp
-            ;;
-        11)
-            clear
-            echo "Going to $names's plugins..."
+
+    # Create the backup directory if it doesn't exist.
+    sudo mkdir -p "$backupdir" > /dev/null
+
+    # Move the backup file to the backup directory.
+    #sudo mv "$name-$(date +%F).zip" "$backupdir/"
+
+    # Remove the temporary directory.
+    #sudo rm -r "$tempdir"
+}
+
+backupAll() {
+    # Define variables.
+
+    file_names=()
+
+    # Iterate over each file in the directory
+    for file in "$nginxconfdir"/*.nginx; do
+        # Extract the filename without the extension
+        filename=$(basename "$file" .nginx)
+        # Add the modified filename to the array
+        file_names+=("$filename")
+    done
+
+    echo "  :Backup All Active websites: "
+    echo
+
+    for names in "${file_names[@]}"; do
+        nginx_config="/etc/nginx/sites-enabled/$names.nginx"
+        backupdir="/var/www/backups/$names"
+        tempdir="$backupdir/$names-temp"
+
+        # Create a temporary directory and set appropriate permissions.
+        sudo mkdir "$backupdir" > /dev/null 2>&1
+        sudo mkdir "$backupdir/archive/$(date +%F)" > /dev/null 2>&1
+
+        sudo mv "$tempdir" "$backupdir/archive/$(date +%F)" > /dev/null 2>&1
+        sudo mkdir "$tempdir" > /dev/null 2>&1
+
+        sudo chmod -R 777 "$tempdir" > /dev/null
+
+        # Perform MySQL database backup.
+        sudo mysqldump -u root --single-transaction "$names" > "$tempdir/$names.sql"
+
+        # Backup Nginx configuration.
+        sudo cp "$nginx_config" "$tempdir/"
+
+        # Backup Logs
+        sudo cp -R "/var/www/logs/$names" "$tempdir/logs/" > /dev/null
+
+        #echo "source folder size for $names: "
+        #du -sh "/var/www/sites/$names"
+
+        # Backup WordPress files.
+        sudo cp -R "/var/www/sites/$names" "$tempdir/$names" > /dev/null
+
+        # Copy existing backup
+        # Check if the file exists
+        counter=1
+        while [ -f "$backupdir/$names-$(date +%F)-$counter.zip" ]; do
+            ((counter++))
+        done
+
+        if [ -f "$backupdir/$names-$(date +%F).zip" ]; then
+            # If the file exists, copy it to the archive folder
+            #cp "$name-$(date +%F).zip" "$backupdir/archive"
+            #sudo mv "$backupdir/$name-$(date +%F).zip" "$backupdir/$name-$(date +%F)-$counter.zip
             echo
-            cd /var/www/sites/$name/wp-content/plugins 
-            exit
-            ;;
-        22)
-            clear
-            echo "Going to $name's source..."
+            echo "$counter backups made on $(date +%F) "
             echo
-            cd /var/www/sites/$name 
-            exit
-            ;;
-        33)
-            clear
-            echo "Going to $name's logs..."
+            echo "Zipping backup files"
             echo
-            cd /var/www/logs/$name 
-            exit
-            ;;
-        *)
-            echo "Invalid choice. Please enter a number between 1 and 4."
-            ;;
-        esac
+            sudo zip -r "$names-$(date +%F)-$counter.zip" "$tempdir"  > /dev/null
+            sudo mv "$names-$(date +%F)-$counter.zip" "$backupdir/"
+            echo 
+            echo "Backup archive size for $names: "
+            du -sh "$backupdir/$names-$(date +%F)-$counter.zip"
+        else
+            echo
+            echo "First backup of today $(date +%F)"
+            echo
+            echo "Zipping backup files"
+            echo
+            sudo zip -r "$names-$(date +%F).zip" "$tempdir"  > /dev/null
+            sudo mv "$names-$(date +%F).zip" "$backupdir/"
+            echo 
+            echo "Backup archive size for $names: "
+            du -sh "$backupdir/$names-$(date +%F).zip"
+        fi
+        echo
+        echo -e "\e[32m Backup for $names is completed. \e[0m"
+
+
+        # Create the backup directory if it doesn't exist.
+        sudo mkdir -p "$backupdir" > /dev/null
+
+        
+        # Move the backup file to the backup directory.
+        #sudo mv "$name-$(date +%F).zip" "$backupdir/"
+
+        # Remove the temporary directory.
+        #sudo rm -r "$tempdir"
+    done
+    echo
+    echo "Finished backing up all active sites"
+    echo
+}
+
+RestoreWP() {
+    echo
+    backupdir="/var/www/backups/$name"
+    sudo rm -R "$backupdir/$name-temp" > /dev/null
+    # List files inside backup directory
+    echo
+    echo "Backups"
+    sudo ls -l "$backupdir" | awk '{print $9}'
+    read -p "backup to restore: " backup
+
+
+    # Get database password
+    read -sp "Enter database password: " dbpasss
+    echo
+
+    dir="/var/www/sites/$name"
+
+    echo "unzipping"
+    echo
+    sudo unzip "$backupdir/$backup" -d "$backupdir/" > /dev/null
+
+    echo 
+    echo "clearing previous files"
+    echo
+
+    sudo rm -R "$dir"
+    sudo rm /etc/nginx/sites-enabled/$name.nginx
+
+    echo
+    echo "moving wordpress files to directory"
+    echo
+
+    sudo mv $backupdir/var/www/backups/$name/$name-temp/ $backupdir/
+    sudo rm -R $backupdir/var > /dev/null
+    sudo mv $backupdir/$name-temp/$name /var/www/sites/
+    sudo mv $backupdir/$name-temp/$name.nginx /etc/nginx/sites-enabled/
+    sudo mkdir /var/www/logs/$name
+
+    echo
+    echo "setting up database"
+    echo
+
+    sudo mysql -u root <<EOF
+    DROP DATABASE IF EXISTS $name;
+    CREATE DATABASE $name;
+    DROP USER IF EXISTS '$name'@'localhost';
+    CREATE USER '$name'@'localhost' IDENTIFIED BY '$dbpasss';
+    GRANT ALL PRIVILEGES ON $name.* TO '$name'@'localhost';
+    FLUSH PRIVILEGES;
+    \q
+EOF
+
+    sudo mysql -u $name -p$dbpass $name < $backupdir/$name-temp/$name.sql
+
+    sudo rm -R "$backupdir/$name-temp" > /dev/null
+
+    sudo chown -R www-data:www-data "$dir"
+
+    sudo chmod -R 755 $dir
+
+    sudo chmod 600 "$dir/wp-config.php" > /dev/null
+    sudo chmod -R 755 "$dir/wp-content/uploads" > /dev/null
+
+    sudo systemctl restart nginx
+
+    echo
+    echo "restore complete"
+    echo
+}
+
+GrabDomain() {
     if [ -f "$nginxconfdir/$name.nginx" ]; then
-        case $choice in
+        # Print "Site Enabled" in green
+        currentdomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
+    elif [ -f "$nginxdisabled/$name.nginx" ]; then
+        currentdomain=$(grep -o 'server_name.*;' $nginxdisabled/$name.nginx | awk '{print $2}' | sed 's/;//')
+    fi
+    #echo "$grabbeddomain"
+    #currentdomain=$grabbeddomain
+}
+
+GetDisabledSites() {
+    # Initialize an empty array to store the modified filenames
+    file_names=()
+
+    # Iterate over each file in the directory
+    for file in "$nginxdisabled"/*.nginx; do
+        # Extract the filename without the extension
+        filename=$(basename "$file" .nginx)
+        # Add the modified filename to the array
+        file_names+=("$filename")
+    done
+
+    echo -e "  \e[31m:Disabled websites:\e[0m"
+    echo
+
+    # Define the maximum width for the filenames
+    max_width=20
+
+    for name in "${file_names[@]}"; do
+        # Get the domain
+        getdomain=$(grep -o 'server_name.*;' "$nginxdisabled/$name.nginx" | awk '{print $2}' | sed 's/;//')
+        
+        # Pad the filename with spaces to ensure even alignment
+        padded_name=$(printf "%-${max_width}s" "$name")
+
+        # Print the formatted output
+        echo " : $padded_name :  domain: $getdomain"
+    done
+
+    echo 
+}
+
+
+GetActiveSites() {
+    # Initialize an empty array to store the modified filenames
+    file_names=()
+
+    # Iterate over each file in the directory
+    for file in "$nginxconfdir"/*.nginx; do
+        # Extract the filename without the extension
+        filename=$(basename "$file" .nginx)
+        # Add the modified filename to the array
+        file_names+=("$filename")
+    done
+
+    echo -e "   \e[32m:Active websites:\e[0m"
+    echo
+
+    # Define the maximum width for the filenames
+    max_width=20
+
+    for name in "${file_names[@]}"; do
+        # Get the domain
+        getdomain=$(grep -o 'server_name.*;' "$nginxconfdir/$name.nginx" | awk '{print $2}' | sed 's/;//')
+        
+        # Pad the filename with spaces to ensure even alignment
+        padded_name=$(printf "%-${max_width}s" "$name")
+
+        # Print the formatted output
+        echo " : $padded_name :  domain: $getdomain"
+    done
+
+    echo 
+}
+
+IsSetProject=false
+
+SetProject() {
+    clear
+    echo
+    echo -e "    :Welcome \e[36m$USER\e[0m!!!"
+    echo -e "to the \e[38m project management tool!\e[0m"
+    echo
+    # Ask user to type in a name
+    read -p "Project name: " name
+    echo
+    source="/var/www/sites/$name"
+    GrabDomain
+    IsSetProject=true
+}
+
+#SetProject
+clear
+while true; do
+    while [ "$IsSetProject" == "false" ]; do 
+        echo
+        echo -e "    :Welcome \e[36m$USER\e[0m!!!"
+        echo -e "to the \e[38m project management tool!\e[0m"
+        echo
+        echo "0. Select project"
+        echo
+        echo "1. View All active websites"
+        echo "2. View All disabled websites"
+        echo "3. Graph All active sites"
+        echo "4. Disable All sites"
+        echo "5. Backup All Active"
+        echo
+        echo "r. Restart nginx"
+        echo
+        read -p "What you wanna do?: " adminchoice
+        case $adminchoice in 
+            0)
+                clear
+                SetProject
+                ;;
+            1)
+                clear
+                GetActiveSites
+                ;;
+            2)
+                clear
+                GetDisabledSites
+                ;;
+            3)
+                clear
+                GraphAllActive
+                ;;
             5)
                 clear
-                DisableConf
+                backupAll
                 ;;
-        esac
-    elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
-        case $choice in
-            5)
+            'r')
                 clear
                 echo 
-                echo "Enabling site.."
-                echo
-                sudo rm $nginxconfdir/$name.disabled
-                sudo mv $nginxdisabled/$name.nginx $nginxconfdir
-                echo
                 echo "restarting nginx..."
-                echo
                 sudo systemctl restart nginx
                 echo
-                echo "Enabled! $name"
+                echo "finished restarting nginx"
                 echo
                 ;;
+            *)
+                clear
+                echo "invalid"
+                ;;
+        esac
+    done
+
+    # Present options to the user
+    while [ "$IsSetProject" == "true" ]; do
+    if [ -d "$source" ]; then
+        echo
+        if [ -f "$nginxconfdir/$name.nginx" ]; then
+            # Print "Site Enabled" in green
+            echo -e " :Site \e[32m Enabled:  \e[0m"
+        elif [ -f "$nginxdisabled/$name.nginx" ]; then
+            # Print "Site Disabled" in red
+            echo -e " :Site \e[31m Disabled: \e[0m"
+        fi
+        echo
+        echo "Current domain: $currentdomain" 
+        echo
+        echo "What would you like to do to $name?"
+        echo
+        echo "0. Change project"
+        echo
+        echo "1. Graph log"
+        echo "2. Edit nginx config"
+        echo "3. Reset project"
+        echo "4. Delete project"
+        if [ -f "$nginxconfdir/$name.nginx" ]; then
+            echo -e "5.\e[31m Disble site \e[0m"
+        elif [ -f "$nginxdisabled/$name.nginx" ]; then
+            echo -e "5.\e[32m Enable site \e[0m"
+        else
+            echo
+            echo "  :site status unknown:  "
+            echo
+        fi
+        # Read user's choice
+        echo "6. Change domain"
+        echo "7. View active domains"
+        echo "b. Create backup"
+        echo "r. Restore back"
+        echo
+        read -p "Enter your choice (1-X): " choice
+
+        # Perform action based on user's choice
+        case $choice in
+            0)
+                clear
+                IsSetProject=false
+                break
+                ;;
+            1)
+                clear
+                echo "Graphing log..."
+                GraphLog
+                ;;
+            2)    
+                echo "Editing config..."
+                EditConf
+                ;;
+                
+            3)  
+                clear
+                echo "Resetting project..."
+                test
+                ;;
+                
+            4)
+                clear
+                echo
+                echo "Deleting project..."
+                echo
+                DeleteWp
+                ;;
+            6)
+                clear
+                #grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
+                echo "Changing domain for project $name"
+                echo
+                read -p "Enter new domain: " new_domain
+                echo 
+                echo "Changing domain.."
+                sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxconfdir/$name.nginx"
+
+                echo
+                echo "succesfully changed the domain for project $name from $grabbeddomain to $new_domain"
+                echo
+                ;;
+            7)
+                clear
+                GetActiveSites
+                ;;
+            'b')
+                clear
+                echo
+                echo "Creating backup for $name"
+                echo
+                BackupWP
+                ;;
+            'r')
+                clear
+                echo
+                echo "Restoring a backup for $name"
+                echo
+                RestoreWP
+                ;;
+
+            11)
+                clear
+                echo "Going to $names's plugins..."
+                echo
+                cd /var/www/sites/$name/wp-content/plugins 
+                exit
+                ;;
+            22)
+                clear
+                echo "Going to $name's source..."
+                echo
+                cd /var/www/sites/$name 
+                exit
+                ;;
+            33)
+                clear
+                echo "Going to $name's logs..."
+                echo
+                cd /var/www/logs/$name 
+                exit
+                ;;
+            *)
+                echo "Invalid choice. Please enter a number between 1 and 4."
+                ;;
+            esac
+        if [ -f "$nginxconfdir/$name.nginx" ]; then
+            case $choice in
+                5)
+                    clear
+                    DisableConf
+                    ;;
+            esac
+        elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
+            case $choice in
+                5)
+                    clear
+                    echo 
+                    echo -e "\e[32m Enabling site... \e[0m"
+                    echo
+                    sudo rm $nginxconfdir/$name.disabled
+                    sudo mv $nginxdisabled/$name.nginx $nginxconfdir
+                    echo
+                    echo "restarting nginx..."
+                    echo
+                    sudo systemctl restart nginx
+                    echo
+                    echo "Enabled! $name"
+                    echo
+                    ;;
+            esac
+        fi
+    else
+        echo 
+        echo "project $name doesnt exist"
+        echo
+        read -p "setup new project for $name? (yes or no): " create
+        case $create in
+            yes)
+                echo "setup wordpress project for $name"
+                echo
+                SetupWP
+                clear
+                echo "successfully setup project $name"
+                echo
+                ;;
+            no) 
+                exit
+                ;;
+            *)
+                echo "Invalid choice. cancelling"
+                exit
+            ;;
         esac
     fi
-else
-    echo 
-    echo "project $name doesnt exist"
-    echo
-    read -p "setup new project for $name? (yes or no): " create
-    case $create in
-        yes)
-            echo "setup wordpress project for $name"
-            echo
-            SetupWP
-            clear
-            echo "successfully setup project $name"
-            echo
-            ;;
-        no) 
-            exit
-            ;;
-        *)
-            echo "Invalid choice. cancelling"
-            exit
-        ;;
-    esac
-fi
 
+    done
 done
