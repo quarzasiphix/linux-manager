@@ -456,12 +456,14 @@ backupAll() {
         sudo cp "$nginx_config" "$tempdir/"
 
         # Backup Logs
+        echo "..."
         sudo cp -R "/var/www/logs/$names" "$tempdir/logs/" > /dev/null
 
         #echo "source folder size for $names: "
         #du -sh "/var/www/sites/$names"
 
         # Backup WordPress files.
+        echo "..."
         sudo cp -R "/var/www/sites/$names" "$tempdir/$names" > /dev/null
 
         # Copy existing backup
@@ -499,6 +501,7 @@ backupAll() {
         fi
         echo
         echo -e "\e[32m Backup for $names is completed. \e[0m"
+        echo
 
 
         # Create the backup directory if it doesn't exist.
@@ -768,10 +771,10 @@ while true; do
         echo
         if [ -f "$nginxconfdir/$name.nginx" ]; then
             # Print "Site Enabled" in green
-            echo -e " :Site \e[32m Enabled:  \e[0m"
+            echo -e " :Site \e[32m Enabled\e[0m:"
         elif [ -f "$nginxdisabled/$name.nginx" ]; then
             # Print "Site Disabled" in red
-            echo -e " :Site \e[31m Disabled: \e[0m"
+            echo -e " :Site \e[31m Disabled\e[0m:"
         fi
         echo
         echo "Current domain: $currentdomain" 
@@ -780,19 +783,19 @@ while true; do
         echo
         echo "0. Change project"
         echo
-        echo "1. Graph log"
-        echo "2. Edit nginx config"
-        echo "3. Reset project"
-        echo "4. Delete project"
         if [ -f "$nginxconfdir/$name.nginx" ]; then
-            echo -e "5.\e[31m Disble site \e[0m"
+            echo -e "\e[31m Disble\e[0m site"
         elif [ -f "$nginxdisabled/$name.nginx" ]; then
-            echo -e "5.\e[32m Enable site \e[0m"
+            echo -e "\e[32m Enable\e[0m site "
         else
             echo
             echo "  :site status unknown:  "
             echo
         fi
+        echo "1. Graph log"
+        echo "2. Edit nginx config"
+        echo "3. Reset project"
+        echo "4. Delete project"
         # Read user's choice
         echo "6. Change domain"
         echo "7. View active domains"
@@ -810,16 +813,19 @@ while true; do
                 ;;
             1)
                 clear
+                echo
                 echo "Graphing log..."
                 GraphLog
                 ;;
             2)    
+                echo
                 echo "Editing config..."
                 EditConf
                 ;;
                 
             3)  
                 clear
+                echo
                 echo "Resetting project..."
                 test
                 ;;
