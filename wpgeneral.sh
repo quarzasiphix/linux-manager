@@ -665,14 +665,90 @@ GetActiveSites() {
     echo 
 }
 
+EditNginxconf() {
+    sudo vim /etc/nginx/nginx.conf
+    echo
+    echo "restarting nginx to confirm changes..."
+    sudo systemctl restart nginx 
+    echo
+    echo "done"
+    echo
+}
+
+EditSshconf() {
+    sudo vim /etc/ssh/sshd_config
+    echo
+    echo "restarting ssh to confirm changes..."
+    sudo systemctl restart sshd 
+    echo
+    echo "done"
+    echo
+}
+
+EditMotd() {
+    sudo vim /etc/motd
+    echo
+    echo "restarting ssh to confirm changes..."
+    sudo systemctl restart sshd 
+    echo
+    echo "done"
+    echo
+}
+
+EditBanner() {
+    sudo vim /etc/ssh/banner.sh
+    echo
+    echo "restarting ssh to confirm changes..."
+    sudo systemctl restart sshd 
+    echo
+    echo "done"
+    echo
+}
+
+EditPasswd() {
+    sudo vim /etc/passwd
+    echo
+    echo "done"
+    echo
+}
+
+EditBash() {
+    sudo vim ~/.bashrc
+    echo
+    echo "done"
+    echo
+}
+
+EditVisudo() {
+    sudo visudo
+    echo
+    echo "done"
+    echo
+}
+
 IsSetProject=false
+
+ProjectBanner() {
+    echo
+    echo -e "    :Welcome \e[36m$USER\e[0m!!!"
+    echo -e "to the\e[95m project management tool! \e[0m"
+    echo
+}
+
+PrintLastErrors() {  
+    echo 
+    echo "printing the last 5 errors"
+    echo
+    tail -n 5 /var/www/logs/$name/error.nginx
+    echo
+    echo "done"
+    echo
+}
+
 
 SetProject() {
     clear
-    echo
-    echo -e "    :Welcome \e[36m$USER\e[0m!!!"
-    echo -e "to the \e[38m project management tool!\e[0m"
-    echo
+    ProjectBanner
     # Ask user to type in a name
     read -p "Project name: " name
     echo
@@ -681,14 +757,12 @@ SetProject() {
     IsSetProject=true
 }
 
+
 #SetProject
 clear
 while true; do
     while [ "$IsSetProject" == "false" ]; do 
-        echo
-        echo -e "    :Welcome \e[36m$USER\e[0m!!!"
-        echo -e "to the \e[95mproject management tool!\e[0m"
-        echo
+        ProjectBanner
         echo "0. Select project"
         echo
         echo "1. View All active websites"
@@ -696,6 +770,7 @@ while true; do
         echo "3. Graph All active sites"
         echo "4. Disable All sites"
         echo "5. Backup All Active"
+        echo "6. Edit configs"
         echo
         echo "r. Restart nginx"
         echo
@@ -722,6 +797,10 @@ while true; do
             5)
                 clear
                 backupAll
+                ;;
+            6)
+                clear
+                IsSetProject="conf"
                 ;;
             'r')
                 clear
@@ -797,8 +876,8 @@ while true; do
         echo "3. Reset project"
         echo "4. Delete project"
         # Read user's choice
-        echo "6. Change domain"
-        echo "7. View active domains"
+        echo "5. Change domain"
+        echo "6. Show last errors"
         echo "b. Create backup"
         echo "r. Restore back"
         echo
@@ -837,7 +916,7 @@ while true; do
                 echo
                 DeleteWp
                 ;;
-            6)
+            5)
                 clear
                 #grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
                 echo "Changing domain for project $name"
@@ -859,9 +938,8 @@ while true; do
                 echo
                 GrabDomain
                 ;;
-            7)
-                clear
-                GetActiveSites
+            6)
+                PrintLastErrors
                 ;;
             'b')
                 clear
@@ -906,14 +984,19 @@ while true; do
             esac
         if [ -f "$nginxconfdir/$name.nginx" ]; then
             case $choice in
-                5)
+                'disable')
                     clear
                     DisableConf
+                    ;;
+                'enable')
+                    echo 
+                    echo "site is already enabled..."
+                    echo
                     ;;
             esac
         elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
             case $choice in
-                5)
+                'enable')
                     clear
                     echo 
                     echo -e "\e[32m Enabling site... \e[0m"
@@ -926,6 +1009,11 @@ while true; do
                     sudo systemctl restart nginx
                     echo
                     echo "Enabled! $name"
+                    echo
+                    ;;
+                'disable')
+                    echo 
+                    echo "site is already disabled..."
                     echo
                     ;;
             esac
@@ -953,6 +1041,61 @@ while true; do
             ;;
         esac
     fi
+    done
 
+    while [ "$IsSetProject" == "conf" ]; do 
+        ProjectBanner
+        echo
+        echo "Welcome to config shortcut menu"
+        echo
+        echo " 0. Go back to main menu"
+        echo
+        echo "ngc.      nginx general config (/etc/nginx/nginx.conf)"
+        echo "sc.       sshd config (/etc/ssh/sshd_config)"
+        echo "motd.     ssh motd (/etc/motd)" 
+        echo "banner.   ssh banner (/etc/ssh/banner.sh)"
+        echo "passwd.   (/etc/passwd)"
+        echo "bashrc.   (~/.bashrc)"
+        echo "visudo"
+        echo
+        read -p "   What confif do you want to edit?: " conf
+        case $conf in
+            0)
+                IsSetProject=false
+		 ;;
+            'ngc')
+                clear
+                EditNginxconf
+                ;;
+            'sc')
+                clear
+                EditSshconf
+                ;;
+            'motd')
+                clear
+                EditMotd
+                ;;
+            'banner')
+                clear
+                EditBanner
+                ;;
+            'passwd')
+                clear
+                EditPasswd
+                ;;
+            'bashrc')
+                clear
+                EditBash
+                ;;
+            'visudo')
+                clear
+                EditVisudo
+                ;;
+            *)  
+                echo
+                echo "invalid choice"
+                echo
+                ;;
+        esac
     done
 done
