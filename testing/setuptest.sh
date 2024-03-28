@@ -26,4 +26,3 @@ sudo touch $dir/.ssh/authorized_keys
 sudo chown $admin_name:$admin_name $dir/.ssh
 sudo chown $admin_name:$admin_name $dir/.ssh/authorized_keys
 sudo nano $dir/.ssh/authorized_keys
-

@@ -729,8 +729,12 @@ EditVisudo() {
 IsSetProject=false
 
 ProjectBanner() {
+    server_name=$(</var/www/server_name.txt)
+    server_location=$(</var/www/server_info.txt)
+
     echo
-    echo -e "  server: "
+    echo    "   Server: $server_name!"
+    echo    "   at: $server_location!"
     echo
     echo -e "    :Welcome \e[36m$USER\e[0m!!!"
     echo -e "to the\e[38m project management tool! \e[0m"
@@ -1009,7 +1013,7 @@ while true; do
         echo
         echo
         RestoreWP
-        
+
     else
         echo 
         echo "project $name doesnt exist"

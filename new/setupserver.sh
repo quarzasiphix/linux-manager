@@ -1,10 +1,15 @@
 #!/bin/bash
 
+echo "  :server setup:"
 read -p "name of the server: " server_name
+read -p "Enter the location of the server: " server_location
+echo
 
+echo "$server_name" > /var/www/server_name.txt
+echo "$server_location" >> /var/www/server_info.txt
+
+echo "  setup sudo account"
 read -p "admin account: " admin_name
-
-#read -p "admin password: " admin_password
 
 echo
 echo "setting up admin: $admin_name"
@@ -115,3 +120,30 @@ echo
 
 curl -o /var/www/admin/wpgeneral.sh https://raw.githubusercontent.com/quarzasiphix/server-setup/master/wpgeneral.sh
 
+#setup ssh, clean up
+
+# Define the new PS1 value
+echo
+new_ps1="\${debian_chroot:+(\$debian_chroot)}\[\033[01;32m\]\u@$server_name\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\\$ "
+sed -i "s/^export PS1=.*/export PS1=\"$new_ps1\"/" "/etc/bash.bashrc"
+echo
+echo "PS1 line replaced with: $new_ps1"
+echo
+
+sudo tee "/var/www/scripts/banner.sh" > /dev/null <<EOT
+echo    "  =================================== "
+echo
+echo -e "             Hello\e[36m $USER \e[0m"
+echo
+echo -e "         Welcome\e[95m to Web wiz \e[0m"
+echo
+echo    "  =================================== "
+echo
+echo
+echo
+EOT
+
+sudo chmod +x /var/www/scripts/banner.sh
+
+#add post auth banner script
+echo "/var/www/scripts/banner.sh" | sudo tee -a /etc/bash.bashrc > /dev/null
