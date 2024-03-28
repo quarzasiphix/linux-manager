@@ -1,7 +1,9 @@
-server_name=$(</var/www/server_name.txt)
+clear
+
+server_name=$(</var/www/server/name.txt)
 
 # Read server location from the file
-server_location=$(</var/www/server_info.txt)
+server_location=$(</var/www/server/info.txt)
 
 echo
 echo    "  =================================== "

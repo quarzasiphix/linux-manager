@@ -73,6 +73,7 @@ sudo mkdir /var/www/libs/
 sudo mkdir /var/www/logs/
 sudo mkdir /var/www/disabled/
 sudo mkdir /var/www/admin/
+sudo mkdir /var/www/server/
 
 sudo chmod -R 777 /var/www/
 

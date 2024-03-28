@@ -729,8 +729,8 @@ EditVisudo() {
 IsSetProject=false
 
 ProjectBanner() {
-    server_name=$(</var/www/server_name.txt)
-    server_location=$(</var/www/server_info.txt)
+    server_name=$(</var/www/server/name.txt)
+    server_location=$(</var/www/server/info.txt)
 
     echo
     echo    "   Server: $server_name!"
