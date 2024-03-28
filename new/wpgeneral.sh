@@ -730,7 +730,7 @@ IsSetProject=false
 
 ProjectBanner() {
     echo
-    echo
+    echo -e "  server: "
     echo
     echo -e "    :Welcome \e[36m$USER\e[0m!!!"
     echo -e "to the\e[38m project management tool! \e[0m"
@@ -999,6 +999,17 @@ while true; do
                     ;;
             esac
         fi
+
+    elif [ -d "/var/www/backups/$name" ]; then
+        clear
+        echo
+        echo "no active running site for project"
+        echo 
+        echo "found available backups: "
+        echo
+        echo
+        RestoreWP
+        
     else
         echo 
         echo "project $name doesnt exist"

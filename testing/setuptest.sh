@@ -19,9 +19,11 @@ echo "setting up ssh for admin"
 echo
 
 #setup ssh
-sudo mkdir ~/.ssh
-sudo chmod 700 ~/.ssh
-sudo touch ~/.ssh/authorized_keys
-sudo chown $admin_name:$admin_name ~/.ssh
-sudo chown $admin_name:$admin_name ~/.ssh/authorized_keys
-sudo nano ~/.ssh/authorized_keys
+dir="/home/$admin_name"
+sudo mkdir $dir/.ssh
+sudo chmod 700 $dir/.ssh
+sudo touch $dir/.ssh/authorized_keys
+sudo chown $admin_name:$admin_name $dir/.ssh
+sudo chown $admin_name:$admin_name $dir/.ssh/authorized_keys
+sudo nano $dir/.ssh/authorized_keys
+
