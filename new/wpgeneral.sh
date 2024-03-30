@@ -727,6 +727,7 @@ EditVisudo() {
 }
 
 IsSetProject=false
+export IsSetProject
 
 ProjectBanner() {
     server_name=$(</var/www/server/name.txt)
