@@ -12,6 +12,7 @@ site=()
 current_array="general"
 
 url="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/general"
+dir="/var/www/scripts/new/general"
 
 # Read each line from the file
 while IFS= read -r line; do
@@ -25,27 +26,29 @@ while IFS= read -r line; do
     else
         # Add the line to the current array
         if [ "$current_array" == "general" ]; then
-            curl -O $url/$line.sh
+            echo
+            echo "downloading general script $line..."
+            curl -o "$dir/$line.sh" "$url/$line.sh"
+            echo "done downloading $line"
+            echo
             general+=("$line")
+
         elif [ "$current_array" == "server" ]; then
+            echo
+            echo "downloading server script $line..."
+            curl -o "$dir/server/$line.sh" "$url/$line.sh"
+            echo "done downloading $line"
+            echo
             server+=("$line")
+
         elif [ "$current_array" == "site" ]; then
+            echo
+            echo "downloading server script $line..."
+            curl -o "$dir/sites/$line.sh" "$url/$line.sh"
+            echo "done downloading $line"
+            echo
             site+=("$line")
+            
         fi
     fi
 done < "$file"
-
-
-##run_curl_requests() {
-#    local array_name="$1"
-#    echo "Running curl requests for $array_name..."
-#    for name in "${!array_name[@]}"; do
-#        curl -O "https://github.com/$name"
-#    done
-#}#
-
-# Run curl requests through each array
-#run_curl_requests general
-#run_curl_requests server
-#run_curl_requests site
-

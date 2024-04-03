@@ -3,5 +3,10 @@ general
 server
 banner
 login
+graphlogs
+login
 
 site
+backup
+manage
+restore
