@@ -10,6 +10,7 @@ site=()
 
 # Flag to indicate which array to add lines to
 current_array="general"
+scripts="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/downloader/scripts"
 
 url="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/general"
 dir="/var/www/scripts/new/general"
@@ -32,23 +33,13 @@ while IFS= read -r line; do
             echo "done downloading $line"
             echo
             general+=("$line")
-
-        elif [ "$current_array" == "server" ]; then
+        else 
             echo
-            echo "downloading server script $line..."
-            curl -o "$dir/server/$line.sh" "$url/$line.sh"
+            echo "downloading $current_array script $line..."
+            curl -o "$dir/$current_array/$line.sh" "$url/$line.sh"
             echo "done downloading $line"
             echo
             server+=("$line")
-
-        elif [ "$current_array" == "site" ]; then
-            echo
-            echo "downloading server script $line..."
-            curl -o "$dir/sites/$line.sh" "$url/$line.sh"
-            echo "done downloading $line"
-            echo
-            site+=("$line")
-            
         fi
     fi
 done < "$file"
