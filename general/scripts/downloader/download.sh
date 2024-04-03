@@ -8,51 +8,44 @@ general=()
 server=()
 site=()
 
+# Flag to indicate which array to add lines to
+current_array="general"
+
+url="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/general"
+
 # Read each line from the file
-while IFS= read -r scripts; do
+while IFS= read -r line; do
     # Check if the line contains "server"
-    general+=("$scripts")
-
-    if [[ "$scripts" == *"server"* ]]; then
-    while scripts != "site"; then do
-    server+=($scripts)
-    done
-    while scripts != sites
-    site+=("$scripts")
-
+    if [[ "$line" == *"server"* ]]; then
+        # Change the current array to server
+        current_array="server"
+    elif [[ "$line" == *"site"* ]]; then
+        # Change the current array to site
+        current_array="site"
     else
-        # Add the line to the lines array
+        # Add the line to the current array
+        if [ "$current_array" == "general" ]; then
+            curl -O $url/$line.sh
+            general+=("$line")
+        elif [ "$current_array" == "server" ]; then
+            server+=("$line")
+        elif [ "$current_array" == "site" ]; then
+            site+=("$line")
+        fi
     fi
 done < "$file"
 
-# Read each line from the file
-while IFS= read -r server; do
-    # Check if the line contains "server"
-    if [[ "$server" == *"site"* ]]; then
-        # Break the loop if "server" is found
-        break
-    else
-        # Add the line to the lines array
-        servers+=("$server")
-    fi
-done < "$file"
 
+##run_curl_requests() {
+#    local array_name="$1"
+#    echo "Running curl requests for $array_name..."
+#    for name in "${!array_name[@]}"; do
+#        curl -O "https://github.com/$name"
+#    done
+#}#
 
-# Read each line from the file
-while IFS= read -r site; do
-    sites+=("$site")
-done < "$file"
-
-
-# Print the lines array
-echo "general scripts:"
-printf '%s\n' "${generals[@]}"
-
-# Print the files array
-echo "server scripts:"
-printf '%s\n' "${servers[@]}"
-echo
-# Print the files array
-echo "site scripts:"
-printf '%s\n' "${sites[@]}"
+# Run curl requests through each array
+#run_curl_requests general
+#run_curl_requests server
+#run_curl_requests site
 
