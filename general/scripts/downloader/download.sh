@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Define the file path
-file="scripts"
+scriptsdir="/var/www/scripts/new/downloader/scripts"
+scriptsurl="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/downloader/scripts"
+file="$scriptsdir"
 
 # Initialize empty arrays
 general=()
@@ -9,11 +11,20 @@ server=()
 site=()
 
 # Flag to indicate which array to add lines to
-current_array="general"
-scripts="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/downloader/scripts"
-
 url="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/general"
 dir="/var/www/scripts/new/general"
+
+current_array="general"
+
+echo "getting latest list of scripts..."
+sudo rm "$scriptsdir"
+curl -o "$scriptsdir" "$scriptsurl"
+echo "done"
+echo
+
+echo
+echo "grabbing list of scripts..."
+echo
 
 # Read each line from the file
 while IFS= read -r line; do
@@ -29,14 +40,14 @@ while IFS= read -r line; do
         if [ "$current_array" == "general" ]; then
             echo
             echo "downloading general script $line..."
-            curl -o "$dir/$line.sh" "$url/$line.sh"
+            curl -o "$dir/$line.sh" "$url/$line.sh" > /dev/null 2>&1
             echo "done downloading $line"
             echo
             general+=("$line")
         else 
             echo
             echo "downloading $current_array script $line..."
-            curl -o "$dir/$current_array/$line.sh" "$url/$line.sh"
+            curl -o "$dir/$current_array/$line.sh" "$url/$current_array/$line.sh" > /dev/null 2>&1
             echo "done downloading $line"
             echo
             server+=("$line")
