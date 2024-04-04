@@ -1,10 +1,13 @@
 general
+_common.sh
 
 server
+_commong.sh
 banner
 login
 graphlogs
 login
+serverstuff
 
 site
 backup
