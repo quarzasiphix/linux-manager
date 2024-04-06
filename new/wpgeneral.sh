@@ -315,16 +315,6 @@ DisableConf() {
     echo
     echo ...
     sudo mv $nginxconfdir/$name.nginx $nginxdisabled 
-    sudo tee "$nginxconfdir/$name.disabled" > /dev/null << EOT
-server {
-    listen 80;
-    server_name $grabbeddomain www.$grabbeddomain;
-    root /var/www/sites/disabled;
-    index index.html;
-}
-EOT
-    echo
-    echo "Made config for $name to disabled route"
     echo
     echo "restarting nginx..."
     sudo systemctl restart nginx
@@ -738,7 +728,7 @@ ProjectBanner() {
     echo    "   at: $server_location!"
     echo
     echo -e "    :Welcome \e[36m$USER\e[0m!!!"
-    echo -e "to the\e[38m project management tool! \e[0m"
+    echo -e "to the\e[97m project management tool! \e[0m"
     echo
 }
 
