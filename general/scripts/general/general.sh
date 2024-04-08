@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source _common.sh
-
 #include common..
 DIR="/var/www/scripts/new/general"
 
@@ -10,6 +8,15 @@ for gen in "$DIR"/*.sh; do
     . "$gen"
 done
 
+# Include scripts from subdirectories recursively
+for gen in "$DIR"/*/*.sh; do
+    if [ -f "$gen" ]; then
+        echo "   including: $gen"
+        . "$gen"
+    else
+        echo "   $gen is not a regular file"
+    fi
+done
 
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
