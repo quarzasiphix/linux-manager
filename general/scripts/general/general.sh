@@ -1,3 +1,5 @@
+#!/bin/bash
+
 source _common.sh
 
 nginxconfdir="/etc/nginx/sites-enabled"
