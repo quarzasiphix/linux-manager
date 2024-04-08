@@ -3,7 +3,6 @@ menus
 
 server
 banner
-login
 graphlogs
 serverstuff
 
@@ -11,3 +10,4 @@ site
 backup
 manage
 restore
+
