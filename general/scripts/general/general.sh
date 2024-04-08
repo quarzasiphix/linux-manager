@@ -1,6 +1,15 @@
 #!/bin/bash
 
-source menus.sh
+source _common.sh
+
+#include common..
+DIR="/var/www/scripts/new/general"
+
+for gen in "$DIR"/*.sh; do
+    echo "   including: $gen"
+    . "$gen"
+done
+
 
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"

@@ -2,8 +2,13 @@ DIR="/var/www/scripts/new/general"
 
 for gen in "$DIR"/*.sh; do
     echo "   including: $gen"
-    . "$gen"
+    if [ -f "$gen" ]; then
+        . "$gen"
+    else
+        echo "   $gen is not a regular file"
+    fi
 done
+
 
 # Source all server scripts
 #for server in "$DIR/server"/*.sh; do
