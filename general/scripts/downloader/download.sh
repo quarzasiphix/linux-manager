@@ -66,7 +66,7 @@ while IFS= read -r line; do
         else 
             echo
             echo "downloading $current_array script $line..."
-            sudo curl -o "$dir/$current_array/$line.sh" "$url/$current_array/$line.sh" > /dev/null 2>&1
+            sudo curl -o "$dir/$current_array/$line.sh" "$url/$current_array/$line.sh" #> /dev/null 2>&1
             sudo chmod +x "$dir/$current_array/$line.sh"
             echo "done downloading $line"
             echo
