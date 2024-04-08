@@ -1,12 +1,10 @@
 general
 menus
-_common
 
 server
 banner
 login
 graphlogs
-login
 serverstuff
 
 site
