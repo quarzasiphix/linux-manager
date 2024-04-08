@@ -1,25 +1,10 @@
 #!/bin/bash
 
-#include common..
-DIR="/var/www/scripts/new/general"
+. menus.sh
 
-# Print the script name being sourced
-echo "Sourcing main script: $0"
+. server/serverstuff.sh
+. site/manage.sh
 
-for gen in "$DIR"/*.sh; do
-    echo "   including: $gen"
-    . "$gen"
-done
-
-# Include scripts from subdirectories recursively using find command
-find "$DIR" -type f -name '*.sh' -print0 | while IFS= read -r -d '' gen; do
-    if [ -f "$gen" ]; then
-        echo "   including: $gen"
-        . "$gen"
-    else
-        echo "   $gen is not a regular file"
-    fi
-done
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
 
