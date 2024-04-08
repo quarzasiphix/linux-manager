@@ -2,7 +2,7 @@
 
 . menus.sh
 
-. server/serverstuff.sh
+. server/stuff.sh
 . site/manage.sh
 
 nginxconfdir="/etc/nginx/sites-enabled"

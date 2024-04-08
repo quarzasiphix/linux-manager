@@ -1,4 +1,4 @@
-. server/serverstuff.sh
+. server/stuff.sh
 . site/manage.sh
 
 general() {
