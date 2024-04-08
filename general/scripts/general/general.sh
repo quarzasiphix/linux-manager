@@ -1,9 +1,11 @@
 #!/bin/bash
 
 . menus.sh
+. sitemenu.sh
 
 . server/stuff.sh
 . site/manage.sh
+
 
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
