@@ -163,8 +163,19 @@ EOT
     echo "/var/www/scripts/banner.sh" | sudo tee -a /etc/bash.bashrc > /dev/null
 }
 
+GetManager() {
+    echo "  setting up downloader.."
+
+    dwldir="/var/www/scripts/new/downloader"
+    dwlurl="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/downloader/download.sh"
+    sudo rm $dwldir/download.sh
+    sudo curl -o "$dwldir" "$dwlurl"
+    sudo chmod +x $dwldir/download.sh
+
+}
 
 main() {
+    
     echo
     echo "  setting up directories..."
     SetupDirs
