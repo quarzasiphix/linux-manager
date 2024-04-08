@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source _common.sh
+source menus.sh
 
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
