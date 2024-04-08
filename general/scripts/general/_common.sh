@@ -1,7 +1,7 @@
-#!/bin/bash
 DIR="/var/www/scripts/new/general"
 
 for gen in "$DIR"/*.sh; do
+    echo "   including: $gen"
     . "$gen"
 done
 
