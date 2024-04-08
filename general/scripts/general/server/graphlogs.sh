@@ -1,5 +1,3 @@
-source ../general.sh
-
 GraphAllActive() {
     file_names=()
 

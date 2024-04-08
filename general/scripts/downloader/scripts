@@ -1,8 +1,8 @@
 general
-_common.sh
+menus
+_common
 
 server
-_commong.sh
 banner
 login
 graphlogs

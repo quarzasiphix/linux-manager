@@ -18,12 +18,17 @@ current_array="general"
 
 echo "getting latest list of scripts..."
 sudo rm "$scriptsdir"
+sudo mkdir "$scriptsdir"
 curl -o "$scriptsdir" "$scriptsurl"
 echo "done"
 echo
 
+echo "setting up dir env.."
+sudo rm -R "$dir"
+sudo mkdir "$dir"
+
 echo
-echo "grabbing list of scripts..."
+echo "  Downloading scripts from list..."
 echo
 
 # Read each line from the file

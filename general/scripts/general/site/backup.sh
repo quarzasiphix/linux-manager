@@ -1,5 +1,3 @@
-
-
 BackupWP() {
     # Define variables.
 
