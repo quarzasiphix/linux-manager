@@ -37,12 +37,9 @@ sudo curl -o "$file" "$scriptsurl"
 echo "done"
 echo
 
-
 echo
 echo "  Downloading scripts from list..."
 echo
-
-
 
 # Read each line from the file
 while IFS= read -r line; do
