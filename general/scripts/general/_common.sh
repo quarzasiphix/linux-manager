@@ -8,6 +8,11 @@ for gen in "$DIR"/*.sh; do
         echo "   $gen is not a regular file"
     fi
 done
+# Include scripts from subdirectories recursively
+for gen in "$DIR"/*/*.sh; do
+    echo "   including: $gen"
+    . "$gen"
+done
 
 
 # Source all server scripts
