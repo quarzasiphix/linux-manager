@@ -7,6 +7,7 @@ nginxdisabled="/etc/nginx/disabled"
 
 # project info
 currentdomain=
+IsSetProject=false
 
 ProjectBanner() {
     server_name=$(</var/www/server/name.txt)
