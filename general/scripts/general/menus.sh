@@ -195,7 +195,6 @@ managesite() {
             ;;
         esac
     fi
-    done
 }
 
 general() {
