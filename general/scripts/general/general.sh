@@ -36,7 +36,7 @@ main () {
         done
 
         while [ "$IsSetProject" == "true" ]; do
-        manage
+        managesite
         done
 
         while [ "$IsSetProject" == "conf" ]; do 
