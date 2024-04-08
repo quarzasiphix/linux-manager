@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Define the file path
-scriptsdir="/var/www/scripts/new/downloader/scripts"
+scriptsdir="/var/www/scripts/new/downloader"
 scriptsurl="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/downloader/scripts"
-file="$scriptsdir"
+file="$scriptsdir/scripts"
 
 # Initialize empty arrays
 general=()
@@ -14,8 +14,11 @@ site=()
 url="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/general"
 dir="/var/www/scripts/new/general"
 
-current_array="general"
+echo "setting up dir env.."
+sudo rm -R "$dir"
+sudo mkdir "$dir"
 
+current_array="general"
 echo "getting latest list of scripts..."
 sudo rm "$scriptsdir"
 sudo mkdir "$scriptsdir"
@@ -23,9 +26,6 @@ curl -o "$scriptsdir" "$scriptsurl"
 echo "done"
 echo
 
-echo "setting up dir env.."
-sudo rm -R "$dir"
-sudo mkdir "$dir"
 
 echo
 echo "  Downloading scripts from list..."
