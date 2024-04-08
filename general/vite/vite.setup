@@ -3,3 +3,10 @@ sudo apt-get install npm
 
 npm create vite **
 npm install react-router-dom
+
+
+git add .
+git commit -m "fixing manager"
+git push
+
+

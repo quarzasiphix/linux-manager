@@ -194,5 +194,4 @@ managesite() {
             ;;
         esac
     fi
-    done
 }
