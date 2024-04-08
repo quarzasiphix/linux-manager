@@ -26,24 +26,23 @@ ProjectBanner() {
 }
 
 main () {
-    
-#SetProject
-clear
-while true; do
+    #SetProject
+    clear
+    while true; do
 
-    while [ "$IsSetProject" == "false" ]; do 
-    general
+        while [ "$IsSetProject" == "false" ]; do 
+        general
+        done
+
+        while [ "$IsSetProject" == "true" ]; do
+        managesite
+        done
+
+        while [ "$IsSetProject" == "conf" ]; do 
+        configurator
+        done
+
     done
-
-    while [ "$IsSetProject" == "true" ]; do
-    site
-    done
-
-    while [ "$IsSetProject" == "conf" ]; do 
-    configurator
-    done
-
-done
 }
 
 main 

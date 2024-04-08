@@ -87,7 +87,7 @@ general() {
     esac
 }
 
-site() {
+managesite() {
     if [ -d "$source" ]; then
         echo
         if [ -f "$nginxconfdir/$name.nginx" ]; then
