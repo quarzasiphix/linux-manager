@@ -8,18 +8,15 @@ for gen in "$DIR"/*.sh; do
     . "$gen"
 done
 
-# Include scripts from subdirectories recursively
-for gen in "$DIR"/*/*.sh; do
+# Include scripts from subdirectories recursively using find command
+find "$DIR" -type f -name '*.sh' -print0 | while IFS= read -r -d '' gen; do
     if [ -f "$gen" ]; then
         echo "   including: $gen"
         . "$gen"
-    elif [ -d "$gen" ]; then
-        echo "   $gen is a directory"
     else
         echo "   $gen is not a regular file"
     fi
 done
-
 
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
