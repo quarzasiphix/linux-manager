@@ -22,7 +22,7 @@ current_array="general"
 echo "getting latest list of scripts..."
 sudo rm "$scriptsdir"
 sudo mkdir "$scriptsdir"
-curl -o "$scriptsdir" "$scriptsurl"
+curl -o "$file" "$scriptsurl"
 echo "done"
 echo
 
