@@ -1,3 +1,6 @@
+. server/serverstuff.sh
+. site/manage.sh
+
 general() {
     ProjectBanner
     echo "0. Select project"
