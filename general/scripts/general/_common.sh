@@ -1,8 +1,8 @@
 DIR="/var/www/scripts/new/general"
 
 for gen in "$DIR"/*.sh; do
-    echo "   including: $gen"
     if [ -f "$gen" ]; then
+        echo "   including: $gen"
         . "$gen"
     else
         echo "   $gen is not a regular file"
@@ -10,8 +10,12 @@ for gen in "$DIR"/*.sh; do
 done
 # Include scripts from subdirectories recursively
 for gen in "$DIR"/*/*.sh; do
-    echo "   including: $gen"
-    . "$gen"
+    if [ -f "$gen" ]; then
+        echo "   including: $gen"
+        . "$gen"
+    else
+        echo "   $gen is not a regular file"
+    fi
 done
 
 
@@ -33,7 +37,3 @@ done
 
 #server
 #source server/_common.sh
-
-git add .
-git commit -m "fixing manager"
-git push
