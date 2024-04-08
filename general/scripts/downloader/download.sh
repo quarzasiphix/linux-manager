@@ -16,7 +16,13 @@ dir="/var/www/scripts/new/general"
 
 echo "setting up dir env.."
 sudo rm -R "$dir"
+
 sudo mkdir "$dir"
+sudo mkdir "$dir/site"
+sudo mkdir "$dir/server"
+
+sudo chmod 777 -R "$dir"
+
 
 current_array="general"
 echo "getting latest list of scripts..."
@@ -36,13 +42,7 @@ echo
 echo "  Downloading scripts from list..."
 echo
 
-sudo rm -R "$dir"
 
-sudo mkdir "$dir"
-sudo mkdir "$dir/site"
-sudo mkdir "$dir/server"
-
-sudo chmod 777 -R "$dir"
 
 # Read each line from the file
 while IFS= read -r line; do
