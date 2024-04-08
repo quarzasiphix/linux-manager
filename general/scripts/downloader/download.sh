@@ -36,6 +36,14 @@ echo
 echo "  Downloading scripts from list..."
 echo
 
+sudo rm -R "$dir"
+
+sudo mkdir "$dir"
+sudo mkdir "$dir/site"
+sudo mkdir "$dir/server"
+
+sudo chmod 777 -R "$dir"
+
 # Read each line from the file
 while IFS= read -r line; do
     # Check if the line contains "server"
