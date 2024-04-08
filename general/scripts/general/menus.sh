@@ -1,6 +1,9 @@
 . server/stuff.sh
-. site/manage.sh
 
+. site/manage.sh
+. site/setupwp.sh
+. site/restore.sh
+. site/backup.sh
 
 general() {
     ProjectBanner
