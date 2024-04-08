@@ -20,11 +20,13 @@ sudo mkdir "$dir"
 
 current_array="general"
 echo "getting latest list of scripts..."
-sudo rm "$scriptsdir"
-sudo mkdir "$scriptsdir"
+sudo rm "$file"
+#sudo mkdir "$scriptsdir"
 
 
+echo
 echo "  file: $file"
+echo
 curl -o "$file" "$scriptsurl"
 echo "done"
 echo
