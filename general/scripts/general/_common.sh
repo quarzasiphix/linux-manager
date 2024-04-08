@@ -28,3 +28,7 @@ done
 
 #server
 #source server/_common.sh
+
+git add .
+git commit -m "fixing manager"
+git push
