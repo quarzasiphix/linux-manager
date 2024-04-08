@@ -6,9 +6,9 @@ for gen in "$DIR"/*.sh; do
 done
 
 # Source all server scripts
-for server in "$DIR/server"/*.sh; do
-    . "$server"
-done
+#for server in "$DIR/server"/*.sh; do
+#    . "$server"
+#done
 
 # Source all server scripts
 #for site in "$DIR/site"/*.sh; do
