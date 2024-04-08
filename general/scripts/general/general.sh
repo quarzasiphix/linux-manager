@@ -13,10 +13,13 @@ for gen in "$DIR"/*/*.sh; do
     if [ -f "$gen" ]; then
         echo "   including: $gen"
         . "$gen"
+    elif [ -d "$gen" ]; then
+        echo "   $gen is a directory"
     else
         echo "   $gen is not a regular file"
     fi
 done
+
 
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
