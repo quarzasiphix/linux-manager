@@ -11,9 +11,9 @@ for server in "$DIR/server"/*.sh; do
 done
 
 # Source all server scripts
-for site in "$DIR/site"/*.sh; do
-    . "$site"
-done
+#for site in "$DIR/site"/*.sh; do
+#    . "$site"
+#done
 
 
 
