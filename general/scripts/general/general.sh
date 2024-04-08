@@ -1,7 +1,6 @@
 #!/bin/bash
 
 . menus.sh
-. sitemenu.sh
 
 . server/stuff.sh
 . site/manage.sh
@@ -37,7 +36,7 @@ main () {
         done
 
         while [ "$IsSetProject" == "true" ]; do
-        managesite
+        manage
         done
 
         while [ "$IsSetProject" == "conf" ]; do 

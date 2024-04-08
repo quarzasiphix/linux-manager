@@ -1,6 +1,6 @@
 . server/stuff.sh
 . site/manage.sh
-. sitemenu.sh
+
 general() {
     ProjectBanner
     echo "0. Select project"
@@ -141,4 +141,13 @@ configurator() {
             echo
             ;;
     esac
+}
+
+manage() {
+    echo
+    echo "test"
+    echo "test"
+    read -p "  sup: " t
+    echo
+
 }
