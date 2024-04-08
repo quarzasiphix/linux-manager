@@ -27,7 +27,7 @@ sudo rm "$file"
 echo
 echo "  file: $file"
 echo
-curl -o "$file" "$scriptsurl"
+sudo curl -o "$file" "$scriptsurl"
 echo "done"
 echo
 
@@ -50,14 +50,14 @@ while IFS= read -r line; do
         if [ "$current_array" == "general" ]; then
             echo
             echo "downloading general script $line..."
-            curl -o "$dir/$line.sh" "$url/$line.sh" > /dev/null 2>&1
+            sudo curl -o "$dir/$line.sh" "$url/$line.sh" > /dev/null 2>&1
             echo "done downloading $line"
             echo
             general+=("$line")
         else 
             echo
             echo "downloading $current_array script $line..."
-            curl -o "$dir/$current_array/$line.sh" "$url/$current_array/$line.sh" > /dev/null 2>&1
+            sudo curl -o "$dir/$current_array/$line.sh" "$url/$current_array/$line.sh" > /dev/null 2>&1
             echo "done downloading $line"
             echo
             server+=("$line")
