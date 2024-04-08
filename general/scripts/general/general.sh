@@ -3,6 +3,9 @@
 #include common..
 DIR="/var/www/scripts/new/general"
 
+# Print the script name being sourced
+echo "Sourcing main script: $0"
+
 for gen in "$DIR"/*.sh; do
     echo "   including: $gen"
     . "$gen"
@@ -17,7 +20,6 @@ find "$DIR" -type f -name '*.sh' -print0 | while IFS= read -r -d '' gen; do
         echo "   $gen is not a regular file"
     fi
 done
-
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
 
