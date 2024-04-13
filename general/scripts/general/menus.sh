@@ -1,11 +1,9 @@
-. server/stuff.sh
-
-. site/manage.sh
-. site/setupwp.sh
-. site/restore.sh
-. site/backup.sh
-. site/webs.sh
-
+. $dir/server/stuff.sh
+. $dir/site/manage.sh
+. $dir/site/setupwp.sh
+. $dir/site/restore.sh
+. $dir/site/backup.sh
+. $dir/site/webs.sh
 
 
 general() {
