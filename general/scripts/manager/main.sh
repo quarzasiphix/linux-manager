@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dir="/var/www/scripts/general"
+dir="/var/www/scripts/manager"
 
 . $dir/menus.sh
 
