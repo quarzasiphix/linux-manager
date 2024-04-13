@@ -11,8 +11,8 @@ server=()
 site=()
 
 # Flag to indicate which array to add lines to
-url="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/general"
-dir="/var/www/scripts/general"
+url="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/manager"
+dir="/var/www/scripts/manager"
 
 echo "setting up dir env.."
 sudo rm -R "$dir"
