@@ -6,7 +6,7 @@ GetDisabledSites() {
     # Check if there are any .nginx files in the directory
     if ! ls "$nginxdisabled"/*.nginx &> /dev/null; then
         echo
-        echo "  No\e[31m  Dsiabled\e[0m  websites"
+        echo -e "  No\e[31m  Dsiabled\e[0m  websites"
         echo
         return
     fi
