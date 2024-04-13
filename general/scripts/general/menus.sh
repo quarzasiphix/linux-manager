@@ -5,6 +5,8 @@
 . site/restore.sh
 . site/backup.sh
 
+
+
 general() {
     ProjectBanner
     echo "0. Select project"
@@ -312,7 +314,7 @@ managesite() {
         echo
         echo "no active running site for project"
         echo 
-        echo "found available backups: "
+        echo "  found available backups: "
         echo
         echo
         RestoreWP

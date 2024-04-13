@@ -39,6 +39,7 @@ SetupWP() {
     FLUSH PRIVILEGES;
     \q
 EOF
+
     echo
     echo "Setting up Nginx"
     echo
