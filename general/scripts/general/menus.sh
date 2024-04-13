@@ -108,6 +108,7 @@ configurator() {
     echo "passwd.   (/etc/passwd)"
     echo "bashrc.   (~/.bashrc)"
     echo "visudo"
+    echo "Update.   updates the script"
     echo
     read -p "   What confif do you want to edit?: " conf
     case $conf in
@@ -142,6 +143,11 @@ configurator() {
             clear
             EditVisudo
             ;;
+        'update')
+            clear
+            echo "updating..."
+            echo
+            /var/www/scripts/new/downloader/download.sh
         *)  
             echo
             echo "invalid choice"
@@ -184,12 +190,12 @@ managesite() {
         echo "1. Graph log"
         echo "2. Edit nginx config"
         echo "3. Reset project"
-        echo "4. Delete project"
+        echo "4. Change domain"
         # Read user's choice
-        echo "6. Change domain"
         echo "b. Create backup"
         echo "r. Restore back"
         echo
+        echo "del. Delete project"
         read -p "Enter your choice (1-X): " choice
 
         # Perform action based on user's choice
@@ -219,13 +225,6 @@ managesite() {
                 ;;
                 
             4)
-                clear
-                echo
-                echo "Deleting project..."
-                echo
-                DeleteWp
-                ;;
-            6)
                 clear
                 #grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
                 echo "Changing domain for project $name"
@@ -262,6 +261,13 @@ managesite() {
                 RestoreWP
                 ;;
 
+            'del')
+                clear
+                echo
+                echo "Deleting project..."
+                echo
+                DeleteWp
+                ;;
             11)
                 clear
                 echo "Going to $names's plugins..."
