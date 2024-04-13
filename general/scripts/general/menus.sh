@@ -4,7 +4,7 @@
 . site/setupwp.sh
 . site/restore.sh
 . site/backup.sh
-. site/sites.sh
+. site/webs.sh
 
 
 
