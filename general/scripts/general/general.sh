@@ -1,9 +1,11 @@
 #!/bin/bash
 
-. menus.sh
+dir="/var/www/scripts/new/general"
 
-. server/stuff.sh
-. site/manage.sh
+. $dir/menus.sh
+
+. $dir/server/stuff.sh
+. $dir/site/manage.sh
 
 
 nginxconfdir="/etc/nginx/sites-enabled"

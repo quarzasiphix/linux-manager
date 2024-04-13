@@ -71,3 +71,10 @@ while IFS= read -r line; do
         fi
     fi
 done < "$file"
+
+clear
+echo
+echo "opening script post download..."
+echo
+
+$dir/general.sh
