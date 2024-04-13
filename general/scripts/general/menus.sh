@@ -150,6 +150,11 @@ configurator() {
 }
 
 managesite() {
+    ProjectBanner
+    echo
+    echo "  Project: $name"
+    echo
+    
     if [ -d "$source" ]; then
         echo
         if [ -f "$nginxconfdir/$name.nginx" ]; then

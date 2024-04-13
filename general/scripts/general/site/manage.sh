@@ -15,6 +15,8 @@ SetProject() {
     source="/var/www/sites/$name"
     GrabDomain
     IsSetProject=true
+
+    clear
 }
 
 DeleteWp() {
