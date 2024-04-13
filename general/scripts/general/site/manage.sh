@@ -1,6 +1,14 @@
 SetProject() {
     clear
     ProjectBanner
+
+    echo
+    echo "  Available projects.."
+    echo
+    GetDisabledSites
+    echo
+    GetActiveSites
+    
     # Ask user to type in a name
     read -p "Project name: " name
     echo
