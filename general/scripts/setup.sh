@@ -15,3 +15,4 @@ echo "running download script..."
 echo
 
 $dwldir/download.sh
+

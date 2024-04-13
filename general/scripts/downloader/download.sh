@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the file path
-scriptsdir="/var/www/scripts/new/downloader"
+scriptsdir="/var/www/scripts/downloader"
 scriptsurl="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/downloader/scripts"
 file="$scriptsdir/scripts"
 
@@ -12,7 +12,7 @@ site=()
 
 # Flag to indicate which array to add lines to
 url="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/general"
-dir="/var/www/scripts/new/general"
+dir="/var/www/scripts/general"
 
 echo "setting up dir env.."
 sudo rm -R "$dir"
@@ -29,6 +29,7 @@ echo "getting latest list of scripts..."
 sudo rm "$file"
 #sudo mkdir "$scriptsdir"
 
+#sudo ln -s /var/www/scripts/general.sh
 
 echo
 echo "  file: $file"
@@ -40,6 +41,9 @@ echo
 echo
 echo "  Downloading scripts from list..."
 echo
+
+sudo curl -o "/var/www/scripts/start_manager.sh" "https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/start_manager.sh" > /dev/null 2>&1
+sudo chmod +x /var/www/scripts/start_manager.sh
 
 # Read each line from the file
 while IFS= read -r line; do
