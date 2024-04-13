@@ -1,1 +1,0 @@
-/var/www/scripts/manager/main.sh

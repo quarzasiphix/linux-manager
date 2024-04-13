@@ -42,8 +42,9 @@ echo
 echo "  Downloading scripts from list..."
 echo
 
-sudo curl -o "/var/www/scripts/start_manager.sh" "https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/start_manager.sh" > /dev/null 2>&1
-sudo chmod +x /var/www/scripts/start_manager.sh
+#sudo curl -o "/var/www/scripts/start_manager.sh" "https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/start_manager.sh" > /dev/null 2>&1
+#udo chmod +x /var/www/scripts/start_manager.sh
+
 
 # Read each line from the file
 while IFS= read -r line; do
@@ -76,9 +77,10 @@ while IFS= read -r line; do
     fi
 done < "$file"
 
-clear
 echo
 echo "opening script post download..."
 echo
 
-$dir/general.sh
+sudo ln -s $dir/main.sh /var/www/scripts/start_manager
+
+/var/www/scripts/start_manager
