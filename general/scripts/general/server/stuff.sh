@@ -4,6 +4,14 @@ GetDisabledSites() {
     # Initialize an empty array to store the modified filenames
     file_names=()
 
+    # Check if there are any .nginx files in the directory
+    if ! ls "$nginxdisabled"/*.nginx &> /dev/null; then
+        echo
+        echo "No Dsiabled websites"
+        echo
+        return
+    fi
+
     # Iterate over each file in the directory
     for file in "$nginxdisabled"/*.nginx; do
         # Extract the filename without the extension
@@ -37,6 +45,14 @@ GetActiveSites() {
     # Initialize an empty array to store the modified filenames
     file_names=()
 
+    # Check if there are any .nginx files in the directory
+    if ! ls "$nginxconfdir"/*.nginx &> /dev/null; then
+        echo
+        echo "No active websites"
+        echo
+        return
+    fi
+
     # Iterate over each file in the directory
     for file in "$nginxconfdir"/*.nginx; do
         # Extract the filename without the extension
@@ -44,15 +60,6 @@ GetActiveSites() {
         # Add the modified filename to the array
         file_names+=("$filename")
     done
-
-
-    # Check if there are any active websites
-    if [ ${#file_names[@]} -eq 0 ]; then
-        echo    
-        echo "No active websites"
-        echo 
-        return
-    fi
 
     echo -e "   \e[32m:Active websites:\e[0m"
     echo
