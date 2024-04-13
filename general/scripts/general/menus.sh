@@ -4,6 +4,7 @@
 . site/setupwp.sh
 . site/restore.sh
 . site/backup.sh
+. site/sites.sh
 
 
 
@@ -154,7 +155,7 @@ managesite() {
     echo
     echo "  Project: $name"
     echo
-    
+
     if [ -d "$source" ]; then
         echo
         if [ -f "$nginxconfdir/$name.nginx" ]; then
