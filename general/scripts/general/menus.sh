@@ -148,6 +148,7 @@ configurator() {
             echo "updating..."
             echo
             /var/www/scripts/new/downloader/download.sh
+            ;;
         *)  
             echo
             echo "invalid choice"
