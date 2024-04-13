@@ -1,3 +1,14 @@
+SetProject() {
+    clear
+    ProjectBanner
+    # Ask user to type in a name
+    read -p "Project name: " name
+    echo
+    source="/var/www/sites/$name"
+    GrabDomain
+    IsSetProject=true
+}
+
 DeleteWp() {
     # Confirm deletion
     echo -e " \e[31m Permanent Erase,\e[0m there is no turnning back! "
@@ -56,25 +67,14 @@ DisableConf() {
     echo
 
     echo -e " \e[31m Disbling site... \e[0m"
-
     grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
     echo
-    echo "setting up config for $name on $grabbeddomain to disabled page"
+    echo "Disabling config for $name on $grabbeddomain..."
     echo
-    echo ...
     sudo mv $nginxconfdir/$name.nginx $nginxdisabled 
-    sudo tee "$nginxconfdir/$name.disabled" > /dev/null << EOT
-server {
-    listen 80;
-    server_name $grabbeddomain www.$grabbeddomain;
-    root /var/www/sites/disabled;
-    index index.html;
-}
-EOT
-    echo
-    echo "Made config for $name to disabled route"
     echo
     echo "restarting nginx..."
+    echo "..."
     sudo systemctl restart nginx
     echo
     echo "Disabled! $name"
@@ -89,16 +89,5 @@ GrabDomain() {
     fi
     #echo "$grabbeddomain"
     #currentdomain=$grabbeddomain
-}
-
-SetProject() {
-    clear
-    ProjectBanner
-    # Ask user to type in a name
-    read -p "Project name: " name
-    echo
-    source="/var/www/sites/$name"
-    GrabDomain
-    IsSetProject=true
 }
 

@@ -326,6 +326,8 @@ managesite() {
         read -p "setup new project for $name? (yes or no): " create
         case $create in
             yes)
+                echo
+                echo
                 echo "setup wordpress project for $name"
                 echo
                 SetupWP
