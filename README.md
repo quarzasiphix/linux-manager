@@ -6,5 +6,11 @@ setting up wordpress websites,
 creating backups, restoring.
 
 
+setup script: 
+```shell
+sudo rm setup.sh
+
+```
+
 ![serverhome](https://github.com/quarzasiphix/linux-manager/blob/master/images/demo.gif?raw=true)
 
