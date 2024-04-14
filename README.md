@@ -9,7 +9,9 @@ creating backups, restoring.
 setup script: 
 ```shell
 sudo rm setup.sh
-
+sudo curl -O "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/setup.sh"
+sudo chmod +x setup.sh
+./setup.sh
 ```
 
 ![serverhome](https://github.com/quarzasiphix/linux-manager/blob/master/images/demo.gif?raw=true)
