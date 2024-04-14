@@ -1,0 +1,1 @@
+source inside/_common.sh
