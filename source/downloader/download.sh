@@ -2,7 +2,7 @@
 
 # Define the file path
 scriptsdir="/var/www/scripts/downloader"
-scriptsurl="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/downloader/scripts"
+scriptsurl="https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/downloader/scripts"
 file="$scriptsdir/scripts"
 
 # Initialize empty arrays
@@ -11,7 +11,7 @@ server=()
 site=()
 
 # Flag to indicate which array to add lines to
-url="https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/manager"
+url="https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/manager"
 dir="/var/www/scripts/manager"
 
 echo "setting up dir env.."
