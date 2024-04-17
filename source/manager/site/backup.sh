@@ -43,20 +43,20 @@ BackupWP() {
     while [ -f "$backupdir/$name-$(date +%F)-$counter.zip" ]; do
         ((counter++))
     done
-#
-#sudo mysql -u root <<EOF
+
+####sudo mysql -u root <<EOF
 #    DROP DATABASE IF EXISTS $name;
 #    CREATE DATABASE $name;
 #    DROP USER IF EXISTS '$name'@'localhost';
-##    CREATE USER '$name'@'localhost' IDENTIFIED BY '$new_password';
-    #   GRANT ALL PRIVILEGES ON $name.* TO '$name'@'localhost';
+#   CREATE USER '$name'@'localhost' IDENTIFIED BY '$new_password';
+#   GRANT ALL PRIVILEGES ON $name.* TO '$name'@'localhost';
 #    FLUSH PRIVILEGES;
 #    \q
 #           EOF
 #        echo
 #        echo "changing wp-config.php database password to new project password"
-#        echp
-       #sudo sed -i "s/'DB_PASSWORD',.*/'DB_PASSWORD', '$new_password');/" "$wp_config"
+####        echp
+#sudo sed -i "s/'DB_PASSWORD',.*/'DB_PASSWORD', '$new_password');/" "$wp_config"
 
     password_file="/var/www/sites/$name/password.txt"
     if [ ! -f "$password_file" ]; then

@@ -8,8 +8,11 @@ SetupWP() {
     echo
 
     dir="/var/www/sites/$name"
+    
+    sudo rm "$dir/password.txt"
     echo "$password" | sudo tee "$dir/password.txt" > /dev/null
     echo "setting up wordpress"
+
     # Download WordPress
     sudo rm latest.tar.gz
     echo "downloading wordpress files... "
