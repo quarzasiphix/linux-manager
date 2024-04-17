@@ -44,33 +44,66 @@ BackupWP() {
         ((counter++))
     done
 
+    password_file="/var/www/sites/$name/password.txt"
+    if [ ! -f "$password_file" ]; then
+        echo
+        echo "No set password for $name."
+        echo
+        read -s -p "Enter a new project password for $name: " new_password
+        echo "$new_password" | sudo tee "$password_file" > /dev/null
+        echo "Password file created."
+
+        echo
+        echo "setting up database to new project password"
+        echo
+        sudo mysql -u root <<EOF
+            DROP DATABASE IF EXISTS $name;
+            CREATE DATABASE $name;
+            DROP USER IF EXISTS '$name'@'localhost';
+            CREATE USER '$name'@'localhost' IDENTIFIED BY '$new_password';
+            GRANT ALL PRIVILEGES ON $name.* TO '$name'@'localhost';
+            FLUSH PRIVILEGES;
+            \q
+EOF
+        echo
+        echo "changing wp-config.php database password to new project password"
+        echp
+        sudo sed -i "s/'DB_PASSWORD',.*/'DB_PASSWORD', '$new_password');/" "$wp_config"
+    else
+        echo 
+        echo "Password for project $name found on server..."
+    fi
+
+    #get project password:
+    password=$(sudo cat "/var/www/sites/$name/password.txt")
+
     if [ -f "$backupdir/$name-$(date +%F).zip" ]; then
         # If the file exists, copy it to the archive folder
         #cp "$name-$(date +%F).zip" "$backupdir/archive"
-            #sudo mv "$backupdir/$name-$(date +%F).zip" "$backupdir/$name-$(date +%F)-$counter.zip
-
-            echo
+        #sudo mv "$backupdir/$name-$(date +%F).zip" "$backupdir/$name-$(date +%F)-$counter.zip
+        echo
         echo "$counter backups made on $(date +%F) "
-            echo
-            echo "Zipping backup files"
-            echo
-            sudo zip -r "$name-$(date +%F)-$counter.zip" "$tempdir"  > /dev/null
-            sudo mv "$name-$(date +%F)-$counter.zip" "$backupdir/"
-            echo 
-            echo "Backup archive size: "
-            du -sh "$backupdir/$name-$(date +%F)-$counter.zip"
+        echo
+        echo "Zipping backup files"
+        echo
+        sudo zip -r -P "$password" "$name-$(date +%F)-$counter.zip" "$tempdir"  > /dev/null
+        sudo mv "$name-$(date +%F)-$counter.zip" "$backupdir/"
+        echo 
+        echo "Backup archive size: "
+        du -sh "$backupdir/$name-$(date +%F)-$counter.zip"
     else
-            echo
+        echo
         echo "First backup of today $(date +%F)"
-            echo
-            echo "Zipping backup files"
-            echo
-            sudo zip -r "$name-$(date +%F).zip" "$tempdir"  > /dev/null
-            sudo mv "$name-$(date +%F).zip" "$backupdir/"
-            echo 
-            echo "Backup archive size: "
-            du -sh "$backupdir/$name-$(date +%F).zip"
+        echo
+        echo "Zipping backup files"
+        echo
+        sudo zip -r -P "$password"  "$name-$(date +%F).zip" "$tempdir"  > /dev/null
+        sudo mv "$name-$(date +%F).zip" "$backupdir/"
+        echo 
+        echo "Backup archive size: "
+        du -sh "$backupdir/$name-$(date +%F).zip"
     fi
+
     echo
     echo -e "\e[32m Backup completed. \e[0m  Files are stored in $backupdir."
 

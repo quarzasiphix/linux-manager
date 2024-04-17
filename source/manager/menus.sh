@@ -201,11 +201,45 @@ managesite() {
         echo "b. Create backup"
         echo "r. Restore back"
         echo
+        echo "pass. Show project password"
         echo "del. Delete project"
         read -p "Enter your choice (1-X): " choice
 
         # Perform action based on user's choice
         case $choice in
+            'pass')
+                clear
+                password_file="/var/www/sites/$name/password.txt"
+                if [ ! -f "$password_file" ]; then
+                    echo
+                    echo "No set password for $name."
+                    echo
+                    read -p "Do you want to set a new project password for $name? (y/n): " set_password
+                    if [ "$set_password" = "y" ]; then
+                        read -s -p "Enter a new project password for $name: " new_password
+                        echo "$new_password" | sudo tee "$password_file" > /dev/null
+                        echo "Password file created."
+                    else
+                        echo "No changes made to the password."
+                    fi
+                else
+                    password=$(sudo cat "$password_file")
+                    echo 
+                    echo "Password for project $name: $password"
+                    echo
+                    read -p "Do you want to change the project password for $name? (y/n): " change_password
+                    if [ "$change_password" = "y" ]; then
+                        read -s -p "Enter the new project password for $name: " new_password
+                        echo "$new_password" | sudo tee "$password_file" > /dev/null
+                        echo "Password changed."
+                    else
+                        echo "No changes made to the password."
+                    fi
+                fi
+
+
+        
+                ;;
             0)
                 clear
                 IsSetProject=false

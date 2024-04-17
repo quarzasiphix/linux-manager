@@ -4,16 +4,17 @@ SetupWP() {
     echo
 
     # Get database password
-    read -sp "Enter database password: " dbpasss
+    read -sp "Enter Project password: " password
     echo
 
+    dir="/var/www/sites/$name"
+    echo "$password" > "$dir/password.txt"
     echo "setting up wordpress"
     # Download WordPress
     sudo rm latest.tar.gz
     echo "downloading wordpress files... "
     echo
     sudo wget https://wordpress.org/latest.tar.gz
-    dir="/var/www/sites/$name"
     sudo rm -R "$dir"
     sudo mkdir "$dir"
     echo
@@ -34,7 +35,7 @@ SetupWP() {
     DROP DATABASE IF EXISTS $name;
     CREATE DATABASE $name;
     DROP USER IF EXISTS '$name'@'localhost';
-    CREATE USER '$name'@'localhost' IDENTIFIED BY '$dbpasss';
+    CREATE USER '$name'@'localhost' IDENTIFIED BY '$password';
     GRANT ALL PRIVILEGES ON $name.* TO '$name'@'localhost';
     FLUSH PRIVILEGES;
     \q
@@ -74,7 +75,7 @@ EOF
             fastcgi_pass unix:/run/php/php8.2-fpm.sock;
         }
 
-        location ~ /\.ht {
+        location ~ /\.(ht|txt)$ {
             deny all;
         }
     }
