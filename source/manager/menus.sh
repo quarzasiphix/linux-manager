@@ -366,22 +366,27 @@ managesite() {
         echo "restore. Restore a backup"
         echo "setup. Setup project"
         
-        read -p "type restore to choose backup? (Type 'yes' to choose backup): " confirm
-
-        if      [[ $confirm == "restore" ]]; then
+        read -p " (Type 'no' to leave): " confirm
+        case $confirm in
+        'restore')
             RestoreWP
-        elif if [[ $confirm == "setup" ]]; then
+            ;;
+        'setup')
             SetupWP
-        fi
-
-
+            ;;
+        'no')
+            clear
+            IsSetProject=false
+            ;;
+      esac
+  
     else
         echo 
         echo "project $name doesnt exist"
         echo
         read -p "setup new project for $name? (yes or no): " create
         case $create in
-            yes)
+            'yes')
                 echo
                 echo
                 echo "setup wordpress project for $name"
@@ -391,7 +396,7 @@ managesite() {
                 echo "successfully setup project $name"
                 echo
                 ;;
-            no) 
+            'no') 
                 IsSetProject=false
                 ;;
             *)
