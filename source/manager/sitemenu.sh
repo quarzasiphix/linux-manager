@@ -136,14 +136,14 @@ managesite() {
             esac
         if [ -f "$nginxconfdir/$name.nginx" ]; then
             case $choice in
-                5)
+                'disable')
                     clear
                     DisableConf
                     ;;
             esac
         elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
             case $choice in
-                5)
+                'enable')
                     clear
                     echo 
                     echo -e "\e[32m Enabling site... \e[0m"

@@ -5,7 +5,6 @@
 . $dir/site/backup.sh
 . $dir/site/webs.sh
 
-
 general() {
     ProjectBanner
     echo "0. Select project"
@@ -15,8 +14,8 @@ general() {
     echo "3. Graph All active sites"
     echo "4. Disable All sites"
     echo "5. Backup All Active"
-    echo "6. Edit configs"
     echo
+    echo "conf. Edit configs"
     echo "r. Restart nginx"
     echo
     echo "reboot - Fully reboot the server"
@@ -46,7 +45,7 @@ general() {
             clear
             backupAll
             ;;
-        6)
+        'conf')
             clear
             IsSetProject="conf"
             ;;
@@ -236,9 +235,6 @@ managesite() {
                         echo "No changes made to the password."
                     fi
                 fi
-
-
-        
                 ;;
             0)
                 clear
@@ -336,14 +332,14 @@ managesite() {
             esac
         if [ -f "$nginxconfdir/$name.nginx" ]; then
             case $choice in
-                5)
+                'disable')
                     clear
                     DisableConf
                     ;;
             esac
         elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
             case $choice in
-                5)
+                'enable')
                     clear
                     echo 
                     echo -e "\e[32m Enabling site... \e[0m"

@@ -1,5 +1,3 @@
-
-
 GraphLog() {
     pubdir="/var/www/sites/goaccess"
     nginxdir="/etc/nginx/sites-enabled"

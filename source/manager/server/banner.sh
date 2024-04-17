@@ -1,6 +1,5 @@
 banner() {
     clear
-
     server_name=$(</var/www/server/name.txt)
 
     # Read server location from the file

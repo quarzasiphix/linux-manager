@@ -1,5 +1,31 @@
 #!/bin/bash
 
+main() {
+    
+    echo
+    echo "  setting up directories..."
+    SetupDirs
+
+    echo
+    echo "   configuring server"
+    ConfigServer
+
+    echo
+    echo "   setting up ssh"
+    SetupSsh
+
+    echo
+    echo "  Downloadnig everything..."
+    Download
+
+    echo
+    echo "  setting up webwiz admin account..."
+    SetupWebwiz
+
+    echo "  setting up termianl layout..."
+    SetupTerminal
+}
+
 SetupDirs() {
     #setup directories
     echo
@@ -39,6 +65,14 @@ ConfigServer() {
     echo
     sudo adduser $admin_name
     sudo usermod -aG sudo $admin_name
+
+    bashrc="/home/$admin_name/.bashrc"
+
+    # Backup the original .bashrc file
+    cp "$bashrc" "$bashrc.bak"
+
+    # Remove every instance of PS1 in the .bashrc file
+    sed -i '/PS1=/d' "$bashrc"
 
 }
 
@@ -145,6 +179,11 @@ SetupTerminal() {
     echo
 
     sudo tee "/var/www/scripts/banner.sh" > /dev/null <<EOT
+    clear
+    export PATH=$PATH:/var/www/scripts/manager
+    echo
+    echo
+    echo
     echo    "  =================================== "
     echo
     echo -e "             Hello\e[36m $USER \e[0m"
@@ -161,6 +200,7 @@ EOT
 
     #add post auth banner script
     echo "/var/www/scripts/banner.sh" | sudo tee -a /etc/bash.bashrc > /dev/null
+
 }
 
 GetManager() {
@@ -174,28 +214,5 @@ GetManager() {
 
 }
 
-main() {
-    
-    echo
-    echo "  setting up directories..."
-    SetupDirs
 
-    echo
-    echo "   configuring server"
-    ConfigServer
-
-    echo
-    echo "   setting up ssh"
-    SetupSsh
-
-    echo
-    echo "  Downloadnig everything..."
-    Download
-
-    echo
-    echo "  setting up webwiz admin account..."
-    SetupWebwiz
-
-    echo "  setting up termianl layout..."
-    SetupTerminal
-}
+main

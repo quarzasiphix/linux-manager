@@ -7,7 +7,6 @@ dir="/var/www/scripts/manager"
 . $dir/server/stuff.sh
 . $dir/site/manage.sh
 
-
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
 
@@ -29,10 +28,8 @@ ProjectBanner() {
 }
 
 main () {
-    #SetProject
     clear
     while true; do
-
         while [ "$IsSetProject" == "false" ]; do 
         general
         done
@@ -44,7 +41,6 @@ main () {
         while [ "$IsSetProject" == "conf" ]; do 
         configurator
         done
-
     done
 }
 

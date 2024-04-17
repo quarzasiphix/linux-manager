@@ -43,6 +43,20 @@ BackupWP() {
     while [ -f "$backupdir/$name-$(date +%F)-$counter.zip" ]; do
         ((counter++))
     done
+#
+#sudo mysql -u root <<EOF
+#    DROP DATABASE IF EXISTS $name;
+#    CREATE DATABASE $name;
+#    DROP USER IF EXISTS '$name'@'localhost';
+##    CREATE USER '$name'@'localhost' IDENTIFIED BY '$new_password';
+    #   GRANT ALL PRIVILEGES ON $name.* TO '$name'@'localhost';
+#    FLUSH PRIVILEGES;
+#    \q
+#           EOF
+#        echo
+#        echo "changing wp-config.php database password to new project password"
+#        echp
+       #sudo sed -i "s/'DB_PASSWORD',.*/'DB_PASSWORD', '$new_password');/" "$wp_config"
 
     password_file="/var/www/sites/$name/password.txt"
     if [ ! -f "$password_file" ]; then
@@ -53,28 +67,15 @@ BackupWP() {
         echo "$new_password" | sudo tee "$password_file" > /dev/null
         echo "Password file created."
 
-        echo
-        echo "setting up database to new project password"
-        echo
-        sudo mysql -u root <<EOF
-            DROP DATABASE IF EXISTS $name;
-            CREATE DATABASE $name;
-            DROP USER IF EXISTS '$name'@'localhost';
-            CREATE USER '$name'@'localhost' IDENTIFIED BY '$new_password';
-            GRANT ALL PRIVILEGES ON $name.* TO '$name'@'localhost';
-            FLUSH PRIVILEGES;
-            \q
-EOF
-        echo
-        echo "changing wp-config.php database password to new project password"
-        echp
-        sudo sed -i "s/'DB_PASSWORD',.*/'DB_PASSWORD', '$new_password');/" "$wp_config"
+        #echo
+        #echo "setting up database to new project password"
+        #echo
     else
         echo 
-        echo "Password for project $name found on server..."
+        echo "Using Password for project $name found on server..."
     fi
 
-    #get project password:
+        #get project password:
     password=$(sudo cat "/var/www/sites/$name/password.txt")
 
     if [ -f "$backupdir/$name-$(date +%F).zip" ]; then
