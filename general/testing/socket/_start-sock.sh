@@ -1,0 +1,1 @@
+sudo socat TCP-LISTEN:12345,reuseaddr,fork EXEC:'/path/to/your/socket.sh'
