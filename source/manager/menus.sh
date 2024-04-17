@@ -367,10 +367,15 @@ managesite() {
         echo
         echo "restore. Restore a backup"
         echo "setup. Setup project"
-        
+        echo
         read -p " (Type 'no' to leave): " confirm
         case $confirm in
         'restore')
+            clear
+            ProjectBanner
+            echo
+            echo "Restoring $name"...
+            echo
             RestoreWP
             ;;
         'setup')

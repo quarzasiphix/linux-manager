@@ -8,7 +8,7 @@ SetupWP() {
     echo
 
     dir="/var/www/sites/$name"
-    echo "$password" > "$dir/password.txt"
+    echo "$password" | sudo tee "$dir/password.txt" > /dev/null
     echo "setting up wordpress"
     # Download WordPress
     sudo rm latest.tar.gz
@@ -92,7 +92,7 @@ EOT
     echo
 
     # Wait until wp-config.php has <?php tag on the first line
-    echo "waiting on user to initialise project on $domain/admin"
+    echo "waiting on user to initialise project on $domain"
     echo
     while ! head -n 1 "$dir/wp-config.php" 2>/dev/null | grep -q "^<?php"; do
         sleep 1
