@@ -200,6 +200,8 @@ EOT
 
     #add post auth banner script
     echo "/var/www/scripts/banner.sh" | sudo tee -a /etc/bash.bashrc > /dev/null
+    echo "export PATH=$PATH:/var/www/scripts/manager" | sudo tee -a /etc/bash.bashrc > /dev/null
+    
 
 }
 

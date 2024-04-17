@@ -239,7 +239,6 @@ managesite() {
             0)
                 clear
                 IsSetProject=false
-                break
                 ;;
             1)
                 clear
@@ -364,8 +363,17 @@ managesite() {
         echo 
         echo "  found available backups: "
         echo
-        echo
-        RestoreWP
+        echo "restore. Restore a backup"
+        echo "setup. Setup project"
+        
+        read -p "type restore to choose backup? (Type 'yes' to choose backup): " confirm
+
+        if      [[ $confirm == "restore" ]]; then
+            RestoreWP
+        elif if [[ $confirm == "setup" ]]; then
+            SetupWP
+        fi
+
 
     else
         echo 
@@ -384,11 +392,10 @@ managesite() {
                 echo
                 ;;
             no) 
-                exit
+                IsSetProject=false
                 ;;
             *)
                 echo "Invalid choice. cancelling"
-                exit
             ;;
         esac
     fi
