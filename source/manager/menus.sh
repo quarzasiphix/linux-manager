@@ -358,6 +358,8 @@ managesite() {
 
     elif [ -d "/var/www/backups/$name" ]; then
         clear
+        ProjectBanner
+        echo
         echo
         echo "no active running site for project"
         echo 
@@ -372,6 +374,12 @@ managesite() {
             RestoreWP
             ;;
         'setup')
+            clear
+            ProjectBanner
+            echo
+            echo "setting up project for $name"
+            echo
+            echo
             SetupWP
             ;;
         'no')
