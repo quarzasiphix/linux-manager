@@ -42,6 +42,10 @@ RestoreWP() {
         # Check the exit code
         if [ $? -eq 0 ]; then
             # Password is correct, proceed with restoring backup
+            echo "password is correct"
+            echo
+            echo " unzipping.."
+            echo
             sudo unzip "$backupdir/$backup" -d "$backupdir/" > /dev/null
             echo
             echo "Zip file extracted successfully, continuin with restoration..."

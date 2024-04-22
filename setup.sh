@@ -4,7 +4,6 @@ SetupDirs() {
     echo "setting up directories"
     echo
 
-    sudo rm -R /var/www/  > /dev/null 2>&1
     sudo mkdir /var/www/
     sudo mkdir /var/www/sites/
     sudo mkdir /var/www/scripts/
