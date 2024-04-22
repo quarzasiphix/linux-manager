@@ -9,8 +9,6 @@ SetupWP() {
 
     dir="/var/www/sites/$name"
     
-    sudo rm "$dir/password.txt"
-    echo "$password" | sudo tee "$dir/password.txt" > /dev/null
     echo "setting up wordpress"
 
     # Download WordPress
@@ -20,6 +18,7 @@ SetupWP() {
     sudo wget https://wordpress.org/latest.tar.gz
     sudo rm -R "$dir"
     sudo mkdir "$dir"
+    echo "$password" | sudo tee "$dir/password.txt" > /dev/null
     echo
     echo "extracting wordpress files... "
     echo
