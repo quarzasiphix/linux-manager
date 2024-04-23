@@ -55,28 +55,28 @@ BackupWP() {
 #           EOF
 #        echo
 #        echo "changing wp-config.php database password to new project password"
-####        echp
+###        echp
 #sudo sed -i "s/'DB_PASSWORD',.*/'DB_PASSWORD', '$new_password');/" "$wp_config"
 
-    password_file="/var/www/sites/$name/password.txt"
-    if [ ! -f "$password_file" ]; then
-        echo
-        echo "No set password for $name."
-        echo
-        read -s -p "Enter a new project password for $name: " new_password
-        echo "$new_password" | sudo tee "$password_file" > /dev/null
-        echo "Password file created."
-
-        #echo
-        #echo "setting up database to new project password"
-        #echo
-    else
-        echo 
-        echo "Using Password for project $name found on server..."
-    fi
-
-        #get project password:
-    password=$(sudo cat "/var/www/sites/$name/password.txt")
+##    password_file="/var/www/sites/$name/password.txt"
+#    if [ ! -f "$password_file" ]; then
+#        echo
+#        echo "No set password for $name."
+#        echo
+#        read -s -p "Enter a new project password for $name: " new_password
+#        echo "$new_password" | sudo tee "$password_file" > /dev/null
+#        echo "Password file created."#
+#
+#        #echo
+#        #echo "setting up database to new project password"
+#        #echo
+#    else
+#        echo 
+#        echo "Using Password for project $name found on server..."
+#    fi##
+#
+#        #get project password:
+#    password=$(sudo cat "/var/www/sites/$name/password.txt")#
 
     if [ -f "$backupdir/$name-$(date +%F).zip" ]; then
         # If the file exists, copy it to the archive folder
@@ -87,7 +87,7 @@ BackupWP() {
         echo
         echo "Zipping backup files"
         echo
-        sudo zip -r -P "$password" "$name-$(date +%F)-$counter.zip" "$tempdir"  > /dev/null
+        sudo zip -r "$name-$(date +%F)-$counter.zip" "$tempdir"  > /dev/null
         sudo mv "$name-$(date +%F)-$counter.zip" "$backupdir/"
         echo 
         echo "Backup archive size: "
@@ -104,7 +104,6 @@ BackupWP() {
         echo "Backup archive size: "
         du -sh "$backupdir/$name-$(date +%F).zip"
     fi
-
     echo
     echo -e "\e[32m Backup completed. \e[0m  Files are stored in $backupdir."
 

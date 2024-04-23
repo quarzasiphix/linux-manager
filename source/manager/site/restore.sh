@@ -12,54 +12,53 @@ RestoreWP() {
     echo "checkin if password file exists on server..."
     echo
 
-    password_file="/var/www/sites/$name/password.txt"
-    password=
-    if [ ! -f "$password_file" ]; then
-        echo
-        echo "Password for $name not found on server."
-        echo
-        #read -s -p "Enter a new project password for $name: " new_password
-        #echo "$new_password" | sudo tee "$password_file" > /dev/null
-        #echo "Password file created."
-
-        read -sp "Enter project password: " new_password
-        echo "$new_password" | sudo tee "$password_file" > /dev/null
-    fi
-
-    password=$(sudo cat "$password_file")
-
-    echo
-    dir="/var/www/sites/$name"
-
-
-    password=$(sudo cat "$password_file")
-    while true; do
-        echo
-        echo "Checking password..."
-        echo
-        # Test the integrity of the encrypted zip file without extracting its contents
-        sudo unzip -t -P "$password" "$backupdir/$backup" -d "$backupdir/" > /dev/null 2>&1
-        # Check the exit code
-        if [ $? -eq 0 ]; then
-            # Password is correct, proceed with restoring backup
-            echo "password is correct"
-            echo
-            echo " unzipping.."
-            echo
-            sudo unzip "$backupdir/$backup" -d "$backupdir/" > /dev/null
-            echo
-            echo "Zip file extracted successfully, continuin with restoration..."
-            break
-        else
-            # Password is incorrect
-            echo "Incorrect password."
-            read -p "Type 'x' to exit or press Enter to retry: " choice
-            if [ "$choice" == "x" ]; then
-                echo "Exiting."
-                exit 1
-            fi
-        fi
-    done
+#    #password_file="/var/www/sites/$name/password.txt"
+#    #password=
+#    #if [ ! -f "$password_file" ]; then
+#    #    echo
+#    #    echo "Password for $name not found on server."
+#    #    echo
+#    #    #read -s -p "Enter a new project password for $name: " new_password
+#    #    #echo "$new_password" | sudo tee "$password_file" > /dev/null
+#    #    #echo "Password file created."#
+#
+#        read -sp "Enter project password: " new_password
+#        echo "$new_password" | sudo tee "$password_file" > /dev/null
+#    fi##
+#
+#    password=$(sudo cat "$password_file")#
+#
+#   echo#  dir="/var/www/sites/$name"
+#
+#
+#    password=$(sudo cat "$password_file")
+#    while true; do
+#        echo
+#        echo "Checking password..."
+#        echo
+#        # Test the integrity of the encrypted zip file without extracting its contents
+#        sudo unzip -t -P "$password" "$backupdir/$backup" -d "$backupdir/" > /dev/null 2>&1
+#        # Check the exit code
+#        if [ $? -eq 0 ]; then
+#            # Password is correct, proceed with restoring backup
+#            echo "password is correct"
+#            echo
+#            echo " unzipping.."
+#            echo
+#            sudo unzip "$backupdir/$backup" -d "$backupdir/" > /dev/null
+#            echo
+#            echo "Zip file extracted successfully, continuin with restoration..."
+#            break
+#        else
+#            # Password is incorrect
+#            echo "Incorrect password."
+#            read -p "Type 'x' to exit or press Enter to retry: " choice
+#            if [ "$choice" == "x" ]; then
+#                echo "Exiting."
+#                exit 1
+#            fi
+#        fi
+#    done#
 
 
     echo 
@@ -95,7 +94,7 @@ EOF
 
     sudo mysql -u $name -p$password $name < $backupdir/$name-temp/$name.sql
 
-    sudo rm -R "$backupdir/$name-temp" > /dev/null
+    #sudo rm -R "$backupdir/$name-temp" > /dev/null
 
     sudo chown -R www-data:www-data "$dir"
 
