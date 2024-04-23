@@ -98,7 +98,7 @@ BackupWP() {
         echo
         echo "Zipping backup files"
         echo
-        sudo zip -r -P "$password"  "$name-$(date +%F).zip" "$tempdir"  > /dev/null
+        sudo zip -r "$name-$(date +%F).zip" "$tempdir"  > /dev/null
         sudo mv "$name-$(date +%F).zip" "$backupdir/"
         echo 
         echo "Backup archive size: "
