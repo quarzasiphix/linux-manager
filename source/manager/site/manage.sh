@@ -1,3 +1,5 @@
+nginxdisabled="/etc/nginx/disabled"
+
 SetProject() {
     clear
 
@@ -76,6 +78,7 @@ DisableConf() {
     echo
     echo
 
+    sudo mkdir "$nginxdisabled" > /dev/null 2>&1
     echo -e " \e[31m Disbling site... \e[0m"
     grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
     echo

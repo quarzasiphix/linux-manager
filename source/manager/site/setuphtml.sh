@@ -1,7 +1,4 @@
 SetupHtml() {
-    read -p "Enter project name: " name
-    echo
-
     read -p "Enter domain: " domain
     echo
 
