@@ -34,7 +34,7 @@ SetupHtml() {
             font-size: 36px;
             font-weight: bold;
             text-align: center;
-            color: black;
+            color: white;
         }
     </style>
     </head>
