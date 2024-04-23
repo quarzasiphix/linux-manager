@@ -276,7 +276,7 @@ managesite() {
                     new_domain="unkown"
                 fi
                 echo "Changing domain.."
-
+                sudo systemctl restart nginx
                 echo
                 echo "succesfully changed the domain for project $name from $grabbeddomain to $new_domain"
                 echo
