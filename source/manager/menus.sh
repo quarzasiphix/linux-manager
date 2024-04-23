@@ -389,6 +389,15 @@ managesite() {
             echo
             SetupWP
             ;;
+        'html')
+            echo
+            echo "setting up html project for $name"
+            echo
+            SetupHtml
+            echo
+            echo "Done configuring html project for $name"
+            echo
+            ;;
         'no')
             clear
             IsSetProject=false
@@ -415,7 +424,6 @@ managesite() {
                 echo "setting up html project for $name"
                 echo
                 SetupHtml
-                clear
                 echo
                 echo "Done configuring html project for $name"
                 echo
