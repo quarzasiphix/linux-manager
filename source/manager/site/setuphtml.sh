@@ -22,7 +22,7 @@ SetupHtml() {
         body {
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0; /* Gray background color */
+            background-color: #1c1a1a; /* Gray background color */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -34,6 +34,7 @@ SetupHtml() {
             font-size: 36px;
             font-weight: bold;
             text-align: center;
+            color: black;
         }
     </style>
     </head>
