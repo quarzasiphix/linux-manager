@@ -175,9 +175,9 @@ managesite() {
         echo 
         echo "project $name doesnt exist"
         echo
-        read -p "setup new project for $name? (yes or no): " create
+        read -p "setup new project for $name? (wp, html or no): " create
         case $create in
-            yes)
+            'wp')
                 echo "setup wordpress project for $name"
                 echo
                 SetupWP

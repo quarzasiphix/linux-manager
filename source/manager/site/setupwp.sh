@@ -42,6 +42,7 @@ SetupWP() {
     FLUSH PRIVILEGES;
     \q
 EOF
+GRANT ALL PRIVILEGES ON frano.* TO 'frano'@'localhost';
 
     echo
     echo "Setting up Nginx"
@@ -77,7 +78,7 @@ EOF
             fastcgi_pass unix:/run/php/php8.2-fpm.sock;
         }
 
-        location ~ /\.(ht|txt)$ {
+        location ~ ^/(\.user.ini|\.htaccess|\.git|\.svn|\.project|LICENSE|README.md) {
             deny all;
         }
     }
