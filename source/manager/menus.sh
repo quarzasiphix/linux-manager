@@ -4,6 +4,7 @@
 . $dir/site/restore.sh
 . $dir/site/backup.sh
 . $dir/site/webs.sh
+. $dir/site/setuphtml.sh
 
 general() {
     ProjectBanner
@@ -366,7 +367,8 @@ managesite() {
         echo "  found available backups: "
         echo
         echo "restore. Restore a backup"
-        echo "setup. Setup project"
+        echo "wp. Setup wordpress project"
+        echo "html. Setup regular html project"
         echo
         read -p " (Type 'no' to leave): " confirm
         case $confirm in
@@ -378,7 +380,7 @@ managesite() {
             echo
             RestoreWP
             ;;
-        'setup')
+        'wp')
             clear
             ProjectBanner
             echo
@@ -397,16 +399,25 @@ managesite() {
         echo 
         echo "project $name doesnt exist"
         echo
-        read -p "setup new project for $name? (yes or no): " create
+        read -p "setup new project for $name? (wp, html or no): " create
         case $create in
-            'yes')
-                echo
+            'wp')
                 echo
                 echo "setup wordpress project for $name"
                 echo
                 SetupWP
                 clear
                 echo "successfully setup project $name"
+                echo
+                ;;
+            'html')
+                echo
+                echo "setting up html project for $name"
+                echo
+                SetupHtml
+                clear
+                echo
+                echo "Done configuring html project for $name"
                 echo
                 ;;
             'no') 
