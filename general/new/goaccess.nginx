@@ -1,0 +1,21 @@
+server {
+    listen 80;
+    server_name aws.webwiz.expert;
+
+    root /var/www/sites/goaccess;  # Replace this with the actual path to your directory containing report.html
+    index report.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location /logs {
+        autoindex on;
+        try_files $uri $uri/ =404;
+    }
+
+    location /backups {
+        autoindex on;
+        try_files $uri $uri/ =404;
+    }
+}

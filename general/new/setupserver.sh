@@ -188,7 +188,7 @@ SetupTerminal() {
     echo
     echo -e "             Hello\e[36m $USER \e[0m"
     echo
-    echo -e "         Welcome\e[95m to Web wiz \e[0m"
+    echo -e "         Welcome to\e[95m Web wiz \e[0m"
     echo
     echo    "  =================================== "
     echo

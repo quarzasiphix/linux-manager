@@ -47,9 +47,9 @@ ConfigServer() {
     echo
     echo    "  =================================== "
     echo
-    echo -e "             Hello\e[36m $USER \e[0m"
+    echo -e "             Hello\e[36m $USER \e[+0m"
     echo
-    echo -e "         Welcome\e[95m to Web wiz \e[0m"
+    echo -e "         Welcome to\e[95m Web wiz \e[0m"
     echo
     echo    "  =================================== "
     echo
@@ -74,6 +74,7 @@ SetupDirs() {
     sudo mkdir /var/www/disabled/
     sudo mkdir /var/www/admin/
     sudo mkdir /var/www/server/
+    sudo mkdir /var/www/sites/disabled
 
     sudo chmod -R 777 /var/www/
 }
@@ -108,11 +109,65 @@ EOT
 
 }
 
+SetupDisabled() {
+    sudo mkdir /etc/nginx/disabled
+    sudo chmod -R 777 /etc/nginx/disabled
+
+    sudo tee "/etc/nginx/sites-enabled/default" > /dev/null <<EOT
+        server {
+            listen 80 default_server;
+            server_name _;
+
+            location / {
+                root /var/www/sites/disabled;
+                index index.html;
+            }
+        }
+EOT
+
+    sudo tee "/var/www/sites/disabled" > /dev/null <<EOT
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                    font-family: 'Poppins', sans-serif;
+                    background-color: #0d0d0d; /* Light gray background */
+                    text-align: center;
+                }
+
+                .header {
+                    color: #ffffff; /* White font color */
+                    text-alrgb(0, 0, 0) center;
+                    padding: 20px 0; /* Top and bottom padding of 20 pixels, no left and right padding */
+                }
+            </style>
+        </head>
+        <body>
+
+        <div class="header">
+            <h1>This site is disabled</h1>
+        </div>
+
+        </body>
+        </html>
+EOT
+
+}
+
 
 
 wwwdir="/var/www"
 
 
+echo
+echo "checking directories.."
+echo
 if [ ! -d "$directory" ]; then
     echo
     echo "main directory /var/www/ not found.. setting up."
@@ -131,6 +186,8 @@ if [ ! -d "$directory/server" ]; then
     echo
     ConfigServer
 fi
+
+if [ ! -d "$directory/sites/goaccess" ]; then
 
 if [ ! -d "$directory/sites/goaccess" ]; then
     echo
