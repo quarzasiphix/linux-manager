@@ -125,7 +125,7 @@ SetupDisabled() {
         }
 EOT
 
-    sudo tee "/var/www/sites/disabled" > /dev/null <<EOT
+    sudo tee "/var/www/sites/disabled/index.html" > /dev/null <<EOT
         <!DOCTYPE html>
         <html lang="en">
         <head>
