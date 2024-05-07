@@ -100,20 +100,12 @@ configurator() {
     echo
     ProjectBanner
     echo
-    echo "logs folder size: "
-    du -sh "/var/www/logs"
-    echo
-    echo "Sites folder size: "
-    du -sh "/var/www/sites"
-    echo
-    echo "Backups folder size: "
-    du -sh "/var/www/backups"
-
     echo
     echo "Welcome to config shortcut menu"
     echo
     echo " 0. Go back to main menu"
     echo
+    echo "sizes.    check size of main directories"
     echo "serv.     update server config"
     echo "ngc.      nginx general config (/etc/nginx/nginx.conf)"
     echo "sc.       sshd config (/etc/ssh/sshd_config)"
@@ -130,7 +122,19 @@ configurator() {
             clear
             IsSetProject=false
             EditingConfig=false
-            ;;
+        ;;
+        'sizes')
+            clear
+            echo
+            echo "logs folder size: "
+            du -sh "/var/www/logs"
+            echo
+            echo "Sites folder size: "
+            du -sh "/var/www/sites"
+            echo
+            echo "Backups folder size: "
+            du -sh "/var/www/backups"
+        ;;  
         'serv')
             clear
             ConfigServer
