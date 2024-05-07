@@ -53,9 +53,11 @@ ConfigServer() {
     read -p "Enter the location of the server: " server_location
     echo
 
-    echo "$server_name" > /var/www/server/name.txt
-    echo "$server_location" >> /var/www/server/info.txt
+    server_dir="/var/www/server"
+    sudo mkdir -p "$server_dir"
 
+    echo "$server_name" > /var/www/server/name.txt
+    echo "$server_location" > /var/www/server/info.txt
 
     echo "  setup sudo account"
     read -p "admin account: " admin_name
