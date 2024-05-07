@@ -160,13 +160,13 @@ configurator() {
             echo
             echo " retrieving new downloader..."
             echo
-            sudo rm /var/www/scripts/new/downloader/download.sh
-            sudo curl -o "/var/www/scripts/new/downloader/download.sh" "https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/downloader/download.sh"
-            sudo chmod +x "/var/www/scripts/new/downloader/download.sh"
+            sudo rm /var/www/scripts/downloader/download.sh
+            sudo curl -o "/var/www/scripts/downloader/download.sh" "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/downloader/download.sh"
+            sudo chmod +x "/var/www/scripts/downloader/download.sh"
             echo
             echo "updating..."
             echo
-            /var/www/scripts/new/downloader/download.sh
+            /var/www/scripts/downloader/download.sh
             ;;
         *)  
             echo
