@@ -97,7 +97,6 @@ configurator() {
     echo
     ProjectBanner
     echo
-    echo
     echo "Welcome to config shortcut menu"
     echo
     echo " 0. Go back to main menu"
@@ -110,7 +109,7 @@ configurator() {
     echo "banner.   ssh banner (/etc/ssh/banner.sh)"
     echo "passwd.   (/etc/passwd)"
     echo "bashrc.   (~/.bashrc)"
-    echo "visudo"
+    echo "visudo."
     echo "Update.   updates the script"
     echo
     read -p "   What confif do you want to edit?: " conf
@@ -124,6 +123,9 @@ configurator() {
             clear
             echo
             neofetch
+            echo
+            echo "www folder size: "
+            du -sh "/var/www"
             echo
             echo "logs folder size: "
             du -sh "/var/www/logs"
