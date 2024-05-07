@@ -219,10 +219,12 @@ ConfigServer() {
     read -p "name of the server: " server_name
     read -p "Enter the location of the server: " server_location
     echo
+    server_dir="/var/www/server"
+    sudo mkdir -p "$server_dir"
 
     echo "$server_name" > /var/www/server/name.txt
-    echo "$server_location" >> /var/www/server/info.txt
-
+    echo "$server_location" > /var/www/server/info.txt
+    sudo mkdir -p "/var/www/scripts/"
     sudo tee "/var/www/scripts/banner.sh" > /dev/null <<EOT
     clear
     export PATH=$PATH:/var/www/scripts/manager
