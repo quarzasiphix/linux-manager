@@ -283,6 +283,7 @@ case $newserv in
     echo
     Download
     ConfigServer
+    SetupDisabled
 ;;
 *)
     echo
