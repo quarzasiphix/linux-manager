@@ -95,7 +95,6 @@ general() {
 
 configurator() {
     echo
-    echo
     ProjectBanner
     echo
     echo
