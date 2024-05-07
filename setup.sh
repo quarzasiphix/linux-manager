@@ -150,7 +150,7 @@ Download() {
     echo
     echo "Downloading..."
     echo
-    sudo apt-get install --assume-yes ufw screen unzip zip nginx curl mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-gd php8.2-mbstring php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-soap php8.2-zip php8.2-xml php8.2-dom php8.2-curl php8.2-mysqli > /dev/null
+    sudo apt-get install --assume-yes ufw screen unzip neofetch zip nginx curl mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-gd php8.2-mbstring php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-soap php8.2-zip php8.2-xml php8.2-dom php8.2-curl php8.2-mysqli > /dev/null
 }
 
 

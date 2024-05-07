@@ -9,8 +9,6 @@
 general() {
     ProjectBanner
     echo
-    echo
-    echo
     echo "0. Select project"
     echo
     echo "1. View All active websites"
@@ -98,13 +96,15 @@ general() {
 configurator() {
     ProjectBanner
     echo
+    echo
+    neofetch
+    echo
     echo "logs folder size: "
     du -sh "/var/www/logs"
-
     echo
     echo "Sites folder size: "
     du -sh "/var/www/sites"
-
+    echo
     echo "Backups folder size: "
     du -sh "/var/www/backups"
 
