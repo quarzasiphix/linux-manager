@@ -94,10 +94,11 @@ general() {
 }
 
 configurator() {
-    ProjectBanner
     echo
     echo
     neofetch
+    echo
+    ProjectBanner
     echo
     echo "logs folder size: "
     du -sh "/var/www/logs"
