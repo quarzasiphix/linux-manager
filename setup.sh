@@ -60,22 +60,11 @@ EOT
 admin_name=""
 
 SetupTerminal() {
-
-    bashrc="/home/$admin_name/.bashrc"
-    cp "$bashrc" "$bashrc.bak"
-    # Remove every instance of PS1 in the .bashrc file
-    sed -i '/PS1=/d' "$bashrc"
-    echo
-    # Define the new PS1 value
-    new_ps1="\${debian_chroot:+(\$debian_chroot)}\[\033[01;32m\]\u@$server_name\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\\$ "
-    sudo sed -i "s/^export PS1=.*/export PS1=\"$new_ps1\"/" "/etc/bash.bashrc"
-    echo
-    echo "PS1 line replaced with: $new_ps1"
-    echo
-
+    s_name=$(</var/www/server/name.txt)
     sudo tee "/var/www/scripts/banner.sh" > /dev/null <<EOT
+    export PATH=\$PATH:/var/www/scripts/manager
     clear
-    export PATH=$PATH:/var/www/scripts/manager
+    PS1="\${debian_chroot:+(\$debian_chroot)}\[\033[01;32m\]\u@$s_name\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\\$ "
     echo
     echo
     echo
@@ -90,15 +79,13 @@ SetupTerminal() {
     echo
     echo
 EOT
-
     sudo chmod +x /var/www/scripts/banner.sh
-
     #add post auth banner script
-    echo "/var/www/scripts/banner.sh" | sudo tee -a /etc/bash.bashrc > /dev/null
-    echo "export PATH=$PATH:/var/www/scripts/manager" | sudo tee -a /etc/bash.bashrc > /dev/null
-    
-
+    echo "source /var/www/scripts/banner.sh" | sudo tee -a /etc/bash.bashrc > /dev/null
 }
+
+/etc/bash.bashrc
+
 
 SetupSsh() {
     echo
@@ -160,11 +147,10 @@ Download() {
     echo "running apt update and upgrade..."
     echo
     sudo apt update > /dev/null
-    sudo apt upgrade > /dev/null
     echo
     echo "Downloading..."
     echo
-    sudo apt-get install --assume-yes ufw screen unzip zip nginx curl mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-gd php8.2-mbstring php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-zip php8.2-xml php8.2-dom php8.2-curl php8.2-mysqli > /dev/null
+    sudo apt-get install --assume-yes ufw screen unzip zip nginx curl mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-gd php8.2-mbstring php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-soap php8.2-zip php8.2-xml php8.2-dom php8.2-curl php8.2-mysqli > /dev/null
 }
 
 
@@ -228,10 +214,14 @@ ConfigServer() {
     echo
     server_dir="/var/www/server"
     sudo mkdir -p "$server_dir"
+    sudo chmod 777 -R $server_dir
 
     echo "$server_name" > /var/www/server/name.txt
+    sudo chmod 777 -R $server_dir
     echo "$server_location" > /var/www/server/info.txt
     sudo mkdir -p "/var/www/scripts/"
+    sudo chmod 777 -R "/var/www/scripts/"
+
     sudo tee "/var/www/scripts/banner.sh" > /dev/null <<EOT
     clear
     export PATH=$PATH:/var/www/scripts/manager

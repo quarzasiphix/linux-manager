@@ -10,8 +10,6 @@ general() {
     ProjectBanner
     echo
     echo
-    echo "Backups folder size: "
-    du -sh "/var/www/backups"
     echo
     echo "0. Select project"
     echo
@@ -99,6 +97,17 @@ general() {
 
 configurator() {
     ProjectBanner
+    echo
+    echo "logs folder size: "
+    du -sh "/var/www/logs"
+
+    echo
+    echo "Sites folder size: "
+    du -sh "/var/www/sites"
+
+    echo "Backups folder size: "
+    du -sh "/var/www/backups"
+
     echo
     echo "Welcome to config shortcut menu"
     echo
