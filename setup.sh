@@ -1,5 +1,3 @@
-comments() {
-
 
 #    echo "  setup sudo account"
 #    read -p "admin account: " admin_name
@@ -25,7 +23,6 @@ comments() {
 #    echo "PS1 line replaced with: $new_ps1"
 #    echo
 
-}
 
 SetupGoaccess() {
     echo
@@ -163,6 +160,59 @@ Download() {
     sudo apt-get install ufw screen unzip zip nginx curl mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-gd php8.2-mbstring php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-zip php8.2-xml php8.2-dom php8.2-curl php8.2-mysqli
 }
 
+
+SetupDisabled() {
+    sudo mkdir /etc/nginx/disabled
+    sudo chmod -R 777 /etc/nginx/disabled
+
+    sudo tee "/etc/nginx/sites-enabled/default" > /dev/null <<EOT
+        server {
+            listen 80 default_server;
+            server_name _;
+
+            location / {
+                root /var/www/sites/disabled;
+                index index.html;
+            }
+        }
+EOT
+
+    sudo tee "/var/www/sites/disabled/index.html" > /dev/null <<EOT
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                    font-family: 'Poppins', sans-serif;
+                    background-color: #0d0d0d; /* Light gray background */
+                    text-align: center;
+                }
+
+                .header {
+                    color: #ffffff; /* White font color */
+                    text-alrgb(0, 0, 0) center;
+                    padding: 20px 0; /* Top and bottom padding of 20 pixels, no left and right padding */
+                }
+            </style>
+        </head>
+        <body>
+
+        <div class="header">
+            <h1>This site is disabled</h1>
+        </div>
+
+        </body>
+        </html>
+EOT
+
+}
+
+
 ConfigServer() {
     echo
     echo "  :server setup:"
@@ -219,59 +269,6 @@ SetupDirs() {
 
     sudo chmod -R 777 /var/www/
 }
-
-SetupDisabled() {
-    sudo mkdir /etc/nginx/disabled
-    sudo chmod -R 777 /etc/nginx/disabled
-
-    sudo tee "/etc/nginx/sites-enabled/default" > /dev/null <<EOT
-        server {
-            listen 80 default_server;
-            server_name _;
-
-            location / {
-                root /var/www/sites/disabled;
-                index index.html;
-            }
-        }
-EOT
-
-    sudo tee "/var/www/sites/disabled/index.html" > /dev/null <<EOT
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-                body {
-                    margin: 0;
-                    padding: 0;
-                    font-family: 'Poppins', sans-serif;
-                    background-color: #0d0d0d; /* Light gray background */
-                    text-align: center;
-                }
-
-                .header {
-                    color: #ffffff; /* White font color */
-                    text-alrgb(0, 0, 0) center;
-                    padding: 20px 0; /* Top and bottom padding of 20 pixels, no left and right padding */
-                }
-            </style>
-        </head>
-        <body>
-
-        <div class="header">
-            <h1>This site is disabled</h1>
-        </div>
-
-        </body>
-        </html>
-EOT
-
-}
-
-
 
 wwwdir="/var/www"
 
