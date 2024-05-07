@@ -484,6 +484,7 @@ EOF
                 ;;
             'no') 
                 IsSetProject=false
+                clear
                 ;;
             *)
                 echo "Invalid choice. cancelling"
