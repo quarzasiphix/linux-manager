@@ -99,6 +99,10 @@ GrabDomain() {
         currentdomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
     elif [ -f "$nginxdisabled/$name.nginx" ]; then
         currentdomain=$(grep -o 'server_name.*;' $nginxdisabled/$name.nginx | awk '{print $2}' | sed 's/;//')
+    else
+        echo
+        echo "config not found.."
+        echo
     fi
     #echo "$grabbeddomain"
     #currentdomain=$grabbeddomain

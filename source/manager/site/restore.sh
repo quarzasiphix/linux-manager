@@ -1,17 +1,7 @@
-RestoreWP() {
-    echo
-    backupdir="/var/www/backups/$name"
-    sudo rm -R "$backupdir/$name-temp" > /dev/null
-    # List files inside backup directory
-    echo
-    echo "Backups"
-    sudo ls -l "$backupdir" | awk '{print $9}'
-    read -p "backup to restore: " backup
-
-    echo 
-    echo "checkin if password file exists on server..."
-    echo
-
+#echo 
+#    echo "checkin if password file exists on server..."
+#    echo#
+#
 #    #password_file="/var/www/sites/$name/password.txt"
 #    #password=
 #    #if [ ! -f "$password_file" ]; then
@@ -60,6 +50,28 @@ RestoreWP() {
 #        fi
 #    done#
 
+
+
+RestoreWP() {
+    echo
+    backupdir="/var/www/backups/$name"
+    sudo rm -R "$backupdir/$name-temp" > /dev/null
+    # List files inside backup directory
+    echo
+    echo "Backups folder size for $name: "
+    du -sh "/var/www/backups/$name"
+    echo
+    echo "Backups"
+    sudo ls -l "$backupdir" | awk '{print $9}'
+    echo
+    echo "  (type 'quit' to exit restore)"  
+    read -p "backup to restore: " backup
+    if [ "$backup" = "quit" ]; then
+        return  # This will exit the function
+    fi
+    echo
+    echo "continuing"
+    echo
 
     echo 
     echo "clearing previous files"

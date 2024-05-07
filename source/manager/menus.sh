@@ -8,6 +8,11 @@
 
 general() {
     ProjectBanner
+    echo
+    echo
+    echo "Backups folder size: "
+    du -sh "/var/www/backups"
+    echo
     echo "0. Select project"
     echo
     echo "1. View All active websites"
@@ -180,6 +185,15 @@ managesite() {
         echo
         echo "Current domain: $currentdomain" 
         echo
+        echo "Logs folder size: "
+        du -sh "/var/www/logs/$name"
+        echo
+        echo "backups folder size: "
+        du -sh "/var/www/backups/$name"
+        echo
+        echo "source folder size: "
+        du -sh "/var/www/sites/$name"
+
         echo "What would you like to do to $name?"
         echo
         echo "0. Change project"
@@ -207,155 +221,173 @@ managesite() {
 
         # Perform action based on user's choice
         case $choice in
-            'pass')
-                clear
-                password_file="/var/www/sites/$name/password.txt"
-                if [ ! -f "$password_file" ]; then
-                    echo
-                    echo "No set password for $name."
-                    echo
-                    read -p "Do you want to set a new project password for $name? (y/n): " set_password
-                    if [ "$set_password" = "y" ]; then
-                        read -s -p "Enter a new project password for $name: " new_password
-                        echo "$new_password" | sudo tee "$password_file" > /dev/null
-                        echo "Password file created."
-                    else
-                        echo "No changes made to the password."
-                    fi
+        'pass')
+            clear
+            password_file="/var/www/sites/$name/password.txt"
+            if [ ! -f "$password_file" ]; then
+                echo
+                echo "No set password for $name."
+                echo
+                read -p "Do you want to set a new project password for $name? (y/n): " set_password
+                if [ "$set_password" = "y" ]; then
+                    read -s -p "Enter a new project password for $name: " new_password
+                    echo "$new_password" | sudo tee "$password_file" > /dev/null
+                    echo "Password file created."
                 else
-                    password=$(sudo cat "$password_file")
-                    echo 
-                    echo "Password for project $name: $password"
-                    echo
-                    read -p "Do you want to change the project password for $name? (y/n): " change_password
-                    if [ "$change_password" = "y" ]; then
-                        read -s -p "Enter the new project password for $name: " new_password
-                        echo "$new_password" | sudo tee "$password_file" > /dev/null
-                        echo "Password changed."
-                    else
-                        echo "No changes made to the password."
-                    fi
+                    echo "No changes made to the password."
                 fi
-                ;;
-            0)
-                clear
-                IsSetProject=false
-                ;;
-            1)
-                clear
+            else
+                password=$(sudo cat "$password_file")
+                echo 
+                echo "Password for project $name: $password"
                 echo
-                echo "Graphing log..."
-                GraphLog
-                ;;
-            2)    
-                echo
-                echo "Editing config..."
-                EditConf
-                ;;
-                
-            3)  
-                clear
-                echo
-                echo "Resetting project..."
-                test
-                ;;
-                
-            4)
-                clear
-                #grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
-                echo "Changing domain for project $name"
-                echo
-                read -p "Enter new domain: " new_domain
-                echo
-                GrabDomain 
-                if [ -f "$nginxconfdir/$name.nginx" ]; then
-                    sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxconfdir/$name.nginx"
-                elif [ -f "$nginxdisabled/$name.nginx" ]; then
-                    sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxdisabled/$name.nginx"
+                read -p "Do you want to change the project password for $name? (y/n): " change_password
+                if [ "$change_password" = "y" ]; then
+                    read -s -p "Enter the new project password for $name: " new_password
+                    echo "$new_password" | sudo tee "$password_file" > /dev/null
+                    echo "Password changed."
                 else
-                    new_domain="unkown"
+                    echo "No changes made to the password."
                 fi
-                echo "Changing domain.."
-                sudo systemctl restart nginx
-                echo
-                echo "succesfully changed the domain for project $name from $grabbeddomain to $new_domain"
-                echo
-                GrabDomain
-                ;;
-            'b')
-                clear
-                echo
-                echo "Creating backup for $name"
-                echo
-                BackupWP
-                ;;
-            'r')
-                clear
-                echo
-                echo "Restoring a backup for $name"
-                echo
-                RestoreWP
-                ;;
+            fi
+            ;;
+        0)
+            clear
+            IsSetProject=false
+            ;;
+        1)
+            clear
+            echo
+            echo "Graphing log..."
+            GraphLog
+            ;;
+        2)    
+            echo
+            echo "Editing config..."
+            EditConf
+            ;;
+            
+        3)  
+            clear
+            echo
+            echo "Resetting project..."
+            test
+            ;;
+            
+        4)
+            clear
+            #grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
+            echo "Changing domain for project $name"
+            echo
+            read -p "Enter new domain: " new_domain
+            echo
+            GrabDomain 
+            currentdomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
+            if [ -f "$nginxconfdir/$name.nginx" ]; then
+                sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxconfdir/$name.nginx"
+            elif [ -f "$nginxdisabled/$name.nginx" ]; then
+                sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxdisabled/$name.nginx"
+            else
+                new_domain="unkown"
+            fi
+            echo "Changing domain.."
+            read -p "attempt to change wordpress domain?: " wpdomain
+            if [ "$wpdomain" = "yes" ]; then
+                db_password=$(grep -oP "(?<=DB_PASSWORD\s*=\s*['\"])\w*(?=['\"])" "$wp_config_file")
+                # Check if the password was found
+                if [ -z "$db_password" ]; then
+                    echo "Error: Database password not found in wp-config.php"
+                    return #break out of function
+                fi
 
-            'del')
-                clear
-                echo
-                echo "Deleting project..."
-                echo
-                DeleteWp
-                ;;
-            11)
-                clear
-                echo "Going to $names's plugins..."
-                echo
-                cd /var/www/sites/$name/wp-content/plugins 
-                exit
-                ;;
-            22)
-                clear
-                echo "Going to $name's source..."
-                echo
-                cd /var/www/sites/$name 
-                exit
-                ;;
-            33)
-                clear
-                echo "Going to $name's logs..."
-                echo
-                cd /var/www/logs/$name 
-                exit
-                ;;
-       
-            *)
-                echo "Invalid choice. Please enter a number between 1 and 4."
-                ;;
-            esac
-        if [ -f "$nginxconfdir/$name.nginx" ]; then
-            case $choice in
-                'disable')
-                    clear
-                    DisableConf
-                    ;;
-            esac
-        elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
-            case $choice in
-                'enable')
-                    clear
-                    echo 
-                    echo -e "\e[32m Enabling site... \e[0m"
-                    echo
-                    sudo rm $nginxconfdir/$name.disabled
-                    sudo mv $nginxdisabled/$name.nginx $nginxconfdir
-                    echo
-                    echo "restarting nginx..."
-                    echo
-                    sudo systemctl restart nginx
-                    echo
-                    echo "Enabled! $name"
-                    echo
-                    ;;
-            esac
-        fi
+            # Update WordPress options table
+            mysql -u$name -p$db_password $name << EOF
+            UPDATE wp_options SET option_value = replace(option_value, '$currentdomain', '$new_domain') WHERE option_name = 'home' OR option_name = 'siteurl';
+EOF
+            # Update WordPress posts content
+            mysql -u$name -p$db_password $name << EOF
+            UPDATE wp_posts SET post_content = replace(post_content, '$currentdomain', '$new_domain');
+EOF
+            # Update WordPress post meta
+            mysql -u$name -p$db_password $name << EOF
+            UPDATE wp_postmeta SET meta_value = replace(meta_value, '$currentdomain','$new_domain');
+EOF
+            fi
+            sudo systemctl restart nginx
+            echo
+            echo "succesfully changed the domain for project $name from $currentdomain to $new_domain"
+            echo
+            GrabDomain
+        ;;
+        'b')
+            clear
+            echo
+            echo "Creating backup for $name"
+            echo
+            BackupWP
+        ;;
+        'r')
+            clear
+            echo
+            echo "Restoring a backup for $name"
+            echo
+            RestoreWP
+        ;;
+
+        'del')
+            clear
+            echo
+            echo "Deleting project..."
+            echo
+            DeleteWp
+        ;;
+        11)
+            clear
+            echo "Going to $names's plugins..."
+            echo
+            cd /var/www/sites/$name/wp-content/plugins 
+            exit
+        ;;
+        22)
+            clear
+            echo "Going to $name's source..."
+            echo
+            cd /var/www/sites/$name 
+            exit
+        ;;
+        33)
+            clear
+            echo "Going to $name's logs..."
+            echo
+            cd /var/www/logs/$name 
+            exit
+        ;;
+    
+        *)
+            echo "Invalid choice. Please enter a number between 1 and 4."
+        ;;
+        
+        'disable')
+            clear
+            DisableConf
+        ;;
+
+        'enable')
+            clear
+            echo 
+            echo -e "\e[32m Enabling site... \e[0m"
+            echo
+            sudo rm $nginxconfdir/$name.disabled
+            sudo mv $nginxdisabled/$name.nginx $nginxconfdir
+            echo
+            echo "restarting nginx..."
+            echo
+            sudo systemctl restart nginx
+            echo
+            echo "Enabled! $name"
+            echo
+        ;;
+        esac
 
     elif [ -d "/var/www/backups/$name" ]; then
         clear

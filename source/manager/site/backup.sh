@@ -1,48 +1,3 @@
-BackupWP() {
-    # Define variables.
-
-    nginx_config="/etc/nginx/sites-enabled/$name.nginx"
-    backupdir="/var/www/backups/$name"
-    tempdir="$backupdir/$name-temp"
-
-    # Create a temporary directory and set appropriate permissions.
-    sudo mkdir "$backupdir" > /dev/null 2>&1
-    sudo mkdir "$backupdir/archive/$(date +%F)" > /dev/null 2>&1
-
-    echo "moving existing temp directory to archive"
-    echo
-    sudo mv "$tempdir" "$backupdir/archive/$(date +%F)" > /dev/null 2>&1
-    sudo mkdir "$tempdir" > /dev/null 2>&1
-
-    sudo chmod -R 777 "$tempdir" > /dev/null
-
-    # Perform MySQL database backup.
-    sudo mysqldump -u root --single-transaction "$name" > "$tempdir/$name.sql"
-
-    # Backup Nginx configuration.
-    sudo cp "$nginx_config" "$tempdir/"
-
-    # Backup Logs
-    sudo cp -R "/var/www/logs/$name" "$tempdir/logs/" > /dev/null
-    echo "Logs folder size: "
-    du -sh "/var/www/logs/$name"
-
-    echo
-    echo "Backing up source files"
-    echo
-
-    echo "source folder size: "
-    du -sh "/var/www/sites/$name"
-
-    # Backup WordPress files.
-    sudo cp -R "/var/www/sites/$name" "$tempdir/$name" > /dev/null
-
-    # Copy existing backup
-    # Check if the file exists
-    counter=1
-    while [ -f "$backupdir/$name-$(date +%F)-$counter.zip" ]; do
-        ((counter++))
-    done
 
 ####sudo mysql -u root <<EOF
 #    DROP DATABASE IF EXISTS $name;
@@ -78,6 +33,73 @@ BackupWP() {
 #        #get project password:
 #    password=$(sudo cat "/var/www/sites/$name/password.txt")#
 
+
+   # if [ -d "$tempdir" ]; then
+   #     echo "temp dir size: "
+   #     du -sh "$tempdir"
+   #     echo
+    #    echo "moving existing temp directory to archive"
+    #    echo
+   #     if [ -f "$backupdir/archive/$(date +%F)" ]; then
+   #         sudo mv "$tempdir" "$tempdir-$(date +%F)"
+   #         sudo mv "$tempdir-$(date +%F)" "$backupdir/archive/$(date +%F)"
+   #     else
+   #     fi
+   #     sudo mkdir "$tempdir"
+   # fi
+
+
+BackupWP() {
+    # Define variables.
+    nginx_config="/etc/nginx/sites-enabled/$name.nginx"
+    backupdir="/var/www/backups/$name"
+    tempdir="$backupdir/$name-temp"
+
+    # Create a temporary directory and set appropriate permissions.
+    sudo mkdir "$backupdir" > /dev/null 2>&1
+    sudo mkdir "$backupdir/archive/" > /dev/null 2>&1
+    sudo mkdir "$backupdir/archive/$(date +%F)" > /dev/null 2>&1
+
+    if [ -d "$tempdir" ]; then
+        echo "temp dir size: "
+        du -sh "$tempdir"
+        echo
+        echo "moving existing temp directory to archive $(date +%F)"
+        echo
+        sudo mv "$tempdir" "$backupdir/archive/$(date +%F)"
+    fi
+    echo
+
+    sudo chmod -R 777 "$tempdir" > /dev/null
+
+    # Perform MySQL database backup.
+    sudo mysqldump -u root --single-transaction "$name" > "$tempdir/$name.sql"
+
+    # Backup Nginx configuration.
+    sudo cp "$nginx_config" "$tempdir/"
+
+    # Backup Logs
+    sudo cp -R "/var/www/logs/$name" "$tempdir/logs/" > /dev/null
+    echo "Logs folder size: "
+    du -sh "/var/www/logs/$name"
+
+    echo
+    echo "Backing up source files"
+    echo
+
+    echo "source folder size: "
+    du -sh "/var/www/sites/$name"
+
+    # Backup WordPress files.
+    sudo cp -R "/var/www/sites/$name" "$tempdir/$name" > /dev/null
+
+    # Copy existing backup
+    # Check if the file exists
+    counter=1
+    while [ -f "$backupdir/$name-$(date +%F)-$counter.zip" ]; do
+        ((counter++))
+    done
+
     if [ -f "$backupdir/$name-$(date +%F).zip" ]; then
         # If the file exists, copy it to the archive folder
         #cp "$name-$(date +%F).zip" "$backupdir/archive"
@@ -112,10 +134,14 @@ BackupWP() {
     sudo mkdir -p "$backupdir" > /dev/null
 
     # Move the backup file to the backup directory.
-    #sudo mv "$name-$(date +%F).zip" "$backupdir/"
+    sudo mv "$name-$(date +%F).zip" "$backupdir/"
 
+    du -sh $tempdir
+    read -p "Remove temp directory?: " _temp
     # Remove the temporary directory.
-    #sudo rm -r "$tempdir"
+    if [ "$_temps" = "yes" ]; then
+        sudo rm -R $tempdir 
+    fi
 }
 
 backupAll() {
@@ -157,6 +183,8 @@ backupAll() {
         # Backup Logs
         echo "..."
         sudo cp -R "/var/www/logs/$names" "$tempdir/logs/" > /dev/null
+        echo "Logs folder size: "
+        du -sh "/var/www/logs/$name"
 
         #echo "source folder size for $names: "
         #du -sh "/var/www/sites/$names"
@@ -164,6 +192,9 @@ backupAll() {
         # Backup WordPress files.
         echo "..."
         sudo cp -R "/var/www/sites/$names" "$tempdir/$names" > /dev/null
+        echo "source folder size: "
+        du -sh "/var/www/sites/$name"
+
 
         # Copy existing backup
         # Check if the file exists
