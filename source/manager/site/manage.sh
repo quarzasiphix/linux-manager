@@ -21,6 +21,23 @@ SetProject() {
     clear
 }
 
+
+ConfigServer() {
+    echo
+    echo "  :server setup:"
+    read -p "name of the server: " server_name
+    read -p "Enter the location of the server: " server_location
+    echo
+    server_dir="/var/www/server"
+    sudo mkdir -p "$server_dir"
+    sudo chmod 777 -R $server_dir
+
+    echo "$server_name" > /var/www/server/name.txt
+    echo "$server_location" > /var/www/server/info.txt
+    sudo chmod 777 -R $server_dir
+    
+}
+
 DeleteWp() {
     # Confirm deletion
     echo -e " \e[31m Permanent Erase,\e[0m there is no turnning back! "

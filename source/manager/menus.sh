@@ -114,6 +114,7 @@ configurator() {
     echo
     echo " 0. Go back to main menu"
     echo
+    echo "serv.     update server config"
     echo "ngc.      nginx general config (/etc/nginx/nginx.conf)"
     echo "sc.       sshd config (/etc/ssh/sshd_config)"
     echo "motd.     ssh motd (/etc/motd)" 
@@ -130,34 +131,38 @@ configurator() {
             IsSetProject=false
             EditingConfig=false
             ;;
+        'serv')
+            clear
+            ConfigServer
+        ;;
         'ngc')
             clear
             EditNginxconf
-            ;;
+        ;;
         'sc')
             clear
             EditSshconf
-            ;;
+        ;;
         'motd')
             clear
             EditMotd
-            ;;
+        ;;
         'banner')
             clear
             EditBanner
-            ;;
+        ;;
         'passwd')
             clear
             EditPasswd
-            ;;
+        ;;
         'bashrc')
             clear
             EditBash
-            ;;
+        ;;
         'visudo')
             clear
             EditVisudo
-            ;;
+        ;;
         'update')
             clear
             echo
@@ -170,12 +175,12 @@ configurator() {
             echo "updating..."
             echo
             /var/www/scripts/downloader/download.sh
-            ;;
+        ;;
         *)  
             echo
             echo "invalid choice"
             echo
-            ;;
+        ;;
     esac
 }
 

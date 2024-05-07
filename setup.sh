@@ -217,14 +217,15 @@ ConfigServer() {
     sudo chmod 777 -R $server_dir
 
     echo "$server_name" > /var/www/server/name.txt
-    sudo chmod 777 -R $server_dir
     echo "$server_location" > /var/www/server/info.txt
+    sudo chmod 777 -R $server_dir
+    
     sudo mkdir -p "/var/www/scripts/"
     sudo chmod 777 -R "/var/www/scripts/"
 
     sudo tee "/var/www/scripts/banner.sh" > /dev/null <<EOT
+    export PATH=\$PATH:/var/www/scripts/manager
     clear
-    export PATH=$PATH:/var/www/scripts/manager
     echo
     echo
     echo
