@@ -126,6 +126,7 @@ configurator() {
     read -p "   What confif do you want to edit?: " conf
     case $conf in
         0)
+            IsSetProject=false
             EditingConfig=false
             ;;
         'ngc')
