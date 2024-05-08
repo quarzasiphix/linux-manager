@@ -127,14 +127,14 @@ configurator() {
             echo "www folder size: "
             du -sh "/var/www"
             echo
-            echo "logs folder size: "
-            du -sh "/var/www/logs"
-            echo
             echo "Sites folder size: "
             du -sh "/var/www/sites"
             echo
             echo "Backups folder size: "
             du -sh "/var/www/backups"
+            echo
+            echo "logs folder size: "
+            du -sh "/var/www/logs"
         ;;  
         'serv')
             clear
@@ -314,6 +314,7 @@ managesite() {
             fi
             echo "Changing domain.."
             read -p "attempt to change wordpress domain?: " wpdomain
+            wp_config_file="/var/www/sites/$name/wp-config.php
             if [ "$wpdomain" = "yes" ]; then
                 db_password=$(grep -oP "(?<=DB_PASSWORD\s*=\s*['\"])\w*(?=['\"])" "$wp_config_file")
                 # Check if the password was found
@@ -355,7 +356,6 @@ EOF
             echo
             RestoreWP
         ;;
-
         'del')
             clear
             echo
