@@ -1,8 +1,10 @@
 #!/bin/bash
+sourceurl="https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source"
 
 # Define the file path
 scriptsdir="/var/www/scripts/downloader"
-scriptsurl="https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/downloader/scripts"
+scriptsurl="$sourceurl/downloader/scripts"
+versionurl="$sourceurl/version.txt"
 file="$scriptsdir/scripts"
 
 # Initialize empty arrays
@@ -11,7 +13,7 @@ server=()
 site=()
 
 # Flag to indicate which array to add lines to
-url="https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/manager"
+url="/manager"
 dir="/var/www/scripts/manager"
 
 echo "setting up dir env.."
@@ -47,6 +49,7 @@ echo
 
 
 # Read each line from the file
+
 while IFS= read -r line; do
     # Check if the line contains "server"
     if [[ "$line" == *"server"* ]]; then
