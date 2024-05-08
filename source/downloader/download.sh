@@ -48,7 +48,8 @@ echo
 #udo chmod +x /var/www/scripts/start_manager.sh
 
 #get version:
-sudo curl -o "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt" "$url/version.txt" > /dev/null 2>&1
+sudo curl -o "$dir/version.txt" "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/manager/version.txt" > /dev/null 2>&1
+sudo chmod 777 /var/www/scripts/manager/version.txt
 
 # Read each line from the file
 
