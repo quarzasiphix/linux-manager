@@ -59,4 +59,5 @@ main () {
     done
 }
 
+check_for_update
 main 
