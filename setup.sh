@@ -292,6 +292,8 @@ esac
 echo
 echo "checking directories.."
 echo
+
+$directory="/var/www"
 if [ ! -d "$directory" ]; then
     echo
     echo "main directory /var/www/ not found.. setting up."
@@ -309,6 +311,10 @@ if [ ! -d "$directory/server" ]; then
     echo "server config not found.."
     echo
     ConfigServer
+else
+    echo
+    echo "server config located.."
+    echo
 fi
 
 if [ ! -d "$directory/sites/goaccess" ]; then
