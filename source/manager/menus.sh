@@ -110,6 +110,7 @@ configurator() {
     echo "passwd.   (/etc/passwd)"
     echo "bashrc.   (~/.bashrc)"
     echo "visudo."
+    echo "check.    check for updates"
     echo "Update.   updates the script"
     echo
     read -p "   What confif do you want to edit?: " conf
@@ -118,6 +119,9 @@ configurator() {
             clear
             IsSetProject=false
             EditingConfig=false
+        ;;
+        'check')
+            check_for_update
         ;;
         'sizes')
             clear
