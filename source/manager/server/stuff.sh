@@ -1,5 +1,3 @@
-source graphlogs.sh
-
 EditSshconf() {
     sudo vim /etc/ssh/sshd_config
     echo
