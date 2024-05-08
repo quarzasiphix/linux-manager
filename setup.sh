@@ -84,8 +84,6 @@ EOT
     echo "source /var/www/scripts/banner.sh" | sudo tee -a /etc/bash.bashrc > /dev/null
 }
 
-/etc/bash.bashrc
-
 
 SetupSsh() {
     echo
