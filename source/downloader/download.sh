@@ -13,7 +13,7 @@ server=()
 site=()
 
 # Flag to indicate which array to add lines to
-url="$sourceurl/manager"
+url="https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/manager"
 dir="/var/www/scripts/manager"
 
 echo "setting up dir env.."
