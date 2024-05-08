@@ -15,17 +15,8 @@ currentdomain=
 IsSetProject=false
 
 #!/bin/bash
-
-#!/bin/bash
-current_version=""
-latest_version=""
-# Function to check for updates
-check_for_update() {
-    current_version=$(cat version.txt)
-    latest_version=$(curl -s "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt")
-}
-
-# Call the function to check for updates
+latest_version=$(curl -s "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt")
+current_version=$(cat version.txt)
 
 ProjectBanner() {
     server_name=$(</var/www/server/name.txt)
