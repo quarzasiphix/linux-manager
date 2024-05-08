@@ -19,7 +19,7 @@ latest_version=""
 current_version=$(cat $dir/version.txt)
 
 check_for_update() {
-    current_version=$(curl -s "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt")
+    latest_version=$(curl -s "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt")
 }
 
 ProjectBanner() {
