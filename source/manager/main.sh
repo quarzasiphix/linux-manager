@@ -16,7 +16,7 @@ IsSetProject=false
 
 #!/bin/bash
 latest_version=$(curl -s "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt")
-current_version=$(cat version.txt)
+current_version=$(cat $dir/version.txt)
 
 ProjectBanner() {
     server_name=$(</var/www/server/name.txt)
