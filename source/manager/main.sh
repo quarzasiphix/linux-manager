@@ -28,7 +28,7 @@ get_current_version() {
 # Function to retrieve the latest version from the website
 get_latest_version() {
     # Use curl to fetch the plain text content of the website
-    latest_version=$(curl -s https://example.com)
+    latest_version=$(curl -s https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt)
 
     echo "$latest_version"
 }
