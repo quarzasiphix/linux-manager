@@ -91,6 +91,6 @@ echo
 echo "opening script post download..."
 echo
 
-sudo ln -s $dir/main.sh /var/www/scripts/start_manager
+sudo ln -s $dir/main.sh /var/www/scripts/start_manager > /dev/null 2>&1
 
 /var/www/scripts/start_manager
