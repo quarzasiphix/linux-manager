@@ -314,7 +314,7 @@ managesite() {
             fi
             echo "Changing domain.."
             read -p "attempt to change wordpress domain?: " wpdomain
-            wp_config_file="/var/www/sites/$name/wp-config.php
+            wp_config_file="/var/www/sites/$name/wp-config.php"
             if [ "$wpdomain" = "yes" ]; then
                 db_password=$(grep -oP "(?<=DB_PASSWORD\s*=\s*['\"])\w*(?=['\"])" "$wp_config_file")
                 # Check if the password was found
