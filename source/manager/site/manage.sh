@@ -125,3 +125,60 @@ GrabDomain() {
     #currentdomain=$grabbeddomain
 }
 
+# Function to extract database password from wp-config.php
+extract_db_password() {
+    wp_config_file="/var/www/sites/cc/wp-config.php"
+    db_password=$(sed -nE "s/.*DB_PASSWORD\s*=\s*['\"](\w*)['\"].*/\1/p" "$wp_config_file")
+    echo "$db_password"
+}
+
+ChangeDomain() {
+    #grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
+    echo
+    echo "Changing domain for project $name"
+    echo
+    read -p "Enter new domain: " new_domain
+    echo
+    GrabDomain 
+    currentdomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
+    if [ -f "$nginxconfdir/$name.nginx" ]; then
+        sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxconfdir/$name.nginx"
+    elif [ -f "$nginxdisabled/$name.nginx" ]; then
+        sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxdisabled/$name.nginx"
+    else
+        new_domain="unkown"
+        echo "couldnt find nginx config"
+    fi
+    echo
+    read -p "attempt to change wordpress domain?: " wpdomain
+    grep -oP "(?<=DB_PASSWORD\s*=\s*['\"])\w*(?=['\"])" "/var/www/sites/cc/wp-config.php"
+    if [ "$wpdomain" = "yes" ]; then
+        db_password=$(extract_db_password)
+        # Check if the password was found
+        if [ -z "$db_password" ]; then
+            echo "Error: Database password not found in wp-config.php"
+        else
+            echo
+            echo -e "Database password found"
+            echo
+        fi
+
+    # Update WordPress options table
+    mysql -u$name -p$db_password $name << EOF
+    UPDATE wp_options SET option_value = replace(option_value, '$currentdomain', '$new_domain') WHERE option_name = 'home' OR option_name = 'siteurl';
+EOF
+    # Update WordPress posts content
+    mysql -u$name -p$db_password $name << EOF
+    UPDATE wp_posts SET post_content = replace(post_content, '$currentdomain', '$new_domain');
+EOF
+    # Update WordPress post meta
+    mysql -u$name -p$db_password $name << EOF
+    UPDATE wp_postmeta SET meta_value = replace(meta_value, '$currentdomain','$new_domain');
+EOF
+    fi
+    sudo systemctl restart nginx
+    echo
+    echo "succesfully changed the domain for project $name from $currentdomain to $new_domain"
+    echo
+    GrabDomain
+}
