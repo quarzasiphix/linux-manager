@@ -127,7 +127,7 @@ GrabDomain() {
 
 # Function to extract database password from wp-config.php
 extract_db_password() {
-    wp_config_file="/var/www/sites/cc/wp-config.php"
+    wp_config_file="/var/www/sites/$name/wp-config.php"
     db_password=$(sed -nE "s/.*DB_PASSWORD\s*=\s*['\"](\w*)['\"].*/\1/p" "$wp_config_file")
     echo "$db_password"
 }
@@ -151,7 +151,6 @@ ChangeDomain() {
     fi
     echo
     read -p "attempt to change wordpress domain?: " wpdomain
-    grep -oP "(?<=DB_PASSWORD\s*=\s*['\"])\w*(?=['\"])" "/var/www/sites/cc/wp-config.php"
     if [ "$wpdomain" = "yes" ]; then
         db_password=$(extract_db_password)
         # Check if the password was found
