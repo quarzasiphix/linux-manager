@@ -33,11 +33,11 @@ ProjectBanner() {
 
 
     if [[ "$current_version" != "$latest_version" ]]; then
-        echo -e "Update availabile!"
-        echo -e "\e[38;5;208m$current_version \e[0m => \e[32m$latest_version\e[0m"
+        echo -e "   Update availabile!"
+        echo -e "   Current version: \e[38;5;208m$current_version \e[0m => \e[32m$latest_version\e[0m"
     else
-        echo -e "Up to date"
-        echo -e "\e[32m$current_version\e[0m"
+        echo -e "   Up to date"
+        echo -e "   Current version: \e[32m$current_version\e[0m"
     fi
     echo
     echo    "   Server: $server_name!"
