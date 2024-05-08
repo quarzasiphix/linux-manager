@@ -121,6 +121,7 @@ configurator() {
             EditingConfig=false
         ;;
         'check')
+            clear
             check_for_update
         ;;
         'sizes')
