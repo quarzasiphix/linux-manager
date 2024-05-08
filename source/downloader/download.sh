@@ -13,7 +13,7 @@ server=()
 site=()
 
 # Flag to indicate which array to add lines to
-url="/manager"
+url="$sourceurl/manager"
 dir="/var/www/scripts/manager"
 
 echo "setting up dir env.."
