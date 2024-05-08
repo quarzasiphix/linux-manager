@@ -214,8 +214,15 @@ managesite() {
         echo "Logs folder size: "
         du -sh "/var/www/logs/$name"
         echo
-        echo "backups folder size: "
-        du -sh "/var/www/backups/$name"
+                # Check if directory exists
+        if [ -d "/var/www/backups/$name" ]; then
+            # If directory exists, show size
+            echo "Backups folder size:"
+            du -sh "/var/www/backups/$namey"
+        else
+            # If directory does not exist, show message
+            echo "No backups found"
+        fi
         echo
         echo "source folder size: "
         du -sh "/var/www/sites/$name"
