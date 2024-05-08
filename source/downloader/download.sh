@@ -47,6 +47,8 @@ echo
 #sudo curl -o "/var/www/scripts/start_manager.sh" "https://raw.githubusercontent.com/quarzasiphix/server-setup/master/general/scripts/start_manager.sh" > /dev/null 2>&1
 #udo chmod +x /var/www/scripts/start_manager.sh
 
+#get version:
+sudo curl -o "$dir/version.txt" "$url/version.txt" > /dev/null 2>&1
 
 # Read each line from the file
 
