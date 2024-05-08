@@ -39,6 +39,7 @@ ProjectBanner() {
 }
 
 main () {
+    clear
     while true; do
         while [ "$IsSetProject" == "false" ]; do 
         general
