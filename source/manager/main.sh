@@ -14,6 +14,41 @@ nginxdisabled="/etc/nginx/disabled"
 currentdomain=
 IsSetProject=false
 
+#!/bin/bash
+
+#!/bin/bash
+
+# Function to retrieve the current version from the file
+get_current_version() {
+    # Use cat to read the version from the file
+    version=$(cat ../../version.txt)
+    echo "$version"
+}
+
+# Function to retrieve the latest version from the website
+get_latest_version() {
+    # Use curl to fetch the plain text content of the website
+    latest_version=$(curl -s https://example.com)
+
+    echo "$latest_version"
+}
+
+# Function to check for updates
+check_for_update() {
+    current_version=$(get_current_version)
+    latest_version=$(get_latest_version)
+
+    if [[ "$current_version" != "$latest_version" ]]; then
+        echo "There is an update available! Current version: $current_version, Latest version: $latest_version"
+    else
+        echo "You are already using the latest version: $current_version"
+    fi
+}
+
+# Call the function to check for updates
+check_for_update
+
+
 ProjectBanner() {
     server_name=$(</var/www/server/name.txt)
     server_location=$(</var/www/server/info.txt)
