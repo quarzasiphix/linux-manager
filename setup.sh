@@ -291,8 +291,7 @@ echo
 echo "checking directories.."
 echo
 
-$directory="/var/www"
-if [ ! -d "$directory" ]; then
+if [ ! -d "$wwwdir" ]; then
     echo
     echo "main directory /var/www/ not found.. setting up."
     echo
@@ -304,7 +303,7 @@ else
     echo
 fi
 
-if [ ! -d "$directory/server" ]; then
+if [ ! -d "$wwwdir/server" ]; then
     echo
     echo "server config not found.."
     echo
@@ -315,7 +314,7 @@ else
     echo
 fi
 
-if [ ! -d "$directory/sites/goaccess" ]; then
+if [ ! -d "$wwwdir/sites/goaccess" ]; then
     echo
     echo "go access not found.."
     echo
