@@ -128,7 +128,7 @@ GrabDomain() {
 # Function to extract database password from wp-config.php
 extract_db_password() {
     wp_config_file="/var/www/sites/$name/wp-config.php"
-    db_password=$(sed -nE "s/.*DB_PASSWORD\s*=\s*['\"](\w*)['\"].*/\1/p" "$wp_config_file")
+    db_password=$(sed -nE "s/.*DB_PASSWORD\s*=\s*['\"](.*)['\"].*/\1/p" "$wp_config_file")
     echo "$db_password"
 }
 
@@ -156,10 +156,12 @@ ChangeDomain() {
         # Check if the password was found
         if [ -z "$db_password" ]; then
             echo "Error: Database password not found in wp-config.php"
+            echo "password: $db_password"
         else
             echo
             echo -e "Database password found"
             echo
+            return
         fi
 
     # Update WordPress options table
