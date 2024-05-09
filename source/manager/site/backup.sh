@@ -69,7 +69,7 @@ BackupWP() {
         sudo mv "$tempdir" "$backupdir/archive/$(date +%F)"
     fi
     echo
-
+    sudo mkdir "$tempdir"
     sudo chmod -R 777 "$tempdir" > /dev/null
 
     # Perform MySQL database backup.
