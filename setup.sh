@@ -99,6 +99,7 @@ SetupSsh() {
     sudo chown $admin_name:$admin_name $dir/.ssh/authorized_keys
     sudo nano $dir/.ssh/authorized_keys
 
+
     #ssh security
     echo
     echo "securing ssh"
@@ -238,13 +239,13 @@ ConfigServer() {
     echo
     echo
 EOT
-
-    read -p "setup admin account?: " setadmin
-    case $setadmin in
-    'yes')
-        SetupAdmin
-    ;;
-    esac
+    read -p "admin account name: " admin_name
+    SetupSsh
+    #read -p "setup admin account?: " setadmin
+    #case $setadmin in
+    #'yes')
+    #;;
+    #esac
 
 }
 
@@ -283,6 +284,8 @@ case $newserv in
 *)
     echo
     echo "ight, we'll see about that"
+    ConfigServer
+    SetupDirs
     echo
 ;;
 esac
@@ -295,7 +298,6 @@ if [ ! -d "$wwwdir" ]; then
     echo
     echo "main directory /var/www/ not found.. setting up."
     echo
-    SetupDirs
     echo
 else 
     echo
@@ -307,7 +309,6 @@ if [ ! -d "$wwwdir/server" ]; then
     echo
     echo "server config not found.."
     echo
-    ConfigServer
 else
     echo
     echo "server config located.."

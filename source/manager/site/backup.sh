@@ -93,6 +93,8 @@ BackupWP() {
     # Backup WordPress files.
     sudo cp -R "/var/www/sites/$name" "$tempdir/$name" > /dev/null
 
+    sudo mkdir -p "$backupdir" > /dev/null
+    
     # Copy existing backup
     # Check if the file exists
     counter=1
@@ -128,13 +130,6 @@ BackupWP() {
     fi
     echo
     echo -e "\e[32m Backup completed. \e[0m  Files are stored in $backupdir."
-
-
-    # Create the backup directory if it doesn't exist.
-    sudo mkdir -p "$backupdir" > /dev/null
-
-    # Move the backup file to the backup directory.
-    sudo mv "$name-$(date +%F).zip" "$backupdir/"
 
     du -sh $tempdir
     read -p "Remove temp directory?: " _temp
