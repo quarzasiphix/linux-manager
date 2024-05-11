@@ -212,22 +212,6 @@ managesite() {
         echo
         echo "Current domain: $currentdomain" 
         echo
-        echo "Logs folder size: "
-        du -sh "/var/www/logs/$name"
-        echo
-                # Check if directory exists
-        if [ -d "/var/www/backups/$name" ]; then
-            # If directory exists, show size
-            echo "Backups folder size:"
-            du -sh "/var/www/backups/$namey"
-        else
-            # If directory does not exist, show message
-            echo "No backups found"
-        fi
-        echo
-        echo "source folder size: "
-        du -sh "/var/www/sites/$name"
-
         echo "What would you like to do to $name?"
         echo
         echo "0. Change project"
@@ -246,6 +230,7 @@ managesite() {
         echo "3. Reset project"
         echo "4. Change domain"
         # Read user's choice
+        echo "s. Check weight of source files"
         echo "b. Create backup"
         echo "r. Restore back"
         echo
@@ -313,6 +298,28 @@ managesite() {
             echo 
             echo "Changing domain..."
             ChangeDomain
+        ;;
+        's')
+            clear
+            echo "storage usage for $name"
+            echo
+            echo "  Logs folder size: "
+            du -sh "/var/www/logs/$name"
+            echo
+                    # Check if directory exists
+            if [ -d "/var/www/backups/$name" ]; then
+                # If directory exists, show size
+                echo "  Backups folder size:"
+                du -sh "/var/www/backups/$namey"
+            else
+                # If directory does not exist, show message
+                echo "No backups found"
+            fi
+            echo
+            echo "  source folder size: "
+            du -sh "/var/www/sites/$name"
+            echo
+            echo
         ;;
         'b')
             clear
