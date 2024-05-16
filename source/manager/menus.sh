@@ -217,9 +217,9 @@ managesite() {
         echo "0. Change project"
         echo
         if [ -f "$nginxconfdir/$name.nginx" ]; then
-            echo -e "\e[31m Disble\e[0m site"
+            echo -e "5)\e[31m Disble\e[0m site"
         elif [ -f "$nginxdisabled/$name.nginx" ]; then
-            echo -e "\e[32m Enable\e[0m site "
+            echo -e "5)\e[32m Enable\e[0m site "
         else
             echo
             echo "  :site status unknown:  "
