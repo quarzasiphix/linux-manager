@@ -49,7 +49,7 @@ EOT
     echo
     echo "setting up nginx config"
     echo
-
+    sudo chown -R www-data:www-data "$dir"
     # Create Nginx configuration file
     nginx_log_dir="/var/www/logs/$name"
     sudo mkdir $nginx_log_dir > /dev/null

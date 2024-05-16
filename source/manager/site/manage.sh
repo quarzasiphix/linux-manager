@@ -137,14 +137,23 @@ ChangeDomain() {
     echo
     echo "Changing domain for project $name"
     echo
+    read -p "Add or replace domain? (R, A):  " radomain
     read -p "Enter new domain: " new_domain
     echo
     GrabDomain 
     currentdomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
     if [ -f "$nginxconfdir/$name.nginx" ]; then
-        sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxconfdir/$name.nginx"
+        echo
+        echo "  domains"
+        echo
+        domains=$(grep -o 'server_name.*;' "$nginxconfdir/$name.nginx" | awk '{for(i=2; i<=NF; i++) print $i}' | sed 's/;//')
+        printf "%s\n" "$domains"
     elif [ -f "$nginxdisabled/$name.nginx" ]; then
-        sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxdisabled/$name.nginx"
+        echo
+        echo "  domains"
+        echo
+        domains=$(grep -o 'server_name.*;' "$nginxdisabled/$name.nginx" | awk '{for(i=2; i<=NF; i++) print $i}' | sed 's/;//')
+        printf "%s\n" "$domains"
     else
         new_domain="unkown"
         echo "couldnt find nginx config"

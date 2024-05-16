@@ -917,6 +917,7 @@ while true; do
                 GrabDomain 
                 if [ -f "$nginxconfdir/$name.nginx" ]; then
                     sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxconfdir/$name.nginx"
+                    sudo sed -i "s/server_name \(.*\);/server_name \1 $new_domain;/g" "$conf_file"
                 elif [ -f "$nginxdisabled/$name.nginx" ]; then
                     sudo sed -i "s/server_name .*/server_name $new_domain www.$new_domain;/g" "$nginxdisabled/$name.nginx"
                 else
