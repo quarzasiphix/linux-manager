@@ -367,28 +367,31 @@ managesite() {
         *)
             echo "Invalid choice. Please enter a number between 1 and 4."
         ;;
-        
+        esac
+    if [ -f "$nginxconfdir/$name.nginx" ]; then
+        case $choice in
+        5)
+            clear
+            DisableConf
+        ;;
         'disable')
             clear
             DisableConf
         ;;
-
-        'enable')
-            clear
-            echo 
-            echo -e "\e[32m Enabling site... \e[0m"
-            echo
-            sudo rm $nginxconfdir/$name.disabled
-            sudo mv $nginxdisabled/$name.nginx $nginxconfdir
-            echo
-            echo "restarting nginx..."
-            echo
-            sudo systemctl restart nginx
-            echo
-            echo "Enabled! $name"
-            echo
-        ;;
+        
         esac
+    elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
+        case $choice in
+            5)
+                clear
+                EnableConf
+            ;;
+            'enable')
+                clear
+                EnableConf
+            ;;
+        esac
+    fi
 
     elif [ -d "/var/www/backups/$name" ]; then
         clear
@@ -435,7 +438,7 @@ managesite() {
             clear
             IsSetProject=false
             ;;
-      esac
+    esac
   
     else
         echo 

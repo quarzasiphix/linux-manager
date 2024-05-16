@@ -89,6 +89,20 @@ EditConf() {
     sudo systemctl restart nginx
 }
 
+EnableConf() {
+    echo 
+    echo -e "\e[32m Enabling site... \e[0m"
+    echo
+    sudo rm $nginxconfdir/$name.disabled
+    sudo mv $nginxdisabled/$name.nginx $nginxconfdir
+    echo
+    echo "restarting nginx..."
+    echo
+    sudo systemctl restart nginx
+    echo
+    echo "Enabled! $name"
+    echo
+}
 
 DisableConf() {
     echo
