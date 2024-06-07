@@ -59,14 +59,11 @@ echo "version: $current_version"
 
 while IFS= read -r line; do
     # Check if the line contains "server"
-    if [[ "$line" == *"server"* ]]; then
-        # Change the current array to server
+    if [[ "$line" == "server" ]]; then
         current_array="server"
-    elif [[ "$line" == *"site"* ]]; then
-        # Change the current array to site
+    elif [[ "$line" == "site" ]]; then
         current_array="site"
-    elif [[ "$line" == *"menus"* ]]; then
-        # Change the current array to site
+    elif [[ "$line" == "menus" ]]; then
         current_array="menus"
     else
         # Add the line to the current array
