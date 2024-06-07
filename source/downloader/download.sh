@@ -22,6 +22,7 @@ sudo rm -R "$dir"
 sudo mkdir "$dir"
 sudo mkdir "$dir/site"
 sudo mkdir "$dir/server"
+sudo mkdir "$dir/menus"
 
 sudo chmod 777 -R "$dir"
 
@@ -53,7 +54,7 @@ echo "getting version.."
 echo
 sudo curl -o "$dir/version.txt" "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt" > /dev/null 2>&1
 sudo chmod 777 "$dir/version.txt"
-current_version=$(cat version.txt)
+current_version=$(cat $dir/version.txt)
 echo "version: $current_version"
 # Read each line from the file
 
@@ -78,7 +79,7 @@ while IFS= read -r line; do
         else 
             echo
             echo "downloading $current_array script $line..."
-            sudo curl -o "$dir/$current_array/$line.sh" "$url/$current_array/$line.sh" > /dev/null 2>&1
+            sudo curl -o "$dir/$current_array/$line.sh" "$url/$current_array/$line.sh" > /dev/null
             sudo chmod +x "$dir/$current_array/$line.sh"
             echo "done downloading $line"
             echo
