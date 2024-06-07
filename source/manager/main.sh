@@ -7,6 +7,19 @@ sdir="/var/www/scripts/manager"
 . $sdir/server/stuff.sh
 . $sdir/site/manage.sh
 
+. $sdir/menus/general.sh
+. $sdir/menus/managesite.sh
+. $sdir/menus/configurator.sh
+
+. $sdir/server/stuff.sh
+. $sdir/site/manage.sh
+. $sdir/site/setupwp.sh
+. $sdir/site/restore.sh
+. $sdir/site/backup.sh
+. $sdir/site/webs.sh
+. $sdir/site/setuphtml.sh
+
+
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
 
