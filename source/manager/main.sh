@@ -2,14 +2,8 @@
 
 sdir="/var/www/scripts/manager"
 
-. $sdir/menus.sh
-
 . $sdir/server/stuff.sh
 . $sdir/site/manage.sh
-
-. $sdir/menus/general.sh
-. $sdir/menus/managesite.sh
-. $sdir/menus/configurator.sh
 
 . $sdir/server/stuff.sh
 . $sdir/site/manage.sh
@@ -19,6 +13,9 @@ sdir="/var/www/scripts/manager"
 . $sdir/site/webs.sh
 . $sdir/site/setuphtml.sh
 
+. $sdir/menus/general.sh
+. $sdir/menus/managesite.sh
+. $sdir/menus/configurator.sh
 
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
@@ -29,7 +26,7 @@ IsSetProject=false
 
 #!/bin/bash
 latest_version=""
-current_version=$(cat $dir/version.txt)
+current_version=$(cat $sdir/version.txt)
 
 check_for_update() {
     latest_version=$(curl -s "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt")
