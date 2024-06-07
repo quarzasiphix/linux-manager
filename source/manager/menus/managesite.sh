@@ -1,3 +1,4 @@
+dir="/var/www/sites/$name"
 
 managesite() {
     ProjectBanner
