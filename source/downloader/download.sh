@@ -65,6 +65,9 @@ while IFS= read -r line; do
     elif [[ "$line" == *"site"* ]]; then
         # Change the current array to site
         current_array="site"
+    elif [[ "$line" == *"menus"* ]]; then
+        # Change the current array to site
+        current_array="menus"
     else
         # Add the line to the current array
         if [ "$current_array" == "general" ]; then

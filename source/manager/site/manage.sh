@@ -109,8 +109,8 @@ DisableConf() {
     echo
     echo
 
-    sudo mkdir "$nginxdisabled" > /dev/null 2>&1
     echo -e " \e[31m Disbling site... \e[0m"
+    sudo mkdir "$nginxdisabled" > /dev/null 2>&1
     grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
     echo
     echo "Disabling config for $name on $grabbeddomain..."

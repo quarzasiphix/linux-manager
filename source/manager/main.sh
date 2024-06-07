@@ -1,11 +1,11 @@
 #!/bin/bash
 
-dir="/var/www/scripts/manager"
+sdir="/var/www/scripts/manager"
 
-. $dir/menus.sh
+. $sdir/menus.sh
 
-. $dir/server/stuff.sh
-. $dir/site/manage.sh
+. $sdir/server/stuff.sh
+. $sdir/site/manage.sh
 
 nginxconfdir="/etc/nginx/sites-enabled"
 nginxdisabled="/etc/nginx/disabled"
