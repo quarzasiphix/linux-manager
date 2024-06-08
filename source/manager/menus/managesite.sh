@@ -200,7 +200,6 @@ managesite() {
     fi
 
     elif [ -d "/var/www/backups/$name" ]; then
-        ProjectBanner
         echo
         echo
         echo "no active running site for project"

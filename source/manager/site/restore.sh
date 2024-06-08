@@ -24,8 +24,12 @@ RestoreWP() {
     fi
 
     # Get database password
-    read -sp "Enter database password: " dbpass
-    echo
+    dbpass=$(awk -F"'" '/DB_PASSWORD/ {print $4}' "$dir/wp-config.php")
+
+    if [ -z "$dbpass" ]; then
+        echo "Error: Could not retrieve database password from wp-config.php"
+        return 1
+    fi
 
     echo
     echo "Continuing..."
@@ -35,6 +39,10 @@ RestoreWP() {
 
     # Unzip the backup file
     sudo unzip "$backupdir/$backup" -d "$backupdir/" > /dev/null
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to unzip the backup file"
+        return 1
+    fi
 
     echo 
     echo "Clearing previous files"
@@ -69,7 +77,11 @@ RestoreWP() {
     FLUSH PRIVILEGES;
 EOF
 
-    sudo mysql -u $name -p$dbpass $name < "$backupdir/$name-temp/$name.sql"
+    sudo mysql -u $name -p"$dbpass" $name < "$backupdir/$name-temp/$name.sql"
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to restore the database"
+        return 1
+    fi
 
     # Clean up temporary backup directory
     sudo rm -rf "$backupdir/$name-temp" > /dev/null 2>&1
@@ -82,12 +94,15 @@ EOF
 
     # Restart Nginx to apply changes
     sudo systemctl restart nginx
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to restart Nginx"
+        return 1
+    fi
 
     echo
     echo "Restore complete"
     echo
 }
-
 
 
 #echo 
