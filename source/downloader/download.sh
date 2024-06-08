@@ -55,7 +55,7 @@ echo
 sudo curl -o "$dir/version.txt" "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt" > /dev/null 2>&1
 sudo chmod 777 "$dir/version.txt"
 current_version=$(cat $dir/version.txt)
-echo "version: $current_version"
+echo -e "version: \e[32m$current_version\e[0m"
 # Read each line from the file
 
 while IFS= read -r line; do
