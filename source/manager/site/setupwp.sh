@@ -6,8 +6,6 @@ SetupWP() {
     # Get database password
     read -sp "Enter Project password: " password
     echo
-
-    dir="/var/www/sites/$name"
     
     echo "setting up wordpress"
 
