@@ -23,14 +23,6 @@ RestoreWP() {
         return  # Exit the function
     fi
 
-    # Get database password
-    dbpass=$(awk -F"'" '/DB_PASSWORD/ {print $4}' "$dir/wp-config.php")
-
-    if [ -z "$dbpass" ]; then
-        echo "Error: Could not retrieve database password from wp-config.php"
-        return 1
-    fi
-
     echo
     echo "Continuing..."
     echo
@@ -66,6 +58,14 @@ RestoreWP() {
     echo
     echo "Setting up database"
     echo    
+
+    # Get database password
+    dbpass=$(awk -F"'" '/DB_PASSWORD/ {print $4}' "$dir/wp-config.php")
+
+    if [ -z "$dbpass" ]; then
+        echo "Error: Could not retrieve database password from wp-config.php"
+        return 1
+    fi
 
     # Restore the database
     sudo mysql -u root <<EOF
