@@ -200,7 +200,6 @@ managesite() {
     fi
 
     elif [ -d "/var/www/backups/$name" ]; then
-        clear
         ProjectBanner
         echo
         echo
