@@ -23,22 +23,33 @@ RestoreWP() {
         return  # Exit the function
     fi
 
+    # Get database password
+    read -sp "Enter database password: " dbpass
+    echo
+
     echo
     echo "Continuing..."
     echo
+    echo "Unzipping backup file"
+    echo
+
+    # Unzip the backup file
+    sudo unzip "$backupdir/$backup" -d "$backupdir/" > /dev/null
+
+    echo 
     echo "Clearing previous files"
     echo
 
     # Remove old WordPress files and Nginx configuration
     sudo rm -rf "$dir"
-    sudo rm "/etc/nginx/sites-enabled/$name.nginx"
+    sudo rm "/etc/nginx/sites-enabled/$name.nginx" > /dev/null 2>&1
 
     echo
     echo "Moving WordPress files to directory"
     echo
 
     # Move the backup files to their appropriate locations
-    sudo mv "$backupdir/$backup/var/www/backups/$name/$name-temp" "$backupdir/"
+    sudo mv "$backupdir/var/www/backups/$name/$name-temp" "$backupdir/" > /dev/null 2>&1
     sudo rm -rf "$backupdir/var" > /dev/null 2>&1
     sudo mv "$backupdir/$name-temp/$name" "/var/www/sites/"
     sudo mv "$backupdir/$name-temp/$name.nginx" "/etc/nginx/sites-enabled/"
@@ -53,12 +64,12 @@ RestoreWP() {
     DROP DATABASE IF EXISTS $name;
     CREATE DATABASE $name;
     DROP USER IF EXISTS '$name'@'localhost';
-    CREATE USER '$name'@'localhost' IDENTIFIED BY '$password';
+    CREATE USER '$name'@'localhost' IDENTIFIED BY '$dbpass';
     GRANT ALL PRIVILEGES ON $name.* TO '$name'@'localhost';
     FLUSH PRIVILEGES;
 EOF
 
-    sudo mysql -u $name -p$password $name < "$backupdir/$name-temp/$name.sql"
+    sudo mysql -u $name -p$dbpass $name < "$backupdir/$name-temp/$name.sql"
 
     # Clean up temporary backup directory
     sudo rm -rf "$backupdir/$name-temp" > /dev/null 2>&1
@@ -76,7 +87,6 @@ EOF
     echo "Restore complete"
     echo
 }
-
 
 
 
