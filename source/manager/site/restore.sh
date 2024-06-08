@@ -67,6 +67,10 @@ RestoreWP() {
         return 1
     fi
 
+    echo 
+    echo "DB password: $dbpass"
+    echo
+
     # Restore the database
     sudo mysql -u root <<EOF
     DROP DATABASE IF EXISTS $name;
