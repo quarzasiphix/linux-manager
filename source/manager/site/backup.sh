@@ -48,29 +48,26 @@
    #     sudo mkdir "$tempdir"
    # fi
 
-
 BackupWP() {
     # Define variables.
     nginx_config="/etc/nginx/sites-enabled/$name.nginx"
     backupdir="/var/www/backups/$name"
     tempdir="$backupdir/$name-temp"
 
-    # Create a temporary directory and set appropriate permissions.
-    sudo mkdir "$backupdir" > /dev/null 2>&1
-    sudo mkdir "$backupdir/archive/" > /dev/null 2>&1
-    sudo mkdir "$backupdir/archive/$(date +%F)" > /dev/null 2>&1
+    # Create directories if they don't exist.
+    sudo mkdir -p "$backupdir/archive/$(date +%F)" > /dev/null 2>&1
 
     if [ -d "$tempdir" ]; then
-        echo "temp dir size: "
+        echo "Temp dir size: "
         du -sh "$tempdir"
         echo
-        echo "moving existing temp directory to archive $(date +%F)"
-        echo
-        sudo mv "$tempdir" "$backupdir/archive/$(date +%F)"
+        echo "Moving existing temp directory to archive $(date +%F)"
+        sudo mv "$tempdir" "$backupdir/archive/$(date +%F)/"
     fi
+
     echo
-    sudo mkdir "$tempdir"
-    sudo chmod -R 777 "$tempdir" > /dev/null
+    sudo mkdir -p "$tempdir"
+    sudo chmod -R 777 "$tempdir" > /dev/null 2>&1
 
     # Perform MySQL database backup.
     sudo mysqldump -u root --single-transaction "$name" > "$tempdir/$name.sql"
@@ -78,66 +75,70 @@ BackupWP() {
     # Backup Nginx configuration.
     sudo cp "$nginx_config" "$tempdir/"
 
-    # Backup Logs
-    sudo cp -R "/var/www/logs/$name" "$tempdir/logs/" > /dev/null
+    # Backup logs.
+    sudo cp -R "/var/www/logs/$name" "$tempdir/logs/" > /dev/null 2>&1
     echo "Logs folder size: "
     du -sh "/var/www/logs/$name"
 
     echo
     echo "Backing up source files"
     echo
-
-    echo "source folder size: "
+    echo "Source folder size: "
     du -sh "/var/www/sites/$name"
 
     # Backup WordPress files.
-    sudo cp -R "/var/www/sites/$name" "$tempdir/$name" > /dev/null
+    sudo cp -R "/var/www/sites/$name" "$tempdir/$name" > /dev/null 2>&1
 
-    sudo mkdir -p "$backupdir" > /dev/null
-    
-    # Copy existing backup
-    # Check if the file exists
     counter=1
-    while [ -f "$backupdir/$name-$(date +%F)-$counter.zip" ]; do
+    backupfile="$backupdir/$name-$(date +%F)"
+    while [ -f "${backupfile}-$counter.zip" ]; do
         ((counter++))
     done
 
-    if [ -f "$backupdir/$name-$(date +%F).zip" ]; then
-        # If the file exists, copy it to the archive folder
-        #cp "$name-$(date +%F).zip" "$backupdir/archive"
-        #sudo mv "$backupdir/$name-$(date +%F).zip" "$backupdir/$name-$(date +%F)-$counter.zip
+    if [ -f "$backupfile.zip" ]; then
         echo
-        echo "$counter backups made on $(date +%F) "
+        echo "$counter backups made on $(date +%F)"
         echo
         echo "Zipping backup files"
-        echo
-        sudo zip -r "$name-$(date +%F)-$counter.zip" "$tempdir"  > /dev/null
-        sudo mv "$name-$(date +%F)-$counter.zip" "$backupdir/"
-        echo 
-        echo "Backup archive size: "
-        du -sh "$backupdir/$name-$(date +%F)-$counter.zip"
+        sudo zip -r "${backupfile}-$counter.zip" "$tempdir" > /dev/null
+        sudo mv "${backupfile}-$counter.zip" "$backupdir/"
+        final_backupfile="${backupfile}-$counter.zip"
     else
         echo
         echo "First backup of today $(date +%F)"
         echo
         echo "Zipping backup files"
-        echo
-        sudo zip -r "$name-$(date +%F).zip" "$tempdir"  > /dev/null
-        sudo mv "$name-$(date +%F).zip" "$backupdir/"
-        echo 
-        echo "Backup archive size: "
-        du -sh "$backupdir/$name-$(date +%F).zip"
+        sudo zip -r "${backupfile}.zip" "$tempdir" > /dev/null
+        sudo mv "${backupfile}.zip" "$backupdir/"
+        final_backupfile="${backupfile}.zip"
     fi
-    echo
-    echo -e "\e[32m Backup completed. \e[0m  Files are stored in $backupdir."
 
-    du -sh $tempdir
-    read -p "Remove temp directory?: " _temp
-    # Remove the temporary directory.
+    echo
+    echo "Backup archive size:"
+    du -sh "$final_backupfile"
+    echo
+    echo -e "\e[32mBackup completed. \e[0m Files are stored in $backupdir."
+
+    du -sh "$tempdir"
+    read -p "Remove temp directory? (yes/no): " _temps
     if [ "$_temps" = "yes" ]; then
-        sudo rm -R $tempdir 
+        sudo rm -R "$tempdir"
     fi
+
+    read -p "Setup for goaccess download? (yes/no): " _public
+    if [ "$_public" = "yes" ]; then
+        sudo cp -R "$final_backupfile" "/var/www/sites/goaccess/backups/"
+        if [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
+            tempname=$name
+            name="goaccess"
+            EnableConf
+            name=$tempname
+
+            echo "Enabled goaccess site"
+        fi
+    fi  
 }
+
 
 backupAll() {
     # Define variables.
