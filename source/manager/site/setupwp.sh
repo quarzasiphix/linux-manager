@@ -109,7 +109,7 @@ EOT
     echo
     echo "setting permissions"
     echo 
-
+    
     sudo chmod 644 	"$dir/wp-admin/index.php" > /dev/null
     sudo chmod 600 "$dir/wp-config.php" > /dev/null
     sudo chmod -R 755 "$dir/wp-content/uploads" > /dev/null

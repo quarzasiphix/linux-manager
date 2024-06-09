@@ -91,10 +91,10 @@ EOF
     sudo rm -rf "$backupdir/$name-temp" > /dev/null 2>&1
 
     # Set ownership and permissions
-    sudo chown -R www-data:www-data "$dir"
     sudo chmod -R 755 "$dir"
-    sudo chmod 600 "$dir/wp-config.php" > /dev/null 2>&1
+    sudo chmod 640 "$dir/wp-config.php" > /dev/null 2>&1
     sudo chmod -R 755 "$dir/wp-content/uploads" > /dev/null 2>&1
+    sudo chown -R www-data:www-data "$dir"
 
     # Restart Nginx to apply changes
     sudo systemctl restart nginx
