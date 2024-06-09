@@ -1,4 +1,5 @@
 nginxdisabled="/etc/nginx/disabled"
+name=""
 
 SetProject() {
     clear
@@ -17,8 +18,6 @@ SetProject() {
     source="/var/www/sites/$name"
     GrabDomain
     IsSetProject=true
-
-    clear
 }
 
 

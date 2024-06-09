@@ -40,7 +40,6 @@ SetupWP() {
     FLUSH PRIVILEGES;
     \q
 EOF
-GRANT ALL PRIVILEGES ON frano.* TO 'frano'@'localhost';
 
     echo
     echo "Setting up Nginx"
@@ -92,20 +91,7 @@ EOT
     echo "Created WordPress project $name"
     echo
     
-    echo
-    echo "initialising project with wp cli.."
-    echo
    
-    # Use WP-CLI to configure WordPress
-    # Force https and allow 512mb file size
-    dbprefix="${name:0:1}${name: -1}_"
-    wp core config --path="$dir" --dbname="$name" --dbuser="$name" --dbpass="$password" --dbprefix="$dbprefix" --dbhost="localhost" --extra-php <<PHP
-    define( 'WP_MEMORY_LIMIT', '512M' );
-    \$_SERVER['HTTPS'] = 'on';
-PHP
-    echo 
-    echo "project config initialised.."
-    echo
 
     sudo cp -R /var/www/libs/elementor-pro $dir/wp-content/plugins/
     sudo cp -R /var/www/libs/kera $dir/wp-content/themes/
@@ -113,10 +99,27 @@ PHP
     echo
     echo "setting permissions"
     echo 
-    
+
+    sudo chown -R www-data:www-data "$dir"
     sudo chmod 644 	"$dir/wp-admin/index.php" > /dev/null
-    sudo chmod 600 "$dir/wp-config.php" > /dev/null
     sudo chmod -R 755 "$dir/wp-content/uploads" > /dev/null
+
+    echo
+    echo "initialising project with wp cli.."
+    echo
+
+    # Use WP-CLI to configure WordPress
+    # Force https and allow 512mb file size
+    dbprefix="${name:0:1}${name: -1}_"
+    wp core config --path="$dir" --dbname="$name" --dbuser="$name" --dbpass="$password" --dbprefix="$dbprefix" --dbhost="localhost" --extra-php <<PHP
+    define( 'WP_MEMORY_LIMIT', '512M' );
+    \$_SERVER['HTTPS'] = 'on';
+PHP
+    sudo chmod 600 "$dir/wp-config.php" > /dev/null
+
+    echo 
+    echo "project config initialised.."
+    echo
 
     echo
     echo "project $name setup succesfully"

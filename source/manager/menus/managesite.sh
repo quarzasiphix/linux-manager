@@ -255,7 +255,6 @@ managesite() {
                 echo "setup wordpress project for $name"
                 echo
                 SetupWP
-                clear
                 echo "successfully setup project $name"
                 echo
                 ;;
