@@ -21,7 +21,9 @@ SetupWP() {
     echo "downloading wordpress files... "
     echo
     sudo wget https://wordpress.org/latest.tar.gz
-    sudo rm -R "$dir"
+    
+    sudo mkdir "/var/www/backups/temp-old"
+    sudo mv "$dir" "/var/www/backups/temp-old"
     sudo mkdir "$dir"
     echo "$password" | sudo tee "$dir/password.txt" > /dev/null
     echo
