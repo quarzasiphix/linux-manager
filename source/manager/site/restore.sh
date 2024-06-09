@@ -63,7 +63,9 @@ RestoreWP() {
     dbpass=$(sudo awk -F"'" '/DB_PASSWORD/ {print $4}' "$dir/wp-config.php")
 
     if [ -z "$dbpass" ]; then
+        echo
         echo "Error: Could not retrieve database password from wp-config.php"
+        echo
         return 1
     fi
 

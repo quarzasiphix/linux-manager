@@ -91,21 +91,25 @@ EOT
     echo
     echo "Created WordPress project $name"
     echo
-
-    # Wait until wp-config.php has <?php tag on the first line
-    echo "waiting on user to initialise project on $domain"
+    
     echo
-    while ! head -n 1 "$dir/wp-config.php" 2>/dev/null | grep -q "^<?php"; do
-        sleep 1
-    done
+    echo "initialising project with wp cli.."
+    echo
+   
+    # Use WP-CLI to configure WordPress
+    # Force https and allow 512mb file size
+    dbprefix="${name:0:1}${name: -1}_"
+    wp core config --path="$dir" --dbname="$name" --dbuser="$name" --dbpass="$password" --dbprefix="$dbprefix" --dbhost="localhost" --extra-php <<PHP
+    define( 'WP_MEMORY_LIMIT', '512M' );
+    \$_SERVER['HTTPS'] = 'on';
+PHP
+    echo 
+    echo "project config initialised.."
+    echo
 
     sudo cp -R /var/www/libs/elementor-pro $dir/wp-content/plugins/
     sudo cp -R /var/www/libs/kera $dir/wp-content/themes/
 
-
-    # Force https and allow 512mb file size
-    sudo sed -i '2i$_SERVER["HTTPS"] = "on";' "$dir/wp-config.php"
-    sudo sed -i '4i define('"'"'WP_MEMORY_LIMIT'"'"', '"'"'512M'"'"');' "$dir/wp-config.php"
     echo
     echo "setting permissions"
     echo 
@@ -115,6 +119,6 @@ EOT
     sudo chmod -R 755 "$dir/wp-content/uploads" > /dev/null
 
     echo
-    echo "initialised https, project $name setup succesfully"
+    echo "project $name setup succesfully"
     echo
 }
