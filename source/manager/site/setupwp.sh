@@ -1,4 +1,11 @@
 SetupWP() {
+        # Check if name is empty
+    if [ -z "$name" ]; then
+        echo
+        echo "Error: Project name is empty. Exiting..."
+        echo
+        return 1
+    fi
     # Get domain
     read -p "Enter domain: " domain
     echo
