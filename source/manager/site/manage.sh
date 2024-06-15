@@ -1,5 +1,5 @@
 nginxdisabled="/etc/nginx/disabled"
-config_file="$dir/wp-config.php"
+config_file="/var/www/sites/$name/wp-config.php"
 name=""
 
 SetProject() {
