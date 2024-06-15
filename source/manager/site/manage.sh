@@ -1,4 +1,5 @@
 nginxdisabled="/etc/nginx/disabled"
+config_file="$dir/wp-config.php"
 name=""
 
 SetProject() {
@@ -89,13 +90,7 @@ is_debug_enabled() {
 
 DisableDebug() {
     # Path to wp-config.php
-    config_file="$dir/wp-config.php"
-
     # Check if wp-config.php exists
-    if [ ! -f "$config_file" ]; then
-        echo "Error: $config_file not found."
-        return
-    fi
     echo
     echo "Disabling Debug mode for $name"
     echo
@@ -110,14 +105,6 @@ DisableDebug() {
 EnanbleDebug() {
     # Check if directory argument is provided
     # Path to wp-config.php
-    config_file="$dir/wp-config.php"
-
-    # Check if wp-config.php exists
-    if [ ! -f "$config_file" ]; then
-    echo "Error: $config_file not found."
-    exit 1
-    fi
-
     echo
     echo "Enabling Debug mode for $name"
     echo
