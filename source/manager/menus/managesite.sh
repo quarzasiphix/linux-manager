@@ -16,6 +16,12 @@ managesite() {
             echo -e " :Site \e[31m Disabled\e[0m:"
         fi
         echo
+        if is_debug_enabled; then
+            echo "  \033[38;5;214mDEBUG ENABLED\033[0m"
+        else
+            echo "Debug Disabled1"
+        fi
+        echo
         echo "Current domain: $currentdomain" 
         echo
         echo "What would you like to do to $name?"
@@ -39,6 +45,7 @@ managesite() {
         echo "s. Check weight of source files"
         echo "b. Create backup"
         echo "r. Restore back"
+        echo "d. Toggle debug"
         echo
         echo "pass. Show project password"
         echo "del. Delete project"
@@ -104,6 +111,16 @@ managesite() {
             echo 
             echo "Changing domain..."
             ChangeDomain
+        ;;
+        's')
+            clear
+            if is_debug_enabled; then
+                clear
+                DisableDebug
+            else
+                clear
+                EnanbleDebug    
+            fi
         ;;
         's')
             clear

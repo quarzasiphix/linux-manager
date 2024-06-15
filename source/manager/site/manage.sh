@@ -77,6 +77,36 @@ EOF
     fi
 }
 
+
+# Function to check if debug is enabled
+is_debug_enabled() {
+    grep -q "define('WP_DEBUG', true);" "$config_file" && \
+    grep -q "define('WP_DEBUG_LOG', true);" "$config_file" && \
+    grep -q "define('WP_DEBUG_DISPLAY', false);" "$config_file" && \
+    grep -q "@ini_set('display_errors', 0);" "$config_file" && \
+    grep -q "define('SCRIPT_DEBUG', true);" "$config_file"
+}
+
+DisableDebug() {
+    # Path to wp-config.php
+    config_file="$dir/wp-config.php"
+
+    # Check if wp-config.php exists
+    if [ ! -f "$config_file" ]; then
+        echo "Error: $config_file not found."
+        return
+    fi
+    echo
+    echo "Disabling Debug mode for $name"
+    echo
+
+    sed -i "s/define('WP_DEBUG', true);/define('WP_DEBUG', false);/" "$config_file"
+    sed -i "s/define('WP_DEBUG_LOG', true);/define('WP_DEBUG_LOG', false);/" "$config_file"
+    sed -i "s/define('WP_DEBUG_DISPLAY', false);/define('WP_DEBUG_DISPLAY', true);/" "$config_file"
+    sed -i "s/@ini_set('display_errors', 0);/@ini_set('display_errors', 1);/" "$config_file"
+    sed -i "s/define('SCRIPT_DEBUG', true);/define('SCRIPT_DEBUG', false);/" "$config_file" 
+}
+
 EnanbleDebug() {
     # Check if directory argument is provided
     # Path to wp-config.php
@@ -87,6 +117,10 @@ EnanbleDebug() {
     echo "Error: $config_file not found."
     exit 1
     fi
+
+    echo
+    echo "Enabling Debug mode for $name"
+    echo
 
     # Debug settings to add
     debug_settings="
