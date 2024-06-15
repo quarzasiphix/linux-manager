@@ -9,7 +9,7 @@ SetupHtml() {
     echo 
     echo "setting up template html file"
     echo
-    sudo rm "$dir/index.html"
+    sudo trash "$dir/index.html"
     sudo tee "$dir/index.html" > /dev/null <<EOT
     <!DOCTYPE html>
     <html lang="en">

@@ -55,8 +55,8 @@ DeleteWp() {
         echo "Removing files, config, and logs for project '$name'..."
         echo
 
-        sudo rm -R "/var/www/sites/$name"
-        sudo rm -R "/var/www/logs/$name"
+        sudo trash "/var/www/sites/$name"
+        sudo trash "/var/www/logs/$name"
         sudo rm "/etc/nginx/sites-enabled/$name.nginx"
 
         # Restarting nginx to update delete
@@ -74,6 +74,43 @@ EOF
         echo "Successfully removed project '$name'"
     else
         echo "Deletion canceled. No changes made."
+    fi
+}
+
+EnanbleDebug() {
+    # Check if directory argument is provided
+    # Path to wp-config.php
+    config_file="$dir/wp-config.php"
+
+    # Check if wp-config.php exists
+    if [ ! -f "$config_file" ]; then
+    echo "Error: $config_file not found."
+    exit 1
+    fi
+
+    # Debug settings to add
+    debug_settings="
+    /* Enable WP_DEBUG mode */
+    define('WP_DEBUG', true);
+
+    /* Enable Debug logging to the /wp-content/debug.log file */
+    define('WP_DEBUG_LOG', true);
+
+    /* Disable display of errors and warnings */
+    define('WP_DEBUG_DISPLAY', false);
+    @ini_set('display_errors', 0);
+
+    /* Use dev versions of core JS and CSS files (only needed if you are modifying these core files) */
+    define('SCRIPT_DEBUG', true);
+    "
+
+    # Check if WP_DEBUG is already defined
+    if grep -q "define('WP_DEBUG'" "$config_file"; then
+    echo "Debug settings already defined in $config_file"
+    else
+    # Add debug settings before the line that says "That's all, stop editing! Happy blogging."
+    sed -i "/^\/\* That's all, stop editing! Happy blogging. \*\//i $debug_settings" "$config_file"
+    echo "Debug settings added to $config_file"
     fi
 }
 

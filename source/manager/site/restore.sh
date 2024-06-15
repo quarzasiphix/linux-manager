@@ -41,7 +41,7 @@ RestoreWP() {
     echo
 
     # Remove old WordPress files and Nginx configuration
-    sudo rm -rf "$dir"
+    sudo trash -rf "$dir"
     sudo rm "/etc/nginx/sites-enabled/$name.nginx" > /dev/null 2>&1
 
     echo
@@ -50,7 +50,7 @@ RestoreWP() {
 
     # Move the backup files to their appropriate locations
     sudo mv "$backupdir/var/www/backups/$name/$name-temp" "$backupdir/" > /dev/null 2>&1
-    sudo rm -rf "$backupdir/var" > /dev/null 2>&1
+    sudo trash "$backupdir/var" > /dev/null 2>&1
     sudo mv "$backupdir/$name-temp/$name" "/var/www/sites/"
     sudo mv "$backupdir/$name-temp/$name.nginx" "/etc/nginx/sites-enabled/"
     sudo mkdir -p "/var/www/logs/$name"
