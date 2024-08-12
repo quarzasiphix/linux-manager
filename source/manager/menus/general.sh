@@ -58,6 +58,7 @@ general() {
             sudo mv /etc/nginx/sites-enabled/goaccess.nginx/ /etc/nginx/disabled/
             sudo systemctl restart nginx 
             echo
+            ::
         'conf')
             clear
             IsSetProject="conf"
