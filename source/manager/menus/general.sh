@@ -12,6 +12,8 @@ general() {
     echo "conf. Edit configs"
     echo "r. Restart nginx"
     echo
+    echo "g. Start goaccess"
+    echo 
     echo "reboot - Fully reboot the server"
     echo
     read -p "What you wanna do?: " adminchoice
@@ -39,6 +41,23 @@ general() {
             clear
             backupAll
             ;;
+        'g')
+            clear
+            echo
+            echo "starting nginx website"
+            echo
+            sudo mv /etc/nginx/disabled/goaccess.nginx/ /etc/nginx/sites-enabled/goaccess.nginx/ 
+            sudo systemctl restart nginx 
+            echo
+            echo
+            echo "Starting go access in real time.."
+            echo
+            sudo goaccess /var/log/nginx/access.log --log-format=COMBINED --real-time-html -o /var/www/sites/goaccess/report.html
+            echo
+            echo "disabling nginx server"
+            sudo mv /etc/nginx/sites-enabled/goaccess.nginx/ /etc/nginx/disabled/
+            sudo systemctl restart nginx 
+            echo
         'conf')
             clear
             IsSetProject="conf"
