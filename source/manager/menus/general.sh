@@ -1,3 +1,6 @@
+#!/bin/bash
+
+# Define your general function
 general() {
     ProjectBanner
     echo
@@ -35,7 +38,8 @@ general() {
             GraphAllActive
             ;;
         4)
-            
+            clear
+            DisableAllSites
             ;;
         5)
             clear
@@ -43,64 +47,49 @@ general() {
             ;;
         'g')
             clear
-            echo
-            echo "starting nginx website"
-            echo
-            sudo mv /etc/nginx/disabled/goaccess.nginx/ /etc/nginx/sites-enabled/goaccess.nginx/ 
-            sudo systemctl restart nginx 
-            echo
-            echo
-            echo "Starting go access in real time.."
-            echo
-            sudo goaccess /var/log/nginx/access.log --log-format=COMBINED --real-time-html -o /var/www/sites/goaccess/report.html
-            echo
-            echo "disabling nginx server"
-            sudo mv /etc/nginx/sites-enabled/goaccess.nginx/ /etc/nginx/disabled/
-            sudo systemctl restart nginx 
-            echo
-            ::
+            echo "Starting Nginx website..."
+            sudo mv /etc/nginx/disabled/goaccess.nginx /etc/nginx/sites-enabled/goaccess.nginx
+            sudo systemctl restart nginx
+            echo "Starting GoAccess in real-time..."
+            sudo goaccess /var/log/nginx/access.log --log-format=COMBINED --real-time-html -o /var/www/sites/goaccess/report.html &
+            echo "Disabling Nginx server..."
+            sudo mv /etc/nginx/sites-enabled/goaccess.nginx /etc/nginx/disabled/
+            sudo systemctl restart nginx
+            ;;
         'conf')
             clear
             IsSetProject="conf"
             ;;
         'r')
             clear
-            echo 
-            echo "restarting nginx..."
+            echo "Restarting Nginx..."
             sudo systemctl restart nginx
-            echo
-            echo "finished restarting nginx"
-            echo
+            echo "Finished restarting Nginx"
             ;;
         'reboot')
             clear
-            echo
-            echo "Any UNSAVED changes Will be LOST"
-            echo
-            echo "are you sure you want to fully reboot the server"
-            echo
+            echo "Any UNSAVED changes will be LOST"
+            echo "Are you sure you want to fully reboot the server?"
             read -p " (Type 'yes' to confirm reboot): " confirm
-
             if [[ $confirm == "yes" ]]; then
-                echo
-                echo "initiating full reboot of linux...."
-                echo
+                echo "Initiating full reboot of Linux..."
                 sudo reboot
-
-                echo "rebooting...."
-                echo
-
+                # This line will not be reached if `reboot` is successful
+                echo "Rebooting..."
                 while true; do
-                    echo "bye"
+                    echo "Bye"
+                    sleep 1
                 done
             else
-                echo "cancelling reboot"
-                echo
+                echo "Cancelling reboot"
             fi
             ;;
         *)
             clear
-            echo "invalid"
+            echo "Invalid option"
             ;;
     esac
 }
+
+# Ensure to call your function here if needed
+general
