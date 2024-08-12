@@ -1,6 +1,3 @@
-#!/bin/bash
-
-# Define your general function
 general() {
     ProjectBanner
     echo
