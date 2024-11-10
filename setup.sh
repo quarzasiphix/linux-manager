@@ -91,13 +91,13 @@ SetupSsh() {
     echo
 
     #setup ssh
-    dir="/home/$admin_name"
-    sudo mkdir $dir/.ssh
-    sudo chmod 700 $dir/.ssh
-    sudo touch $dir/.ssh/authorized_keys
-    sudo chown $admin_name:$admin_name $dir/.ssh
-    sudo chown $admin_name:$admin_name $dir/.ssh/authorized_keys
-    sudo nano $dir/.ssh/authorized_keys
+    udir="/home/$admin_name"
+    sudo mkdir $udir/.ssh
+    sudo chmod 700 $udir/.ssh
+    sudo touch $udir/.ssh/authorized_keys
+    sudo chown $admin_name:$admin_name $udir/.ssh
+    sudo chown $admin_name:$admin_name $udir/.ssh/authorized_keys
+    sudo nano $udir/.ssh/authorized_keys
 
 
     #ssh security

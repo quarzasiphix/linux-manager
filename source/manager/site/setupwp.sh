@@ -1,5 +1,5 @@
 SetupWP() {
-        # Check if name is empty
+    # Check if name is empty
     if [ -z "$name" ]; then
         echo
         echo "Error: Project name is empty. Exiting..."
@@ -7,6 +7,7 @@ SetupWP() {
         return 1
     fi
     # Get domain
+    dir="/var/www/sites/$name"
     read -p "Enter domain: " domain
     echo
 
@@ -104,6 +105,7 @@ EOT
 
     sudo cp -R /var/www/libs/elementor-pro $dir/wp-content/plugins/
     sudo cp -R /var/www/libs/kera $dir/wp-content/themes/
+
 
     echo
     echo "setting permissions"
