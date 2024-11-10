@@ -1,5 +1,4 @@
-name=
-dir="/var/www/sites/$name"
+
 config_file="/var/www/sites/$name/wp-config.php"
 nginxdisabled="/etc/nginx/disabled"
 
@@ -8,7 +7,9 @@ managesite() {
     echo
     echo "  Project: $name"
     echo
-
+    echo "  dir:  $dir " 
+    echo
+     
     if [ -d "$source" ]; then
         echo
         if [ -f "$nginxconfdir/$name.nginx" ]; then

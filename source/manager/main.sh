@@ -1,4 +1,6 @@
 #!/bin/bash
+dir=
+name=
 sdir="/var/www/scripts/manager"
 
 . $sdir/menus/managesite.sh

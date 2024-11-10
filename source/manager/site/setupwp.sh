@@ -1,5 +1,6 @@
 SetupWP() {
     # Check if name is empty
+    dir="/var/www/sites/$name"
     if [ -z "$name" ]; then
         echo
         echo "Error: Project name is empty. Exiting..."
