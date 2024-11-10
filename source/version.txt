@@ -1,1 +1,1 @@
-1.2.6s (pluginer)
+1.3 (pluginer)
