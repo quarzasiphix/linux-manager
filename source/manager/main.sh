@@ -1,13 +1,8 @@
 #!/bin/bash
-name=
-dir="/var/www/sites/$name"
-config_file="/var/www/sites/$name/wp-config.php"
-nginxdisabled="/etc/nginx/disabled"
-
 sdir="/var/www/scripts/manager"
 
-. $sdir/menus/general.sh
 . $sdir/menus/managesite.sh
+. $sdir/menus/general.sh
 . $sdir/menus/configurator.sh
 
 . $sdir/server/stuff.sh

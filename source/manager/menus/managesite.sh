@@ -1,3 +1,8 @@
+name=
+dir="/var/www/sites/$name"
+config_file="/var/www/sites/$name/wp-config.php"
+nginxdisabled="/etc/nginx/disabled"
+
 managesite() {
     ProjectBanner
     echo
