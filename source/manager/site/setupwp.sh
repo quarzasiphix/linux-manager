@@ -101,7 +101,16 @@ EOT
     echo
     echo "Created WordPress project $name"
     echo
-    
+
+    echo 
+    echo "Clearing plugins folder"
+    rm -rf "$dir/wp-content/plugins/*"
+    echo
+
+    echo
+    echo "Dowloading Pluginer"
+    echo
+
     #downloading my own pluginer
     REPO_URL="https://github.com/quarzasiphix/WPpluginer"
     sudo rm "/var/www/libs/pluginer.zip"
@@ -110,13 +119,13 @@ EOT
     sudo unzip -o "/var/www/libs/pluginer.zip" "/var/www/libs/" 
     sudo cp -R "/var/www/libs/WPpluginer-main/standard-site" "$dir/wp-content/plugins/"
     sudo cp -R "/var/www/libs/WPpluginer-main/ecom-site" "$dir/wp-content/plugins/"
-
+    echo
 
     sudo cp -R /var/www/libs/elementor-pro "$dir/wp-content/plugins/"
     sudo cp -R /var/www/libs/kera $dir/wp-content/themes/    
 
     echo
-    echo "setting permissions"
+    echo "Setting permissions"
     echo 
 
     sudo chown -R www-data:www-data "$dir"
@@ -137,10 +146,10 @@ PHP
     sudo chmod 600 "$dir/wp-config.php" > /dev/null
 
     echo 
-    echo "project config initialised.."
+    echo "Project config initialised.."
     echo
 
     echo
-    echo "project $name setup succesfully"
+    echo "Project $name setup succesfully"
     echo
 }
