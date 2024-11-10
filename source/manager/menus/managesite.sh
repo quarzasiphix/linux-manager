@@ -16,11 +16,13 @@ managesite() {
             echo -e " :Site \e[31m Disabled\e[0m:"
         fi
         echo
-        if is_debug_enabled; then
-            echo "  \033[38;5;214mDEBUG ENABLED\033[0m"
-        else
-            echo "Debug Disabled1"
-        fi
+        
+        #if is_debug_enabled; then
+        #    echo "  \033[38;5;214mDEBUG ENABLED\033[0m"
+        #else
+        #    echo "Debug Disabled1"
+        #fi
+        
         echo
         echo "Current domain: $currentdomain" 
         echo
