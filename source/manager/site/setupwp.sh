@@ -112,15 +112,17 @@ EOT
     echo
 
     #downloading my own pluginer
-    REPO_URL="https://github.com/quarzasiphix/WPpluginer"
-    sudo rm "/var/www/libs/pluginer.zip"
-    sudo rm -R "/var/www/libs/pluginer.zip"
-    sudo curl -L "$REPO_URL/archive/refs/heads/main.zip" -o "/var/www/libs/pluginer.zip"
-    sudo unzip -o "/var/www/libs/pluginer.zip" "/var/www/libs/" 
-    sudo cp -R "/var/www/libs/WPpluginer-main/standard-site" "$dir/wp-content/plugins/"
-    sudo cp -R "/var/www/libs/WPpluginer-main/ecom-site" "$dir/wp-content/plugins/"
-    echo
+    #REPO_URL="https://github.com/quarzasiphix/WPpluginer"
+    #sudo rm "/var/www/libs/pluginer.zip"  > /dev/null
+    #sudo curl -L "$REPO_URL/archive/refs/heads/main.zip" -o "/var/www/libs/pluginer.zip"
+    #sudo unzip -o "/var/www/libs/pluginer.zip" "/var/www/libs/" 
+    
+    
 
+    echo
+    sudo cp -R "/var/www/libs/WPpluginer-main/ecom-site" "$dir/wp-content/plugins/"
+    sudo cp -R "/var/www/libs/WPpluginer-main/standard-site" "$dir/wp-content/plugins/"
+    
     sudo cp -R /var/www/libs/elementor-pro "$dir/wp-content/plugins/"
     sudo cp -R /var/www/libs/kera $dir/wp-content/themes/    
 
@@ -139,7 +141,7 @@ EOT
     # Use WP-CLI to configure WordPress
     # Force https and allow 512mb file size
     dbprefix="${name:0:1}${name: -1}_"
-    sudo wp core config --path="$dir" --dbname="$name" --dbuser="$name" --dbpass="$password" --dbprefix="$dbprefix" --dbhost="localhost" --extra-php <<PHP
+    sudo wp core config --allow-root --path="$dir" --dbname="$name" --dbuser="$name" --dbpass="$password" --dbprefix="$dbprefix" --dbhost="localhost" --extra-php <<PHP
     define( 'WP_MEMORY_LIMIT', '512M' );
     \$_SERVER['HTTPS'] = 'on';
 PHP

@@ -1,1 +1,1 @@
-1.2.3 (pluginer)
+1.2.4 (pluginer)
