@@ -1,4 +1,8 @@
 #!/bin/bash
+name=
+dir="/var/www/sites/$name"
+config_file="/var/www/sites/$name/wp-config.php"
+nginxdisabled="/etc/nginx/disabled"
 
 sdir="/var/www/scripts/manager"
 
@@ -16,6 +20,8 @@ sdir="/var/www/scripts/manager"
 . $sdir/site/backup.sh
 . $sdir/site/webs.sh
 . $sdir/site/setuphtml.sh
+
+
 
 
 nginxconfdir="/etc/nginx/sites-enabled"
