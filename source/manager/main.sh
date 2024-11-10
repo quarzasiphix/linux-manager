@@ -3,8 +3,7 @@
 sdir="/var/www/scripts/manager"
 
 . $sdir/server/stuff.sh
-. $sdir/site/manage.sh
-
+. $sdir/server/banner.sh
 . $sdir/server/stuff.sh
 . $sdir/site/manage.sh
 . $sdir/site/setupwp.sh
