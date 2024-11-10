@@ -51,11 +51,11 @@ DeleteWp() {
 
     if [[ $confirm == "yes" ]]; then
         echo
-        echo "Removing files, config, and logs for project '$name'..."
+        echo "Removing files and configs for project '$name'..."
         echo
 
         sudo trash "/var/www/sites/$name"
-        sudo trash "/var/www/logs/$name"
+        #sudo trash "/var/www/logs/$name"
         sudo rm "/etc/nginx/sites-enabled/$name.nginx"
 
         # Restarting nginx to update delete
@@ -260,4 +260,6 @@ EOF
     echo "succesfully changed the domain for project $name from $currentdomain to $new_domain"
     echo
     GrabDomain
+
+    rm /var/$name
 }

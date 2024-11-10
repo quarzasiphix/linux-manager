@@ -33,6 +33,16 @@ SetupWP() {
     echo
     sudo tar -xvzf latest.tar.gz --strip-components=1 -C "$dir" > /dev/null
     echo "finished extracting wp files.. setting up perms"
+
+        # Use WP-CLI to configure WordPress
+    # Force https and allow 512mb file size
+    dbprefix="${name:0:1}${name: -1}_"
+    sudo wp core config --allow-root --path="$dir" --dbname="$name" --dbuser="$name" --dbpass="$password" --dbprefix="$dbprefix" --dbhost="localhost" --extra-php <<PHP
+    define( 'WP_MEMORY_LIMIT', '512M' );
+    \$_SERVER['HTTPS'] = 'on';
+PHP
+    sudo chmod 600 "$dir/wp-config.php" > /dev/null
+
     echo
     sudo chown -R www-data:www-data "$dir"
     sudo chmod -R 755 "$dir"
@@ -137,15 +147,6 @@ EOT
     echo
     echo "initialising project with wp cli.."
     echo
-
-    # Use WP-CLI to configure WordPress
-    # Force https and allow 512mb file size
-    dbprefix="${name:0:1}${name: -1}_"
-    sudo wp core config --allow-root --path="$dir" --dbname="$name" --dbuser="$name" --dbpass="$password" --dbprefix="$dbprefix" --dbhost="localhost" --extra-php <<PHP
-    define( 'WP_MEMORY_LIMIT', '512M' );
-    \$_SERVER['HTTPS'] = 'on';
-PHP
-    sudo chmod 600 "$dir/wp-config.php" > /dev/null
 
     echo 
     echo "Project config initialised.."
