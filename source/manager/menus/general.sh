@@ -1,4 +1,5 @@
 general() {
+    clear
     ProjectBanner
     echo
     echo "0. Select project"
@@ -88,5 +89,4 @@ general() {
     esac
 }
 
-# Ensure to call your function here if needed
-general
+
