@@ -249,6 +249,8 @@ managesite() {
             SetupWP
             ;;
         'html')
+            clear
+            ProjectBanner
             echo
             echo "setting up html project for $name"
             echo
@@ -264,6 +266,8 @@ managesite() {
     esac
   
     else
+        clear
+        ProjectBanner
         echo 
         echo "project $name doesnt exist"
         echo
