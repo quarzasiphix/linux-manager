@@ -122,7 +122,7 @@ BackupWP() {
     du -sh "$tempdir"
     read -p "Remove temp directory? (yes/no): " _temps
     if [ "$_temps" = "yes" ]; then
-        sudo rm -R "$tempdir"
+        sudo trash "$tempdir"
     fi
 
     read -p "Setup for goaccess download? (yes/no): " _public
