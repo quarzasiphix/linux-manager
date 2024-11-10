@@ -7,7 +7,6 @@ managesite() {
     echo
     echo "  Project: $name"
     echo
-    echo "  dir:  $dir " 
     echo
      
     if [ -d "$source" ]; then

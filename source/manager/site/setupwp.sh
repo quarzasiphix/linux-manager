@@ -104,7 +104,7 @@ EOT
 
     echo 
     echo "Clearing plugins folder"
-    rm -rf "$dir/wp-content/plugins/*"
+    sudo rm -rf "$dir/wp-content/plugins/*"
     echo
 
     echo
