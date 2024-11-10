@@ -21,7 +21,7 @@ nginxdisabled="/etc/nginx/disabled"
 
 # project info
 currentdomain=
-IsSetProject=false
+IsSetProject="false"
 
 #!/bin/bash
 latest_version=""
