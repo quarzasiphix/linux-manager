@@ -269,8 +269,6 @@ managesite() {
     esac
   
     else
-        clear
-        ProjectBanner
         echo 
         echo "project $name doesnt exist"
         echo
