@@ -89,7 +89,7 @@ while IFS= read -r line; do
 done < "$file"
 
 echo
-echo "Download \e[32msuccessfull\e[0m"
+echo -e "Download \e[32msuccessfull\e[0m"
 echo
 echo "Press Enter to continue..."
 echo
