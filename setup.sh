@@ -345,14 +345,14 @@ echo
 
 dir="/var/www/scripts"
 
-sudo rm -R $dir/downloader
+sudo trash $dir/downloader
 sudo mkdir $dir/downloader
 sudo chmod 777 -R $dir
 
 dwldir="$dir/downloader"
 dwlurl="https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/downloader/download.sh"
 #remove previous if exists
-sudo rm $dwldir/download.sh
+sudo trash $dwldir/download.sh
 sudo curl -o "$dwldir/download.sh" "$dwlurl"
 sudo chmod +x $dwldir/download.sh
 
