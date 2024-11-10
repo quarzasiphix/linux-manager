@@ -89,6 +89,14 @@ while IFS= read -r line; do
 done < "$file"
 
 echo
+echo "Download \e[32msuccessfull\e[0m"
+echo
+echo "Press Enter to continue..."
+echo
+read
+
+echo
+echo
 echo "opening script post download..."
 echo
 
