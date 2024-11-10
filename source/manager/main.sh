@@ -26,6 +26,7 @@ IsSetProject="false"
 #!/bin/bash
 latest_version=""
 current_version=$(cat $sdir/version.txt)
+name=
 
 check_for_update() {
     latest_version=$(curl -s "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt")

@@ -7,7 +7,6 @@ SetupWP() {
         return 1
     fi
     # Get domain
-    dir="/var/www/sites/$name"
     read -p "Enter domain: " domain
     echo
 

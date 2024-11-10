@@ -1,6 +1,5 @@
 nginxdisabled="/etc/nginx/disabled"
 config_file="/var/www/sites/$name/wp-config.php"
-name=""
 
 SetProject() {
     clear
@@ -18,7 +17,7 @@ SetProject() {
     echo
     source="/var/www/sites/$name"
     GrabDomain
-    IsSetProject=true
+    IsSetProject="true"
 }
 
 
