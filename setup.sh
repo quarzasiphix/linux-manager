@@ -92,12 +92,12 @@ SetupSsh() {
 
     #setup ssh
     udir="/home/$admin_name"
-    sudo mkdir $udir/.ssh
-    sudo chmod 700 $udir/.ssh
-    sudo touch $udir/.ssh/authorized_keys
-    sudo chown $admin_name:$admin_name $udir/.ssh
-    sudo chown $admin_name:$admin_name $udir/.ssh/authorized_keys
-    sudo nano $udir/.ssh/authorized_keys
+    sudo mkdir "$udir/.ssh"
+    sudo chmod 700 "$udir/.ssh"
+    sudo touch "$udir/.ssh/authorized_keys"
+    sudo chown $admin_name:$admin_name "$udir/.ssh"
+    sudo chown $admin_name:$admin_name "$udir/.ssh/authorized_keys"
+    sudo nano "$udir/.ssh/authorized_keys"
 
 
     #ssh security
@@ -148,6 +148,9 @@ Download() {
     sudo apt update > /dev/null
     echo
     echo "Downloading..."
+    echo
+    echo
+    echo -e "5)\e[32m This may take a Minute\e[0m site "
     echo
     #download wp cli
     curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
