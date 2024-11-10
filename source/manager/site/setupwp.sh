@@ -139,7 +139,7 @@ EOT
     # Use WP-CLI to configure WordPress
     # Force https and allow 512mb file size
     dbprefix="${name:0:1}${name: -1}_"
-    wp core config --path="$dir" --dbname="$name" --dbuser="$name" --dbpass="$password" --dbprefix="$dbprefix" --dbhost="localhost" --extra-php <<PHP
+    sudo wp core config --path="$dir" --dbname="$name" --dbuser="$name" --dbpass="$password" --dbprefix="$dbprefix" --dbhost="localhost" --extra-php <<PHP
     define( 'WP_MEMORY_LIMIT', '512M' );
     \$_SERVER['HTTPS'] = 'on';
 PHP
