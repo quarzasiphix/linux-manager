@@ -1,5 +1,8 @@
-nginxdisabled="/etc/nginx/disabled"
+name=
+dir="/var/www/sites/$name"
 config_file="/var/www/sites/$name/wp-config.php"
+nginxdisabled="/etc/nginx/disabled"
+
 
 SetProject() {
     clear
