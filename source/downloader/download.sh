@@ -14,17 +14,17 @@ site=()
 
 # Flag to indicate which array to add lines to
 url="https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/manager"
-dir="/var/www/scripts/manager"
+ddir="/var/www/scripts/manager"
 
 echo "setting up dir env.."
-sudo rm -R "$dir"
+sudo rm -R "$ddir"
 
-sudo mkdir "$dir"
-sudo mkdir "$dir/site"
-sudo mkdir "$dir/server"
-sudo mkdir "$dir/menus"
+sudo mkdir "$ddir"
+sudo mkdir "$ddir/site"
+sudo mkdir "$ddir/server"
+sudo mkdir "$ddir/menus"
 
-sudo chmod 777 -R "$dir"
+sudo chmod 777 -R "$ddir"
 
 
 current_array="general"
@@ -52,9 +52,9 @@ echo
 echo
 echo "getting version.."
 echo
-sudo curl -o "$dir/version.txt" "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt" > /dev/null 2>&1
-sudo chmod 777 "$dir/version.txt"
-current_version=$(cat $dir/version.txt)
+sudo curl -o "$ddir/version.txt" "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt" > /dev/null 2>&1
+sudo chmod 777 "$ddir/version.txt"
+current_version=$(cat $ddir/version.txt)
 echo -e "version: \e[32m$current_version\e[0m"
 # Read each line from the file
 
@@ -71,16 +71,16 @@ while IFS= read -r line; do
         if [ "$current_array" == "general" ]; then
             echo
             echo "downloading general script $line..."
-            sudo curl -o "$dir/$line.sh" "$url/$line.sh" > /dev/null 2>&1
-            sudo chmod +x "$dir/$line.sh"
+            sudo curl -o "$ddir/$line.sh" "$url/$line.sh" > /dev/null 2>&1
+            sudo chmod +x "$ddir/$line.sh"
             echo "done downloading $line"
             echo
             general+=("$line")
         else 
             echo
             echo "downloading $current_array script $line..."
-            sudo curl -o "$dir/$current_array/$line.sh" "$url/$current_array/$line.sh" > /dev/null
-            sudo chmod +x "$dir/$current_array/$line.sh"
+            sudo curl -o "$ddir/$current_array/$line.sh" "$url/$current_array/$line.sh" > /dev/null
+            sudo chmod +x "$ddir/$current_array/$line.sh"
             echo "done downloading $line"
             echo
             server+=("$line")
@@ -91,6 +91,8 @@ done < "$file"
 echo
 echo -e "Download \e[32msuccessfull\e[0m"
 echo
+echo -e "version: \e[32m$current_version\e[0m"
+echo
 echo "Press Enter to continue..."
 echo
 read
@@ -100,6 +102,6 @@ echo
 echo "opening script post download..."
 echo
 
-sudo ln -s $dir/main.sh /var/www/scripts/start_manager > /dev/null 2>&1
+sudo ln -s $ddir/main.sh /var/www/scripts/start_manager > /dev/null 2>&1
 
 /var/www/scripts/start_manager

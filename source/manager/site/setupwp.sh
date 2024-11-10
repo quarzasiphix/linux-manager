@@ -104,9 +104,8 @@ EOT
     #downloading my own pluginer
     REPO_URL="https://github.com/quarzasiphix/WPpluginer"
     sudo rm "/var/www/libs/pluginer.zip"
-    sudo rm -R "pluginer"
-    sudo mkdir "pluginer"
-    curl -L "$REPO_URL/archive/refs/heads/main.zip" -o "/var/www/libs/pluginer.zip"
+    sudo rm -R "/var/www/libs/pluginer.zip"
+    sudo curl -L "$REPO_URL/archive/refs/heads/main.zip" -o "/var/www/libs/pluginer.zip"
     sudo unzip -o "/var/www/libs/pluginer.zip" "/var/www/libs/" 
     sudo cp -R "/var/www/libs/WPpluginer-main/standard-site" $dir/wp-content/plugins/
     sudo cp -R "/var/www/libs/WPpluginer-main/ecom-site" $dir/wp-content/plugins/
