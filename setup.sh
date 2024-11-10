@@ -153,7 +153,7 @@ Download() {
     curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     chmod +x wp-cli.phar
     sudo mv wp-cli.phar /usr/local/bin/wp
-    sudo apt-get install --assume-yes ufw screen unzip neofetch zip trash nginx curl mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-gd php8.2-mbstring php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-soap php8.2-zip php8.2-xml php8.2-dom php8.2-curl php8.2-mysqli > /dev/null
+    sudo apt-get install --assume-yes ufw screen unzip neofetch zip trash-cli nginx curl mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-gd php8.2-mbstring php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-soap php8.2-zip php8.2-xml php8.2-dom php8.2-curl php8.2-mysqli > /dev/null
 }
 
 
@@ -162,48 +162,48 @@ SetupDisabled() {
     sudo chmod -R 777 /etc/nginx/disabled
 
     sudo tee "/etc/nginx/sites-enabled/default" > /dev/null <<EOT
-        server {
-            listen 80 default_server;
-            server_name _;
+server {
+    listen 80 default_server;
+    server_name _;
 
-            location / {
-                root /var/www/sites/disabled;
-                index index.html;
-            }
-        }
+    location / {
+        root /var/www/sites/disabled;
+        index index.html;
+    }
+}
 EOT
 
     sudo tee "/var/www/sites/disabled/index.html" > /dev/null <<EOT
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-                body {
-                    margin: 0;
-                    padding: 0;
-                    font-family: 'Poppins', sans-serif;
-                    background-color: #0d0d0d; /* Light gray background */
-                    text-align: center;
-                }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #0d0d0d; /* Light gray background */
+            text-align: center;
+        }
 
-                .header {
-                    color: #ffffff; /* White font color */
-                    text-alrgb(0, 0, 0) center;
-                    padding: 20px 0; /* Top and bottom padding of 20 pixels, no left and right padding */
-                }
-            </style>
-        </head>
-        <body>
+        .header {
+            color: #ffffff; /* White font color */
+            text-alrgb(0, 0, 0) center;
+            padding: 20px 0; /* Top and bottom padding of 20 pixels, no left and right padding */
+        }
+    </style>
+</head>
+<body>
 
-        <div class="header">
-            <h1>This site is disabled</h1>
-        </div>
+<div class="header">
+    <h1>This site is disabled</h1>
+</div>
 
-        </body>
-        </html>
+</body>
+</html>
 EOT
 
 }

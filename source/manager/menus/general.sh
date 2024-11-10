@@ -1,5 +1,4 @@
 general() {
-    clear
     ProjectBanner
     echo
     echo "0. Select project"
