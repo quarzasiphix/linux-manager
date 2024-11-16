@@ -28,6 +28,10 @@ SetupGoaccess() {
     echo
     read -p "domain for goaccess: " godomain
     echo
+
+    sudo sed -i '/http {/a\    access_log /var/log/nginx/access.log combined;' /etc/nginx/nginx.conf
+
+    echo
     sudo tee "/etc/nginx/sites-enabled/goaccess.nginx" > /dev/null <<EOT
         server {
             listen 80;
@@ -166,7 +170,7 @@ Download() {
     curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     chmod +x wp-cli.phar
     sudo mv wp-cli.phar /usr/local/bin/wp
-    sudo apt-get install --assume-yes ufw screen unzip neofetch zip trash-cli nginx curl mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-gd php8.2-mbstring php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-soap php8.2-zip php8.2-xml php8.2-dom php8.2-curl php8.2-mysqli > /dev/null
+    sudo apt-get install --assume-yes ufw goaccess screen unzip neofetch zip trash-cli nginx curl mariadb-server mariadb-client curl php8.2-sqlite3 php8.2-gd php8.2-mbstring php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-soap php8.2-zip php8.2-xml php8.2-dom php8.2-curl php8.2-mysqli > /dev/null
 }
 
 
