@@ -128,7 +128,7 @@ SetupSsh() {
 SetupAdmin() {
     echo
     echo "Setting up sudo account"
-    read -p "Admin account name: " admin_name
+    read -p "Admin account name: " . admin_name
 
     echo
     echo "Setting up admin: $admin_name"

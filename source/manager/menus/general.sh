@@ -3,9 +3,10 @@ general() {
     echo
     echo "0. Select project"
     echo
-    echo "1. View All active websites"
-    echo "2. View All disabled websites"
-    echo "3. Graph All active sites"
+    echo "1. View All Projects"
+    echo "2. View All active websites"
+    echo "3. View All disabled websites"
+    #echo "3. Graph All active sites"
     echo "4. Disable All sites"
     echo "5. Backup All Active"
     echo
@@ -24,13 +25,24 @@ general() {
             ;;
         1)
             clear
+            echo
+            echo "  Available projects.."
+            echo
+            GetDisabledSites
+            echo
+            GetActiveSites
+            echo
+            ;;
+    
+        2)
+            clear
             GetActiveSites
             ;;
-        2)
+        3)
             clear
             GetDisabledSites
             ;;
-        3)
+        'gl')
             clear
             GraphAllActive
             ;;

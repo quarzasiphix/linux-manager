@@ -202,6 +202,55 @@ extract_db_password() {
 }
 
 ChangeDomain() {
+    echo
+    echo "Changing domain for project $name"
+    echo
+    read -p "   Add or replace domain? (R, A):  " radomain
+    echo
+    read -p "   Enter new domain: " new_domain
+    echo
+
+    config_file=""
+    if [ -f "$nginxconfdir/$name.nginx" ]; then
+        config_file="$nginxconfdir/$name.nginx"
+    elif [ -f "$nginxdisabled/$name.nginx" ]; then
+        config_file="$nginxdisabled/$name.nginx"
+    else
+        echo "Could not find Nginx config."
+        return
+    fi
+
+    current_domains=$(grep -o 'server_name.*;' "$config_file" | awk '{for(i=2; i<=NF; i++) print $i}' | sed 's/;//')
+    echo
+    echo "Current domains in the configuration:"
+    printf "%s\n" "$current_domains"
+    echo
+
+    if [ "$radomain" = "A" ] || [ "$radomain" = "a" ]; then
+        echo "Adding domain $new_domain to the configuration..."
+        sed -i "/server_name/ s/;/ $new_domain;/" "$config_file"
+        echo "Domain added successfully."
+    elif [ "$radomain" = "R" ] || [ "$radomain" = "r" ]; then
+        echo "Replacing domain in the configuration with $new_domain..."
+        current_domain=$(echo "$current_domains" | head -n 1) # Assume first domain is the one to replace
+        sed -i "s/\b$current_domain\b/$new_domain/" "$config_file"
+        echo "Domain replaced successfully."
+    else
+        echo "Invalid option. Please choose 'A' to add or 'R' to replace."
+        return
+    fi
+
+    # Restart Nginx to apply changes
+    sudo systemctl restart nginx
+
+    echo
+    echo "Successfully updated the Nginx configuration for project $name."
+    echo
+}
+
+
+
+OldChangeDomain() {
     #grabbeddomain=$(grep -o 'server_name.*;' $nginxconfdir/$name.nginx | awk '{print $2}' | sed 's/;//')
     echo
     echo "Changing domain for project $name"
