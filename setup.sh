@@ -87,49 +87,59 @@ EOT
 
 SetupSsh() {
     echo
-    echo "setting up ssh for admin: $admin_name"
+    echo "Setting up SSH for admin: $admin_name"
     echo
 
-    #setup ssh
+    # Setup SSH
     udir="/home/$admin_name"
-    sudo mkdir "$udir/.ssh"
-    sudo chmod 700 "$udir/.ssh"
+    if [ ! -d "$udir" ]; then
+        echo "Home directory for $admin_name does not exist. Creating it..."
+        sudo mkdir -p "$udir"
+        sudo chown $admin_name:$admin_name "$udir"
+        sudo chmod 755 "$udir"
+    fi
+
+    sudo mkdir -p "$udir/.ssh"
     sudo touch "$udir/.ssh/authorized_keys"
-    sudo chown $admin_name:$admin_name "$udir/.ssh"
-    sudo chown $admin_name:$admin_name "$udir/.ssh/authorized_keys"
     sudo nano "$udir/.ssh/authorized_keys"
+    sudo chmod 700 "$udir/.ssh"
+    sudo chmod 600 "$udir/.ssh/authorized_keys"
+    sudo chown -R $admin_name:$admin_name "$udir/.ssh"
 
-
-    #ssh security
+    # SSH security
     echo
-    echo "securing ssh"
+    echo "Securing SSH"
     echo
 
-    #backup current config
+    # Backup current config
     sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
-    #disable password auth and only allow key auth
+
+    # Disable password auth and only allow key auth
     sudo sed -i -E 's/^#?(PasswordAuthentication)\s+(yes|no)/\1 no/' /etc/ssh/sshd_config
-    sudo sed -i -E 's/^#?(PubkeyAuthentication)\s+(yes|no)/\1 yes/' /etc/ssh/sshd_config 
-    #disables root login
+    sudo sed -i -E 's/^#?(PubkeyAuthentication)\s+(yes|no)/\1 yes/' /etc/ssh/sshd_config
+
+    # Disable root login
     sudo sed -i -E 's/^#?(PermitRootLogin)\s+(yes|no)/\1 no/' /etc/ssh/sshd_config
     sudo systemctl restart sshd
+
     SetupTerminal
 }
 
 SetupAdmin() {
     echo
-    echo
-    echo "  setup sudo account"
-    read -p "admin account name: " admin_name
+    echo "Setting up sudo account"
+    read -p "Admin account name: " admin_name
 
     echo
-    echo "setting up admin: $admin_name"
+    echo "Setting up admin: $admin_name"
     echo
     sudo adduser $admin_name
     sudo usermod -aG sudo $admin_name
 
+    # Call SetupSsh after creating the user
     SetupSsh
 }
+
 
 Download() {
     echo
