@@ -66,6 +66,7 @@ EOT
         error_page 404 /index;
         error_log $nginx_log_dir/error.nginx;
         access_log $nginx_log_dir/access.nginx;
+        access_log /var/log/nginx/access.log;
 
         location / {
             try_files \$uri \$uri/ /index.html /index.php?\$args;

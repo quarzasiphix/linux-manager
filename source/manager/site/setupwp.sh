@@ -48,8 +48,6 @@ SetupWP() {
     FLUSH PRIVILEGES;
     \q
 EOF
-
-
     # Use WP-CLI to configure WordPress
     # Force https and allow 512mb file size
     dbprefix="${name:0:1}${name: -1}_"
@@ -83,6 +81,7 @@ PHP
         error_page 404 /index;
         error_log $nginx_log_dir/error.nginx;
         access_log $nginx_log_dir/access.nginx;
+        access_log /var/log/nginx/access.log;
 
         location / {
             try_files \$uri \$uri/ /index.php?\$args;
@@ -129,7 +128,6 @@ EOT
     #sudo unzip -o "/var/www/libs/pluginer.zip" "/var/www/libs/" 
     
     
-
     echo
     sudo cp -R "/var/www/libs/WPpluginer-main/ecom-site" "$dir/wp-content/plugins/"
     sudo cp -R "/var/www/libs/WPpluginer-main/standard-site" "$dir/wp-content/plugins/"
