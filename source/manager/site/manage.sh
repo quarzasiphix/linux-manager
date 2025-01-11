@@ -200,21 +200,49 @@ extract_db_password() {
 }
 
 UpdateElementor() {
-
-    echo 
+    echo
     echo "Making backup..."
     echo
-    BackupWP
-    echo
-    echo "Backup finished"
-    echo "Removing old elementor"
-    sudo mkdir $backupdir/elementor-pro
-    sudo mkdir $backupdir/elementor-pro/e$(date +%F) 
-    sudo mv $plugindir/elementor-pro $backupdir/elementor-pro/e$(date +%F) 
+
+    if ! BackupWP; then
+        echo "Backup failed! Exiting..."
+        exit 1
+    fi
+
+    echo "Backup finished."
+    echo "Removing old Elementor Pro..."
+    
+    # Get current date
+    current_date=$(date +%F)
+
+    # Define backup directories
+    elementor_backup="$backupdir/elementor"
+    dated_backup="$elementor_backup/3-$current_date"
+    elementor_version_backup="$dated_backup/e-$current_date"
+
+    # Create necessary backup directories
+    sudo mkdir -p "$elementor_version_backup"
+
+    # Move old Elementor Pro into the dated backup folder
+    if [[ -d "$plugindir/elementor-pro" ]]; then
+        sudo mv "$plugindir/elementor-pro" "$elementor_version_backup"
+        echo "Old Elementor Pro moved to $elementor_version_backup"
+    else
+        echo "Warning: No existing Elementor Pro found at $plugindir"
+    fi
 
     echo
-    echo "updating elementor pro..."
+    echo "Updating Elementor Pro..."
     echo
+
+    # Copy new Elementor Pro from /var/www/libs/
+    if [[ -d "$elementor_lib" ]]; then
+        sudo cp -r "/var/www/libs/elementor-pro" "$plugindir/elementor-pro"
+        echo "New Elementor Pro installed successfully."
+    else
+        echo "Error: New Elementor Pro not found at $elementor_lib. Exiting..."
+        exit 1
+    fi
 }
 
 ChangeDomain() {
