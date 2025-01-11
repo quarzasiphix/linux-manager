@@ -1,5 +1,3 @@
-
-
 SetProject() {
     clear
 
@@ -199,6 +197,24 @@ extract_db_password() {
     wp_config_file="/var/www/sites/$name/wp-config.php"
     db_password=$(sed -nE "s/.*DB_PASSWORD\s*=\s*['\"](.*)['\"].*/\1/p" "$wp_config_file")
     echo "$db_password"
+}
+
+UpdateElementor() {
+
+    echo 
+    echo "Making backup..."
+    echo
+    BackupWP
+    echo
+    echo "Backup finished"
+    echo "Removing old elementor"
+    sudo mkdir $backupdir/elementor-pro
+    sudo mkdir $backupdir/elementor-pro/e$(date +%F) 
+    sudo mv $plugindir/elementor-pro $backupdir/elementor-pro/e$(date +%F) 
+
+    echo
+    echo "updating elementor pro..."
+    echo
 }
 
 ChangeDomain() {

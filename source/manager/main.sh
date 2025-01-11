@@ -1,6 +1,7 @@
 #!/bin/bash
+
+#script files
 dir=
-name=
 sdir="/var/www/scripts/manager"
 
 . $sdir/menus/managesite.sh
@@ -18,7 +19,25 @@ sdir="/var/www/scripts/manager"
 . $sdir/site/webs.sh
 . $sdir/site/setuphtml.sh
 
+latest_version=""
+current_version=$(cat $sdir/version.txt)
 
+check_for_update() {
+    latest_version=$(curl -s "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt")
+}
+
+
+# website management variables
+name=
+nginx_config="/etc/nginx/sites-enabled/$name.nginx"
+backupdir="/var/www/backups/$name"
+tempdir="$backupdir/$name-temp"
+plugindir="/var/www/sites/$name"
+
+#for backups
+nginx_config="/etc/nginx/sites-enabled/$name.nginx"
+backupdir="/var/www/backups/$name"
+tempdir="$backupdir/$name-temp"
 
 
 nginxconfdir="/etc/nginx/sites-enabled"
@@ -27,14 +46,6 @@ nginxdisabled="/etc/nginx/disabled"
 # project info
 currentdomain=
 IsSetProject="false"
-
-#!/bin/bash
-latest_version=""
-current_version=$(cat $sdir/version.txt)
-
-check_for_update() {
-    latest_version=$(curl -s "https://raw.githubusercontent.com/quarzasiphix/linux-manager/master/source/version.txt")
-}
 
 ProjectBanner() {
     server_name=$(</var/www/server/name.txt)

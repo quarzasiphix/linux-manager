@@ -50,10 +50,6 @@
 
 BackupWP() {
     # Define variables.
-    nginx_config="/etc/nginx/sites-enabled/$name.nginx"
-    backupdir="/var/www/backups/$name"
-    tempdir="$backupdir/$name-temp"
-
     # Create directories if they don't exist.
     sudo mkdir -p "$backupdir/archive/$(date +%F)" > /dev/null 2>&1
 

@@ -42,11 +42,12 @@ managesite() {
             echo "  :site status unknown:  "
             echo
         fi
+        # Read user's choice
         echo "1. Graph log"
         echo "2. Edit nginx config"
         echo "3. Reset project"
         echo "4. Change domain"
-        # Read user's choice
+        echo "e. Update elementor pro from lib."
         echo "s. Check weight of source files"
         echo "b. Create backup"
         echo "r. Restore back"
