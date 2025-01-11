@@ -241,8 +241,8 @@ UpdateElementor() {
     echo
 
     # Copy new Elementor Pro from /var/www/libs/
-    if [[ -d "$elementor_lib" ]]; then
-        sudo cp -r "/var/www/libs/elementor-pro" "$plugindir/elementor-pro"
+    if [[ -d "/var/www/libs/elementor-pro" ]]; then
+        sudo cp -r "/var/www/libs/elementor-pro" "$plugindir"
         echo "New Elementor Pro installed successfully."
     else
         echo "Error: New Elementor Pro not found at $elementor_lib. Exiting..."
