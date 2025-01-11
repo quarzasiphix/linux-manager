@@ -35,9 +35,6 @@ tempdir="$backupdir/$name-temp"
 plugindir="/var/www/sites/$name"
 
 #for backups
-nginx_config="/etc/nginx/sites-enabled/$name.nginx"
-backupdir="/var/www/backups/$name"
-tempdir="$backupdir/$name-temp"
 
 
 nginxconfdir="/etc/nginx/sites-enabled"

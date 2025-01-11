@@ -200,6 +200,11 @@ extract_db_password() {
 }
 
 UpdateElementor() {
+    nginx_config="/etc/nginx/sites-enabled/$name.nginx"
+    backupdir="/var/www/backups/$name"
+    tempdir="$backupdir/$name-temp"
+    plugindir="/var/www/sites/$name"
+
     echo
     echo "Making backup..."
     echo

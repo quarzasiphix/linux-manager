@@ -1,1 +1,1 @@
-1.4.1 elementor pro updater
+1.4.2 elementor pro updater
