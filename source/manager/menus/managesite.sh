@@ -118,9 +118,6 @@ managesite() {
             echo "Changing domain..."
             ChangeDomain
         ;;
-        'e')
-            UpdateElementor
-        ;;
         's')
             clear
             echo "storage usage for $name"
@@ -184,6 +181,14 @@ managesite() {
             echo
             cd /var/www/logs/$name 
             exit
+        ;;
+
+        'e')
+            clear
+            echo "Starting elementor updater.."
+            echo
+            UpdateElementor
+            echo
         ;;
     
         *)
