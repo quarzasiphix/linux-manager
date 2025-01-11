@@ -118,15 +118,8 @@ managesite() {
             echo "Changing domain..."
             ChangeDomain
         ;;
-        's')
-            clear
-            if is_debug_enabled; then
-                clear
-                DisableDebug
-            else
-                clear
-                EnanbleDebug    
-            fi
+        'e')
+            UpdateElementor
         ;;
         's')
             clear
