@@ -190,7 +190,22 @@ managesite() {
             UpdateElementor
             echo
         ;;
-    
+
+        'g')
+            clear
+            echo "Starting Nginx website..."
+            sudo mv /etc/nginx/disabled/goaccess.nginx /etc/nginx/sites-enabled/goaccess.nginx
+            echo
+            sudo systemctl restart nginx
+            echo "Starting GoAccess in real-time..."
+            echo
+            sudo goaccess /var/www/logs/$name/access.nginx --log-format=COMBINED --real-time-html -o /var/www/sites/goaccess/report.html
+            echo
+            echo "Disabling Nginx server..."
+            echo
+            sudo mv /etc/nginx/sites-enabled/goaccess.nginx /etc/nginx/disabled/
+            sudo systemctl restart nginx
+            ;;
         *)
             echo "Invalid choice. Please enter a number between 1 and 4."
         ;;
