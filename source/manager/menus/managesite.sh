@@ -52,10 +52,12 @@ managesite() {
         echo "b. Create backup"
         echo "r. Restore back"
         echo "d. Toggle debug"
+        echo "g. Start Goaccess for site"
         echo
         echo "pass. Show project password"
         echo "del. Delete project"
         read -p "Enter your choice (1-X): " choice
+
 
         # Perform action based on user's choice
         case $choice in
@@ -197,7 +199,7 @@ managesite() {
             sudo mv /etc/nginx/disabled/goaccess.nginx /etc/nginx/sites-enabled/goaccess.nginx
             echo
             sudo systemctl restart nginx
-            echo "Starting GoAccess in real-time..."
+            echo "Starting GoAccess in real-time for \e[32m$name\e[0m..."
             echo
             sudo goaccess /var/www/logs/$name/access.nginx --log-format=COMBINED --real-time-html -o /var/www/sites/goaccess/report.html
             echo
