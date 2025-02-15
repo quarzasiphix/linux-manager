@@ -50,8 +50,11 @@ clear
 PS1="\${debian_chroot:+(\$debian_chroot)}\[\033[01;32m\]\u@${s_name}\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\\\$ "
 echo
 echo "  ==================================="
-echo -e "         Hello \e[36m\$USER\e[0m"
-echo -e "   Welcome to \e[95mWeb wiz\e[0m"
+echo 
+echo -e "         Hello \e[36m\$ USER\e[0m"
+echo
+echo -e "   Welcome to \e[95m $s_name\e[0m"
+echo
 echo "  ==================================="
 echo
 EOT
@@ -109,9 +112,8 @@ EOT
     curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     chmod +x wp-cli.phar
     sudo mv wp-cli.phar /usr/local/bin/wp
-    sudo apt-get install -y ufw goaccess screen unzip neofetch zip trash-cli nginx curl mariadb-server mariadb-client \
-        php8.2-sqlite3 php8.2-gd php8.2-mbstring php8.2-pdo-sqlite php8.2-fpm php8.2-cli php8.2-soap \
-        php8.2-zip php8.2-xml php8.2-dom php8.2-curl php8.2-mysqli
+
+    sudo apt install ufw goaccess screen unzip neofetch zip trash-cli nginx curl mariadb-server mariadb-client php-sqlite3 php-gd php-mbstring php-pdo-sqlite php-fpm php-cli php-soap php-zip php-xml php-dom php-curl php-mysqli
 }
 
 # --- Function: Setup Disabled Site for Nginx ---
