@@ -32,6 +32,240 @@ WPCLICommands() {
     sudo -u www-data wp $wp_cmd --path="/var/www/sites/$name"
 }
 
+managesite() {
+    clear
+    ProjectBanner
+    echo "Project: $name"
+    echo
+
+    echo "0 - Change project"
+    if [ -f "$nginxconfdir/$name.nginx" ]; then
+        echo -e "5) \e[31mDisable\e[0m site"
+    elif [ -f "$nginxdisabled/$name.nginx" ]; then
+        echo -e "5) \e[32mEnable\e[0m site"
+    else
+        echo "  :site status unknown:"
+    fi
+    echo
+    echo "2 - Backup create"
+    echo "3 - Restore"
+    echo
+
+    echo "E/e - Edit files and configs"
+    echo "S/s - Script management"
+    echo "A/a - Analytics"
+    echo "W/w - WordPress management"
+    echo
+    echo
+    echo "del - Delete project"
+    echo "res - Reset project"
+    echo "r - Return to main menu"  # Return option
+    echo
+    echo
+    read -p "Enter your choice (0-X, r): " choice
+
+    case $choice in
+        0)
+            clear
+            echo "Changing project..."
+            IsSetProject=false
+            SetProject
+            ;;
+        2)
+            clear
+            echo "Creating backup..."
+            CreateBackup
+            ;;
+        3)
+            clear
+            echo "Restoring backup..."
+            RestoreBackup
+            ;;
+        E|e)
+            clear
+            echo "Editing site configurations..."
+            EditSiteConfig
+            ;;
+        S|s)
+            clear
+            echo "Managing scripts..."
+            ScriptManagement
+            ;;
+        A|a)
+            clear
+            echo "Analytics options..."
+            AnalyticsOptions
+            ;;
+        W|w)
+            clear
+            echo "WordPress management..."
+            WordPressOptions
+            ;;
+        del)
+            clear
+            echo "Deleting project..."
+            DeleteProject
+            ;;
+        res)
+            clear
+            echo "Resetting project..."
+            ResetProject
+            ;;
+        r|R)  # Return option
+            clear
+            echo "Returning to main menu..."
+            IsSetProject=false
+            ;;
+        *)
+            echo "Invalid choice, please try again."
+            ;;
+    esac
+
+    # Site enable/disable logic remains unchanged
+    if [ -f "$nginxconfdir/$name.nginx" ]; then
+        case $choice in
+            1|'disable')
+                clear
+                DisableConf
+                ;;
+        esac
+    elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
+        case $choice in
+            1|'enable')
+                clear
+                EnableConf
+                ;;
+        esac
+    fi
+}
+
+EditSiteConfig() {
+    clear
+    ProjectBanner
+    echo "Project: $name"
+    echo
+    echo "Edititing project $name"
+    echo
+    echo "0 - Return to previous menu"  # Return option
+    echo "1 - Change domain"
+    echo "2 - Edit nginx config"
+    echo "3 - Edit index.html"
+    echo "4 - Edit wp-config.php (WordPress only)"
+    echo "0 - Return to previous menu"  # Return option
+    echo
+    echo
+    read -p "Select your choice (1-4, r): " editChoice
+    case $editChoice in
+        1)
+            echo "Changing domain..."
+            ChangeDomain
+            ;;
+        2)
+            echo "Editing nginx config..."
+            EditNginxConfig
+            ;;
+        3)
+            echo "Editing index.html..."
+            EditIndexHtml
+            ;;
+        4)
+            echo "Editing wp-config.php..."
+            EditWpConfig
+            ;;
+        0)  # Return option
+            clear
+            echo "Returning to the manage site menu..."
+            managesite  # Calls the main menu again
+            ;;
+        *)
+            echo "Invalid choice."
+            ;;
+    esac
+}
+
+
+AnalyticsOptions() {
+    clear
+    ProjectBanner
+    echo "Project: $name"
+    echo
+    echo "0 - Return to previous menu"  # Return option
+    echo "1 - Start Go access for project $name"
+    echo "2 - Show weight of source files"
+    echo
+    echo
+    read -p "Select your choice (0, 1-2): " editChoice
+    case $editChoice in
+        1)
+            echo "Starting script"
+            StartHTMLScript
+            ;;
+        2)
+            echo "Editing nginx config..."
+            EditNginxConfig
+            ;;
+        3)
+            echo "Editing index.html..."
+            EditIndexHtml
+            ;;
+        4)
+            echo "Editing wp-config.php..."
+            EditWpConfig
+            ;;
+        0)  # Return option
+            clear
+            echo "Returning to the manage site menu..."
+            managesite  # Calls the main menu again
+            ;;
+        *)
+            echo "Invalid choice."
+            ;;
+    esac
+}
+
+
+
+WordPressOptions() {
+    clear
+    ProjectBanner
+    echo "Project: $name"
+    echo
+    echo "0 - Return to previous menu"  # Return option
+    echo "1 - debug mode (not finished)"
+    echo "2 - update elementor"
+    echo "3 - wp-cli (not finished)"
+    echo
+    echo
+    read -p "Select your choice (0, 1-4): " editChoice
+    case $editChoice in
+        1)
+            echo "toggling debug"
+            ;;
+        2)
+            echo "Updating elementor..."
+            UpdateElementor
+            ;;
+        3)
+            echo "Editing index.html..."
+            EditIndexHtml
+            ;;
+        4)
+            echo "Editing wp-config.php..."
+            EditWpConfig
+            ;;
+        0)  # Return option
+            clear
+            echo "Returning to the manage site menu..."
+            managesite  # Calls the main menu again
+            ;;
+        *)
+            echo "Invalid choice."
+            ;;
+    esac
+}
+
+
+
 # Functions for HTML projects (example: starting/stopping a Python script)
 StartHTMLScript() {
     script="/var/www/sites/$name/start_script.py"
@@ -61,258 +295,43 @@ StopHTMLScript() {
     fi
 }
 
-managesite() {
+ScriptManagement() {
+    clear
     ProjectBanner
+    echo "Project: $name"
     echo
-    echo "  Project: $name"
+    echo "0 - Return to previous menu"  # Return option
+    echo "1 - Start Script"
+    echo "2 - Status of script"
+    echo "3 - Stop script"
+    echo "4 - Edit script"
     echo
     echo
-
-    # Determine project type based on the existence of the WordPress config file
-    if [ -f "$config_file" ]; then
-        projectType="wordpress"
-    else
-        projectType="html"
-    fi
-
-    if [ -d "$source" ]; then
-        echo
-        if [ -f "$nginxconfdir/$name.nginx" ]; then
-            echo -e " :Site \e[32mEnabled\e[0m:"
-        elif [ -f "$nginxdisabled/$name.nginx" ]; then
-            echo -e " :Site \e[31mDisabled\e[0m:"
-        fi
-        echo
-        
-        echo "Current domain: $currentdomain" 
-        echo
-        echo "What would you like to do to $name?"
-        echo
-        echo "0. Change project"
-        if [ -f "$nginxconfdir/$name.nginx" ]; then
-            echo -e "5) \e[31mDisable\e[0m site"
-        elif [ -f "$nginxdisabled/$name.nginx" ]; then
-            echo -e "5) \e[32mEnable\e[0m site"
-        else
-            echo "  :site status unknown:"
-        fi
-        echo "1. Graph log"
-        echo "2. Edit nginx config"
-        echo "3. Reset project"
-        echo "4. Change domain"
-        
-        # Display additional options based on project type
-        if [ "$projectType" = "wordpress" ]; then
-            echo "w. WP-CLI commands"
-            echo "pass. Show project password"
-        elif [ "$projectType" = "html" ]; then
-            echo "p. Start script"
-            echo "q. Check script status"
-            echo "r. Stop script"
-        fi
-        
-        echo "e. Update elementor pro from lib."
-        echo "s. Check weight of source files"
-        echo "b. Create backup"
-        echo "r. Restore backup"
-        echo "d. Toggle debug"
-        echo "g. Start Goaccess for site"
-        echo
-        echo "del. Delete project"
-        read -p "Enter your choice (1-X): " choice
-
-        # Main case statement for actions
-        case $choice in
-            'pass')
-                clear
-                password_file="/var/www/sites/$name/password.txt"
-                if [ ! -f "$password_file" ]; then
-                    echo "No set password for $name."
-                    read -p "Do you want to set a new project password for $name? (y/n): " set_password
-                    if [ "$set_password" = "y" ]; then
-                        read -s -p "Enter a new project password for $name: " new_password
-                        echo "$new_password" | sudo tee "$password_file" > /dev/null
-                        echo "Password file created."
-                    else
-                        echo "No changes made to the password."
-                    fi
-                else
-                    password=$(sudo cat "$password_file")
-                    echo "Password for project $name: $password"
-                    read -p "Do you want to change the project password for $name? (y/n): " change_password
-                    if [ "$change_password" = "y" ]; then
-                        read -s -p "Enter the new project password for $name: " new_password
-                        echo "$new_password" | sudo tee "$password_file" > /dev/null
-                        echo "Password changed."
-                    else
-                        echo "No changes made to the password."
-                    fi
-                fi
-                ;;
-            0)
-                clear
-                IsSetProject=false
-                ;;
-            1)
-                clear
-                echo "Graphing log..."
-                GraphLog
-                ;;
-            2)
-                clear
-                echo "Editing nginx config..."
-                EditConf
-                ;;
-            3)
-                clear
-                echo "Resetting project..."
-                test
-                ;;
-            4)
-                clear
-                echo "Changing domain..."
-                ChangeDomain
-                ;;
-            'w')
-                # WordPress specific option
-                clear
-                echo "WP-CLI Commands:"
-                WPCLICommands
-                ;;
-            'p')
-                # HTML specific: start script
-                clear
-                echo "Starting HTML project script..."
-                StartHTMLScript
-                ;;
-            'q')
-                clear
-                echo "Checking HTML project script status..."
-                CheckHTMLScriptStatus
-                ;;
-            'r')
-                # For HTML: stop script; note: if you have both 'r' for restore and stop script,
-                # you might want to choose a different letter or number for one of these actions.
-                clear
-                if [ "$projectType" = "html" ]; then
-                    echo "Stopping HTML project script..."
-                    StopHTMLScript
-                else
-                    echo "Restoring backup..."
-                    RestoreWP
-                fi
-                ;;
-            'e')
-                clear
-                echo "Starting elementor updater..."
-                UpdateElementor
-                ;;
-            's')
-                clear
-                echo "Storage usage for $name:"
-                echo "Logs folder size:"
-                du -sh "/var/www/logs/$name"
-                if [ -d "/var/www/backups/$name" ]; then
-                    echo "Backups folder size:"
-                    du -sh "/var/www/backups/$name"
-                else
-                    echo "No backups found."
-                fi
-                echo "Source folder size:"
-                du -sh "/var/www/sites/$name"
-                ;;
-            'b')
-                clear
-                echo "Creating backup for $name..."
-                BackupWP
-                ;;
-            'del')
-                clear
-                echo "Deleting project..."
-                DeleteWp
-                ;;
-            'g')
-                clear
-                echo "Starting Nginx website for GoAccess..."
-                sudo mv /etc/nginx/disabled/goaccess.nginx /etc/nginx/sites-enabled/goaccess.nginx
-                sudo systemctl restart nginx
-                echo "Starting GoAccess in real-time for \e[32m$name\e[0m..."
-                sudo goaccess /var/www/logs/$name/access.nginx --log-format=COMBINED --real-time-html -o /var/www/sites/goaccess/report.html
-                sudo mv /etc/nginx/sites-enabled/goaccess.nginx /etc/nginx/disabled/
-                sudo systemctl restart nginx
-                ;;
-            *)
-                echo "Invalid choice. Please try again."
-                ;;
-        esac
-
-        # Site enable/disable logic remains unchanged
-        if [ -f "$nginxconfdir/$name.nginx" ]; then
-            case $choice in
-                5|'disable')
-                    clear
-                    DisableConf
-                    ;;
-            esac
-        elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
-            case $choice in
-                5|'enable')
-                    clear
-                    EnableConf
-                    ;;
-            esac
-        fi
-
-    elif [ -d "/var/www/backups/$name" ]; then
-        echo "No active running site for project. Available backups:"
-        echo "restore. Restore a backup"
-        echo "wp. Setup WordPress project"
-        echo "html. Setup regular HTML project"
-        read -p " (Type 'no' to leave): " confirm
-        case $confirm in
-            'restore')
-                clear
-                ProjectBanner
-                echo "Restoring $name..."
-                RestoreWP
-                ;;
-            'wp')
-                clear
-                ProjectBanner
-                echo "Setting up WordPress project for $name..."
-                SetupWP
-                ;;
-            'html')
-                clear
-                ProjectBanner
-                echo "Setting up HTML project for $name..."
-                SetupHtml
-                ;;
-            'no')
-                clear
-                IsSetProject=false
-                ;;
-        esac
-  
-    else
-        echo "Project $name doesn't exist."
-        read -p "Setup new project for $name? (wp, html, or no): " create
-        case $create in
-            'wp')
-                echo "Setting up WordPress project for $name..."
-                SetupWP
-                ;;
-            'html')
-                echo "Setting up HTML project for $name..."
-                SetupHtml
-                ;;
-            'no') 
-                IsSetProject=false
-                clear
-                ;;
-            *)
-                echo "Invalid choice. Cancelling."
-                ;;
-        esac
-    fi
+    read -p "Select your choice (0, 1-4): " editChoice
+    case $editChoice in
+        1)
+            echo "Starting script"
+            StartHTMLScript
+            ;;
+        2)
+            echo "Editing nginx config..."
+            EditNginxConfig
+            ;;
+        3)
+            echo "Editing index.html..."
+            EditIndexHtml
+            ;;
+        4)
+            echo "Editing wp-config.php..."
+            EditWpConfig
+            ;;
+        0)  # Return option
+            clear
+            echo "Returning to the manage site menu..."
+            managesite  # Calls the main menu again
+            ;;
+        *)
+            echo "Invalid choice."
+            ;;
+    esac
 }
