@@ -35,106 +35,212 @@ WPCLICommands() {
 managesite() {
     clear
     ProjectBanner
-    echo "Project: $name"
     echo
+    echo "  Project: $name"
+    echo
+    echo
+     
+    if [ -d "$source" ]; then
+        echo
+        if [ -f "$nginxconfdir/$name.nginx" ]; then
+            # Print "Site Enabled" in green
+            echo -e " :Site \e[32m Enabled\e[0m:"
+        elif [ -f "$nginxdisabled/$name.nginx" ]; then
+            # Print "Site Disabled" in red
+            echo -e " :Site \e[31m Disabled\e[0m:"
+        fi
+        echo
+        
+        #if is_debug_enabled; then
+        #    echo "  \033[38;5;214mDEBUG ENABLED\033[0m"
+        #else
+        #    echo "Debug Disabled1"
+        #fi
+        
+        echo
+        echo "Current domain: $currentdomain" 
+        echo
+        echo "What would you like to do to $name?"
+        echo
+        echo "0 - Change project"
+        if [ -f "$nginxconfdir/$name.nginx" ]; then
+            echo -e "5) \e[31mDisable\e[0m site"
+        elif [ -f "$nginxdisabled/$name.nginx" ]; then
+            echo -e "5) \e[32mEnable\e[0m site"
+        else
+            echo "  :site status unknown:"
+        fi
 
-    echo "0 - Change project"
-    if [ -f "$nginxconfdir/$name.nginx" ]; then
-        echo -e "5) \e[31mDisable\e[0m site"
-    elif [ -f "$nginxdisabled/$name.nginx" ]; then
-        echo -e "5) \e[32mEnable\e[0m site"
-    else
-        echo "  :site status unknown:"
-    fi
-    echo
-    echo "2 - Backup create"
-    echo "3 - Restore"
-    echo
 
-    echo "E/e - Edit files and configs"
-    echo "S/s - Script management"
-    echo "A/a - Analytics"
-    echo "W/w - WordPress management"
-    echo
-    echo
-    echo "del - Delete project"
-    echo "res - Reset project"
-    echo "r - Return to main menu"  # Return option
-    echo
-    echo
-    read -p "Enter your choice (0-X, r): " choice
+        echo
+        echo "2 - Backup create"
+        echo "3 - Restore"
+        echo
 
-    case $choice in
-        0)
-            clear
-            echo "Changing project..."
-            IsSetProject=false
-            SetProject
-            ;;
-        2)
-            clear
-            echo "Creating backup..."
-            CreateBackup
-            ;;
-        3)
-            clear
-            echo "Restoring backup..."
-            RestoreBackup
-            ;;
-        E|e)
-            clear
-            echo "Editing site configurations..."
-            EditSiteConfig
-            ;;
-        S|s)
-            clear
-            echo "Managing scripts..."
-            ScriptManagement
-            ;;
-        A|a)
-            clear
-            echo "Analytics options..."
-            AnalyticsOptions
-            ;;
-        W|w)
-            clear
-            echo "WordPress management..."
-            WordPressOptions
-            ;;
-        del)
-            clear
-            echo "Deleting project..."
-            DeleteProject
-            ;;
-        res)
-            clear
-            echo "Resetting project..."
-            ResetProject
-            ;;
-        r|R)  # Return option
-            clear
-            echo "Returning to main menu..."
-            IsSetProject=false
-            ;;
-        *)
-            echo "Invalid choice, please try again."
-            ;;
-    esac
+        echo "E/e - Edit files and configs"
+        echo "S/s - Script management"
+        echo "A/a - Analytics"
+        echo "W/w - WordPress management"
+        echo
+        echo
+        echo "del - Delete project"
+        echo "res - Reset project"
+        echo "r - Return to main menu"  # Return option
+        echo
+        echo
+        read -p "Enter your choice (0-X, r): " choice
 
-    # Site enable/disable logic remains unchanged
-    if [ -f "$nginxconfdir/$name.nginx" ]; then
         case $choice in
-            1|'disable')
+            0)
                 clear
-                DisableConf
+                echo "Changing project..."
+                IsSetProject=false
+                SetProject
+                ;;
+            2)
+                clear
+                echo "Creating backup..."
+                CreateBackup
+                ;;
+            3)
+                clear
+                echo "Restoring backup..."
+                RestoreBackup
+                ;;
+            E|e)
+                clear
+                echo "Editing site configurations..."
+                EditSiteConfig
+                ;;
+            S|s)
+                clear
+                echo "Managing scripts..."
+                ScriptManagement
+                ;;
+            A|a)
+                clear
+                echo "Analytics options..."
+                AnalyticsOptions
+                ;;
+            W|w)
+                clear
+                echo "WordPress management..."
+                WordPressOptions
+                ;;
+            del)
+                clear
+                echo "Deleting project..."
+                DeleteProject
+                ;;
+            res)
+                clear
+                echo "Resetting project..."
+                ResetProject
+                ;;
+            r|R)  # Return option
+                clear
+                echo "Returning to main menu..."
+                IsSetProject=false
+                ;;
+            *)
+                echo "Invalid choice, please try again."
                 ;;
         esac
-    elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
-        case $choice in
-            1|'enable')
-                clear
-                EnableConf
+
+        # Site enable/disable logic remains unchanged
+        if [ -f "$nginxconfdir/$name.nginx" ]; then
+            case $choice in
+                1|'disable')
+                    clear
+                    DisableConf
+                    ;;
+            esac
+        elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
+            case $choice in
+                1|'enable')
+                    clear
+                    EnableConf
+                    ;;
+            esac
+        fi
+
+    elif [ -d "/var/www/backups/$name" ]; then
+        echo
+        echo
+        echo "no active running site for project"
+        echo 
+        echo "  found available backups: "
+        echo
+        echo "restore. Restore a backup"
+        echo "wp. Setup wordpress project"
+        echo "html. Setup regular html project"
+        echo
+        read -p " (Type 'no' to leave): " confirm
+        case $confirm in
+        'restore')
+            clear
+            ProjectBanner
+            echo
+            echo "Restoring $name"...
+            echo
+            RestoreWP
+            ;;
+        'wp')
+            clear
+            ProjectBanner
+            echo
+            echo "setting up project for $name"
+            echo
+            echo
+            SetupWP
+            ;;
+        'html')
+            clear
+            ProjectBanner
+            echo
+            echo "setting up html project for $name"
+            echo
+            SetupHtml
+            echo
+            echo "Done configuring html project for $name"
+            echo
+            ;;
+        'no')
+            clear
+            IsSetProject=false
+            ;;
+    esac
+  
+    else
+        echo 
+        echo "project $name doesnt exist"
+        echo
+        read -p "setup new project for $name? (wp, html or no): " create
+        case $create in
+            'wp')
+                echo
+                echo "setup wordpress project for $name"
+                echo
+                SetupWP
+                echo "successfully setup project $name"
+                echo
                 ;;
+            'html')
+                echo
+                echo "setting up html project for $name"
+                echo
+                SetupHtml
+                echo
+                echo "Done configuring html project for $name"
+                echo
+                ;;
+            'no') 
+                IsSetProject=false
+                clear
+                ;;
+            *)
+                echo "Invalid choice. cancelling"
+            ;;
         esac
     fi
 }
@@ -146,7 +252,6 @@ EditSiteConfig() {
     echo
     echo "Edititing project $name"
     echo
-    echo "0 - Return to previous menu"  # Return option
     echo "1 - Change domain"
     echo "2 - Edit nginx config"
     echo "3 - Edit index.html"
@@ -154,7 +259,9 @@ EditSiteConfig() {
     echo "0 - Return to previous menu"  # Return option
     echo
     echo
-    read -p "Select your choice (1-4, r): " editChoice
+    echo "r - Return to previous menu"  # Return option
+    echo
+    read -p "Select your choice (1-2, r): " editChoice
     case $editChoice in
         1)
             echo "Changing domain..."
@@ -172,7 +279,7 @@ EditSiteConfig() {
             echo "Editing wp-config.php..."
             EditWpConfig
             ;;
-        0)  # Return option
+        r|R)  # Return option
             clear
             echo "Returning to the manage site menu..."
             managesite  # Calls the main menu again
@@ -189,12 +296,13 @@ AnalyticsOptions() {
     ProjectBanner
     echo "Project: $name"
     echo
-    echo "0 - Return to previous menu"  # Return option
     echo "1 - Start Go access for project $name"
     echo "2 - Show weight of source files"
     echo
     echo
-    read -p "Select your choice (0, 1-2): " editChoice
+    echo "r - Return to previous menu"  # Return option
+    echo
+    read -p "Select your choice (1-2, r): " editChoice
     case $editChoice in
         1)
             echo "Starting script"
@@ -236,7 +344,9 @@ WordPressOptions() {
     echo "3 - wp-cli (not finished)"
     echo
     echo
-    read -p "Select your choice (0, 1-4): " editChoice
+    echo "r - Return to previous menu"  # Return option
+    echo
+    read -p "Select your choice (1-3, r): " editChoice
     case $editChoice in
         1)
             echo "toggling debug"
@@ -307,7 +417,9 @@ ScriptManagement() {
     echo "4 - Edit script"
     echo
     echo
-    read -p "Select your choice (0, 1-4): " editChoice
+    echo "r - Return to previous menu"  # Return option
+    echo
+    read -p "Select your choice (1-4, r): " editChoice
     case $editChoice in
         1)
             echo "Starting script"
