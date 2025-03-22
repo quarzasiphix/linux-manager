@@ -128,12 +128,12 @@ managesite() {
                 echo "WordPress management..."
                 WordPressOptions
                 ;;
-            del)
+            'del')
                 clear
                 echo "Deleting project..."
                 DeleteProject
                 ;;
-            res)
+            'res')
                 clear
                 echo "Resetting project..."
                 ResetProject
