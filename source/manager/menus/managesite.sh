@@ -301,6 +301,7 @@ EditSiteConfig() {
     echo "2 - Edit nginx config"
     echo "3 - Edit index.html"
     echo "4 - Edit wp-config.php (WordPress only)"
+    echo "5 - Update lov project"
     echo "0 - Return to previous menu"  # Return option
     echo
     echo
@@ -323,6 +324,10 @@ EditSiteConfig() {
         4)
             echo "Editing wp-config.php..."
             EditWpConfig
+            ;;
+        5)
+            echo "Updating lov project"
+            UpdateLov
             ;;
         r|R)  # Return option
             clear
