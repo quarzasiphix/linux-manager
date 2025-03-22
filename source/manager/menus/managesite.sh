@@ -277,8 +277,6 @@ managesite() {
                 echo "Done configuring html project for $name"
                 echo
                 ;;
-            'lov' )
-
             'no' | 0) 
                 IsSetProject=false
                 clear
