@@ -218,6 +218,7 @@ SetupDirs() {
     sudo mkdir -p /var/www/admin
     sudo mkdir -p /var/www/server
     sudo mkdir -p /var/www/sites/disabled
+    sudo mkdir -p /var/www/sites/sources
     sudo chmod -R 777 /var/www/
 }
 

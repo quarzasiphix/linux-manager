@@ -14,6 +14,7 @@ sdir="/var/www/scripts/manager"
 
 . $sdir/site/manage.sh
 . $sdir/site/setupwp.sh
+. $sdir/site/setuplov.sh
 . $sdir/site/restore.sh
 . $sdir/site/backup.sh
 . $sdir/site/webs.sh
