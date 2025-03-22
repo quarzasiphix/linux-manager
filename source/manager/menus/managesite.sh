@@ -32,42 +32,6 @@ WPCLICommands() {
     sudo -u www-data wp $wp_cmd --path="/var/www/sites/$name"
 }
 
-UpdateLov() {
-    source_dir="/var/www/sites/sources/$name"
-    project_dir="/var/www/sites/$name"
-
-    # Ensure the source directory exists
-    if [ ! -d "$source_dir" ]; then
-        echo "Source directory $source_dir does not exist. Cannot update."
-        return 1
-    fi
-
-    # Change into the source directory
-    cd "$source_dir" || { echo "Failed to change directory to $source_dir."; return 1; }
-
-    # Optional: Pull the latest changes from the Git repository
-    echo "Pulling latest changes from repository..."
-    git pull || { echo "Git pull failed."; return 1; }
-
-    # Install/update npm dependencies
-    echo "Installing npm dependencies..."
-    npm install || { echo "npm install failed."; return 1; }
-
-    # Build the React project (assumes a 'build' script is defined in package.json)
-    echo "Building the React project..."
-    npm run build || { echo "Build failed."; return 1; }
-
-    # Deploy the compiled build files to the project directory
-    echo "Deploying updated build to $project_dir..."
-    sudo rm -rf "$project_dir"/*
-    sudo cp -R "$source_dir/build/"* "$project_dir/" || { echo "Failed to deploy build files."; return 1; }
-
-    # Set proper permissions for the deployed files
-    sudo chown -R www-data:www-data "$project_dir"
-    sudo chmod -R 755 "$project_dir"
-
-    echo "Project $name updated successfully."
-}
 
 managesite() {
     clear
@@ -276,6 +240,10 @@ managesite() {
                 echo
                 echo "Done configuring html project for $name"
                 echo
+                ;;
+            'lov')
+                echo "setting up lovable project.."
+                SetupLov
                 ;;
             'no' | 0) 
                 IsSetProject=false
