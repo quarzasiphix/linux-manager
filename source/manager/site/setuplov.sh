@@ -1,72 +1,105 @@
 SetupLov() {
+    # Args & derived paths
+    local REPO_URL
+    local NAME=$name # Use the project name selected in the manager
+    local DOMAIN
+    local SRC_ROOT="/var/www/sources" # Changed from /var/www/sites/sources
+    local PROJ_DIR="$SRC_ROOT/$NAME"
+    local DIST_DIR="$PROJ_DIR/dist" # Standard build output dir
+
+    local LOG_DIR="/var/www/logs/$NAME"
+    local NGX_AVAIL="/etc/nginx/sites-available"
+    local NGX_CONF="$NGX_AVAIL/$NAME.nginx"
+    local NGX_ENABLED="/etc/nginx/sites-enabled/$NAME.nginx"
+    local first_time=false
+
     # Prompt for the Git repository URL
-    read -p "Enter Git repository URL: " git_url
-    if [ -z "$git_url" ]; then
-        echo "No Git URL provided. Exiting."
+    read -p "Enter Git repository URL: " REPO_URL
+    if [ -z "$REPO_URL" ]; then
+        echo "❌ No Git URL provided. Exiting."
         return 1
     fi
 
-    # Define directories: clone into /var/www/sites/sources/<project name>
-    # and deploy the build into /var/www/sites/<project name>
-    source_dir="/var/www/sites/sources/$name"
-    project_dir="/var/www/sites/$name"
-    git_url_file="$source_dir/.giturl"
+    # 1. Nginx vhost check / create
+    if [[ -f "$NGX_CONF" ]]; then
+        current_domain=$(awk '/^\\s*server_name/ {print $2}' "$NGX_CONF" | sed 's/[; ]//g')
+        echo "ℹ️  Existing vhost found → $NGX_CONF"
+        echo "    server_name: $current_domain (skipping vhost creation)"
+    else
+        read -rp "Domain for this site (e.g. example.com): " DOMAIN
+        [[ -z $DOMAIN ]] && { echo "❌ Domain cannot be empty"; exit 1; }
 
-    # Create the necessary directories
-    sudo mkdir -p "$source_dir" "$project_dir"
-
-    # Clone the repository into the source directory
-    echo "Cloning repository from $git_url..."
-    git clone "$git_url" "$source_dir" || { echo "Git clone failed."; return 1; }
-    
-    # Save the Git URL for future updates
-    echo "$git_url" | sudo tee "$git_url_file" > /dev/null
-
-    # Change into the source directory
-    cd "$source_dir" || { echo "Cannot change directory to $source_dir."; return 1; }
-
-    # Install npm dependencies
-    echo "Installing npm dependencies..."
-    npm install || { echo "npm install failed."; return 1; }
-
-    # Build the React project (assumes a 'build' script is defined in package.json)
-    echo "Building the React project..."
-    npm run build || { echo "Build failed."; return 1; }
-
-    # Deploy the compiled build files (typically in the "build" folder) to the project directory
-    echo "Deploying build files to project directory..."
-    sudo cp -R "$source_dir/build/"* "$project_dir/" || { echo "Failed to deploy build files."; return 1; }
-
-    # Set up the domain and Nginx configuration
-    read -p "Enter domain for the project (e.g., example.com): " domain
-    log_dir="/var/www/logs/$name"
-    sudo mkdir -p "$log_dir"
-
-    nginx_config="/etc/nginx/sites-available/$name.nginx"
-    sudo tee "$nginx_config" > /dev/null <<EOT
+        sudo mkdir -p "$LOG_DIR"
+        sudo tee "$NGX_CONF" >/dev/null <<EOT
 server {
     listen 80;
-    server_name $domain www.$domain;
-    root $project_dir;
+    server_name $DOMAIN www.$DOMAIN;
+
+    root $DIST_DIR; # Point Nginx root to the build output directory
     index index.html;
 
     error_page 404 /index.html;
-    error_log $log_dir/error.nginx;
-    access_log $log_dir/access.nginx;
+    error_log  $LOG_DIR/error.nginx;
+    access_log $LOG_DIR/access.nginx;
 
     location / {
-        try_files \$uri \$uri/ =404;
+        try_files \\\$uri \\\$uri/ =404; # Ensure backslash before $uri is escaped for tee
     }
 }
 EOT
+        # Avoid error if link already exists but file didn't (unlikely scenario, but safe)
+        if [ ! -e "$NGX_ENABLED" ]; then
+             sudo ln -s "$NGX_CONF" "$NGX_ENABLED"
+        fi
+        first_time=true
+        echo "✅ Nginx config created: $NGX_CONF"
+    fi
 
-    # Enable the Nginx site and set permissions
-    sudo ln -s "$nginx_config" "/etc/nginx/sites-enabled/$name.nginx"
-    sudo chown -R www-data:www-data "$project_dir"
-    sudo chmod -R 755 "$project_dir"
-    sudo systemctl restart nginx
+    # 2. Clone (or update) the repo
+    sudo mkdir -p "$SRC_ROOT"
+    sudo chown -R "$USER":"$USER" "$SRC_ROOT" # Ensure current user can write
 
-    echo "Project $name set up successfully using the lov method."
+    if [[ -d "$PROJ_DIR/.git" ]]; then
+        echo "⬆️  Updating repo…"
+        git -C "$PROJ_DIR" fetch --all --prune || { echo "❌ git fetch failed"; return 1; }
+        git -C "$PROJ_DIR" pull --ff-only || { echo "❌ git pull failed"; return 1; }
+    else
+        echo "⬇️  Cloning $REPO_URL → $PROJ_DIR"
+        git clone "$REPO_URL" "$PROJ_DIR" || { echo "❌ git clone failed"; return 1; }
+    fi
+    sudo chown -R www-data:www-data "$PROJ_DIR" # Nginx/PHP might need access later
+
+    # 3. Build
+    echo "📦  Installing dependencies…"
+    # Run npm commands in a subshell to avoid changing the script's directory
+    ( cd "$PROJ_DIR" && { 
+        if [[ -f package-lock.json ]]; then 
+            sudo npm ci --prefix "$PROJ_DIR" || { echo "❌ npm ci failed"; exit 1; } 
+        else 
+            sudo npm install --prefix "$PROJ_DIR" || { echo "❌ npm install failed"; exit 1; }
+        fi; 
+      } ) || return 1 # Propagate failure from subshell
+
+    echo "🔨  Running build…"
+    ( cd "$PROJ_DIR" && sudo npm run build --prefix "$PROJ_DIR" ) || { echo "❌ npm run build failed"; return 1; }
+    sudo chown -R www-data:www-data "$DIST_DIR" # Ensure web server owns build output
+
+    # 4. Nginx reload/restart
+    echo "🔄 Reloading Nginx configuration..."
+    sudo systemctl restart nginx || { echo "❌ Nginx restart failed"; return 1; }
+
+    echo -e "\n✅ Lovable site '$NAME' setup complete!"
+    echo "   Source: $PROJ_DIR"
+    echo "   Built : $DIST_DIR"
+    [[ -f "$NGX_CONF" ]] && echo "   Vhost : $NGX_CONF"
+    echo "   Domain: ${current_domain:-$DOMAIN}" # Show the domain used
+
+    # Set ownership for web server access if needed (adjust if build dir is different)
+    sudo chown -R www-data:www-data "$DIST_DIR"
+    sudo chmod -R 755 "$DIST_DIR"
+
+    echo "Press Enter to continue..."
+    read -r
 }
 
 UpdateLov() {

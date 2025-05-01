@@ -175,6 +175,7 @@ managesite() {
         echo "restore. Restore a backup"
         echo "wp. Setup wordpress project"
         echo "html. Setup regular html project"
+        echo "lov. Setup lovable (node build) project"
         echo
         read -p " (Type 'no' to leave): " confirm
         case $confirm in
@@ -205,6 +206,15 @@ managesite() {
             echo
             echo "Done configuring html project for $name"
             echo
+            ;;
+        'lov')
+            clear
+            ProjectBanner
+            echo
+            echo "setting up lovable project for $name"
+            echo
+            echo
+            SetupLov
             ;;
         'no')
             clear

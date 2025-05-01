@@ -9,6 +9,7 @@ general() {
     #echo "3. Graph All active sites"
     echo "4. Disable All sites"
     echo "5. Backup All Active"
+    echo "6. Create New Lovable Project (Git + npm build)"
     echo
     echo "conf. Edit configs"
     echo "r. Restart nginx"
@@ -53,6 +54,27 @@ general() {
         5)
             clear
             backupAll
+            ;;
+        6) # New Lovable Project
+            clear
+            ProjectBanner
+            echo
+            read -p "Enter name for the new project: " name
+            # Basic validation: check if name is provided
+            if [[ -z "$name" ]]; then
+                echo "❌ Project name cannot be empty."
+                sleep 2
+            # Basic check: prevent overwriting existing source or config by simplistic check
+            elif [[ -d "/var/www/sources/$name" || -f "/etc/nginx/sites-available/$name.nginx" ]]; then
+                echo "❌ Project '$name' already exists (source dir or nginx config found)."
+                sleep 3
+            else
+                echo "🚀 Starting setup for new lovable project: $name..."
+                # Call the setup function - it will ask for Git URL and domain
+                SetupLov
+                # SetupLov already has a 'Press Enter to continue', so no extra pause needed
+            fi
+            # Return to general menu after setup attempt
             ;;
         'g')
             clear
