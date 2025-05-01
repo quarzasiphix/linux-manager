@@ -550,10 +550,41 @@ LovableOptions() {
             fi
 
             echo "⬇️ Fetching latest changes..."
-            if ! git -C "$SRC_DIR" fetch --all --prune; then
-                echo "❌ git fetch failed."
-                sleep 3
-                return
+            # Attempt fetch, capture stderr
+            local fetch_stderr
+            if ! fetch_stderr=$(git -C "$SRC_DIR" fetch --all --prune 2>&1); then
+                # Check for dubious ownership error
+                if echo "$fetch_stderr" | grep -q "detected dubious ownership"; then
+                    echo "🛡️ Detected dubious ownership. Attempting to add to safe directories..."
+                    # Extract the directory path from the error message
+                    local safe_dir=$(echo "$fetch_stderr" | sed -n 's/.*directory \'\([^\']*\)\'.*/\1/p') 
+                    if [[ -z "$safe_dir" ]]; then # Fallback if sed fails
+                       safe_dir="$SRC_DIR"
+                    fi
+                    
+                    echo "Running: sudo git config --global --add safe.directory \"$safe_dir\""
+                    if sudo git config --global --add safe.directory "$safe_dir"; then
+                        echo "✅ Added $safe_dir to global Git safe directories. Retrying fetch..."
+                        # Retry fetch
+                        if ! git -C "$SRC_DIR" fetch --all --prune; then
+                             echo "❌ git fetch failed even after adding safe directory."
+                             sleep 3
+                             return
+                        fi
+                        echo "✅ Fetch successful after adding safe directory."
+                    else
+                        echo "❌ Failed to add $safe_dir to safe directories. Please run the command manually."
+                        echo "   Command: sudo git config --global --add safe.directory \"$safe_dir\""
+                        sleep 5
+                        return 
+                    fi
+                else
+                    # Different fetch error
+                    echo "❌ git fetch failed. Error below:"
+                    echo "$fetch_stderr" # Print the captured error
+                    sleep 3
+                    return
+                fi
             fi
 
             echo "⬇️ Pulling latest changes..."
