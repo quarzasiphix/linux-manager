@@ -56,17 +56,20 @@ EOT
 
     # 2. Clone (or update) the repo
     sudo mkdir -p "$SRC_ROOT"
-    sudo chown -R "$USER":"$USER" "$SRC_ROOT" # Ensure current user can write
+    # Ensure current user can write to SRC_ROOT if needed, but PROJ_DIR will be owned by user running clone
+    # sudo chown -R "$USER":"$USER" "$SRC_ROOT"
 
     if [[ -d "$PROJ_DIR/.git" ]]; then
         echo "⬆️  Updating repo…"
+        # Ensure the user running the script can operate git commands - relies on safe.directory for root/other users
         git -C "$PROJ_DIR" fetch --all --prune || { echo "❌ git fetch failed"; return 1; }
         git -C "$PROJ_DIR" pull --ff-only || { echo "❌ git pull failed"; return 1; }
     else
         echo "⬇️  Cloning $REPO_URL → $PROJ_DIR"
+        # Clone will be done as the user running the script (likely root if manager started with sudo)
         git clone "$REPO_URL" "$PROJ_DIR" || { echo "❌ git clone failed"; return 1; }
     fi
-    sudo chown -R www-data:www-data "$PROJ_DIR" # Nginx/PHP might need access later
+    # REMOVED: sudo chown -R www-data:www-data "$PROJ_DIR" # Don't change ownership yet
 
     # 3. Build
     echo "📦  Installing dependencies…"
@@ -81,7 +84,10 @@ EOT
 
     echo "🔨  Running build…"
     ( cd "$PROJ_DIR" && sudo npm run build --prefix "$PROJ_DIR" ) || { echo "❌ npm run build failed"; return 1; }
+    # Chown the DIST dir AFTER build is successful
+    echo "🔒 Setting permissions for $DIST_DIR..."
     sudo chown -R www-data:www-data "$DIST_DIR" # Ensure web server owns build output
+    sudo chmod -R 755 "$DIST_DIR"
 
     # 4. Nginx reload/restart
     echo "🔄 Reloading Nginx configuration..."
@@ -93,9 +99,9 @@ EOT
     [[ -f "$NGX_CONF" ]] && echo "   Vhost : $NGX_CONF"
     echo "   Domain: ${current_domain:-$DOMAIN}" # Show the domain used
 
-    # Set ownership for web server access if needed (adjust if build dir is different)
-    sudo chown -R www-data:www-data "$DIST_DIR"
-    sudo chmod -R 755 "$DIST_DIR"
+    # Set ownership for web server access if needed (adjust if build dir is different) - MOVED earlier, after build.
+    # sudo chown -R www-data:www-data "$DIST_DIR"
+    # sudo chmod -R 755 "$DIST_DIR"
 
     echo "Press Enter to continue..."
     read -r
