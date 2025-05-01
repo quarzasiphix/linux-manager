@@ -191,27 +191,23 @@ managesite() {
                 echo "Returning to main menu..."
                 IsSetProject=false
                 ;;
+            5) # Enable/Disable Toggle
+                clear
+                if [ -f "$nginxconfdir/$name.nginx" ]; then
+                    echo "Disabling site..."
+                    DisableConf
+                elif [ -f "$nginxdisabled/$name.nginx" ]; then
+                    echo "Enabling site..."
+                    EnableConf
+                else
+                    echo "Cannot determine state (config missing from both enabled and disabled)."
+                    sleep 2
+                fi
+                ;;
             *)
                 echo "Invalid choice, please try again."
                 ;;
         esac
-
-        # Site enable/disable logic remains unchanged
-        if [ -f "$nginxconfdir/$name.nginx" ]; then
-            case $choice in
-                1|'disable')
-                    clear
-                    DisableConf
-                    ;;
-            esac
-        elif [ -f "$nginxdisabled/$name.nginx" ] || [ -f "$nginxconfdir/$name.disabled" ]; then
-            case $choice in
-                1|'enable')
-                    clear
-                    EnableConf
-                    ;;
-            esac
-        fi
 
     elif [ -d "/var/www/backups/$name" ]; then
         echo
