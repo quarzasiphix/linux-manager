@@ -72,17 +72,24 @@ general() {
             name=$(basename -s .git "$REPO_URL")
             echo
             echo "ℹ️ Derived project name: $name"
+            echo
 
             # Validate derived name
             if [[ -z "$name" ]]; then
+                echo
                 echo "❌ Could not derive project name from URL."
+                echo
                 sleep 2
             # Basic check: prevent overwriting existing source or config by simplistic check
             elif [[ -d "/var/www/sources/$name" || -f "/etc/nginx/sites-available/$name.nginx" ]]; then
+                echo
                 echo "❌ Project '$name' already exists (source dir or nginx config found)."
+                echo    
                 sleep 3
             else
+                echo
                 echo "🚀 Starting setup for new lovable project: $name..."
+                echo
                 # Call the setup function - name and REPO_URL are now set
                 SetupLov
                 # SetupLov already has a 'Press Enter to continue', so no extra pause needed
