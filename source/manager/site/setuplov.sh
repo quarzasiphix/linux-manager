@@ -1,7 +1,7 @@
 SetupLov() {
     # Args & derived paths
-    local REPO_URL
-    local NAME=$name # Use the project name selected in the manager
+    # local REPO_URL # REPO_URL is now expected to be set by the caller (general.sh)
+    local NAME=$name # Use the project name set by the caller (derived from URL)
     local DOMAIN
     local SRC_ROOT="/var/www/sources" # Changed from /var/www/sites/sources
     local PROJ_DIR="$SRC_ROOT/$NAME"
@@ -13,10 +13,9 @@ SetupLov() {
     local NGX_ENABLED="/etc/nginx/sites-enabled/$NAME.nginx"
     local first_time=false
 
-    # Prompt for the Git repository URL
-    read -p "Enter Git repository URL: " REPO_URL
-    if [ -z "$REPO_URL" ]; then
-        echo "❌ No Git URL provided. Exiting."
+    # Check if REPO_URL is actually set by the caller (basic guard)
+    if [[ -z "$REPO_URL" ]]; then
+        echo "❌ Error: REPO_URL variable not set before calling SetupLov. Exiting."
         return 1
     fi
 

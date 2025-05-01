@@ -59,10 +59,23 @@ general() {
             clear
             ProjectBanner
             echo
-            read -p "Enter name for the new project: " name
-            # Basic validation: check if name is provided
+            # Ask for Git URL first
+            read -p "Enter Git repository URL: " REPO_URL
+            if [[ -z "$REPO_URL" ]]; then
+                 echo "❌ Git URL cannot be empty."
+                 sleep 2
+                 # Skip the rest of the case and return to the menu loop
+                 continue 
+            fi
+            
+            # Derive the project name from the Git URL
+            name=$(basename -s .git "$REPO_URL")
+            echo
+            echo "ℹ️ Derived project name: $name"
+
+            # Validate derived name
             if [[ -z "$name" ]]; then
-                echo "❌ Project name cannot be empty."
+                echo "❌ Could not derive project name from URL."
                 sleep 2
             # Basic check: prevent overwriting existing source or config by simplistic check
             elif [[ -d "/var/www/sources/$name" || -f "/etc/nginx/sites-available/$name.nginx" ]]; then
@@ -70,7 +83,7 @@ general() {
                 sleep 3
             else
                 echo "🚀 Starting setup for new lovable project: $name..."
-                # Call the setup function - it will ask for Git URL and domain
+                # Call the setup function - name and REPO_URL are now set
                 SetupLov
                 # SetupLov already has a 'Press Enter to continue', so no extra pause needed
             fi

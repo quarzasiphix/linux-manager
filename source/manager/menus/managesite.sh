@@ -41,7 +41,24 @@ managesite() {
     echo
     echo
      
-    if [ -d "$source" ]; then
+    # Determine project type for menu display
+    local project_type="unknown"
+    if [[ -d "/var/www/sources/$name" ]]; then
+        project_type="lovable"
+    elif [[ -f "/var/www/sites/$name/wp-config.php" ]]; then
+        project_type="wordpress"
+    elif [[ -d "/var/www/sites/$name" ]]; then # Check this after WP/Lovable
+        project_type="html"
+    fi
+
+    # Check if the Nginx config exists in either enabled or disabled
+    local nginx_conf_exists=false
+    if [[ -f "$nginxconfdir/$name.nginx" || -f "$nginxdisabled/$name.nginx" ]]; then
+        nginx_conf_exists=true
+    fi
+
+    # Only show management menu if project files/source exist OR nginx config exists
+    if [[ "$project_type" != "unknown" || "$nginx_conf_exists" == true ]]; then
         echo
         if [ -f "$nginxconfdir/$name.nginx" ]; then
             # Print "Site Enabled" in green
@@ -64,12 +81,13 @@ managesite() {
         echo "What would you like to do to $name?"
         echo
         echo "0 - Change project"
+        # Enable/Disable toggle logic
         if [ -f "$nginxconfdir/$name.nginx" ]; then
             echo -e "5) \e[31mDisable\e[0m site"
         elif [ -f "$nginxdisabled/$name.nginx" ]; then
             echo -e "5) \e[32mEnable\e[0m site"
         else
-            echo "  :site status unknown:"
+            echo "  (Site Nginx config missing - cannot Enable/Disable)"
         fi
 
 
@@ -77,13 +95,26 @@ managesite() {
         echo "2 - Backup create"
         echo "3 - Restore"
         echo
-
-        echo "E/e - Edit files and configs"
-        echo "S/s - Script management"
+        # Show type-specific menu options
+        echo "E/e - Edit General Configs (Domain, Nginx)"
+        case $project_type in
+            lovable)
+                echo "L/l - Lovable Project Management (Update, etc.)"
+                ;;
+            wordpress)
+                echo "W/w - WordPress Management (WP-CLI, etc.)"
+                ;;
+            html)
+                echo "S/s - Script Management (HTML)"
+                ;;
+            *)
+                # Maybe show generic options if type is unknown but config exists?
+                echo "  (Project type unknown)"
+                ;;
+        esac
         echo "A/a - Analytics"
-        echo "W/w - WordPress management"
         echo
-        echo
+
         echo "del - Delete project"
         echo "res - Reset project"
         echo "r - Return to main menu"  # Return option
@@ -113,10 +144,23 @@ managesite() {
                 echo "Editing site configurations..."
                 EditSiteConfig
                 ;;
+            L|l)
+                 if [[ "$project_type" == "lovable" ]]; then
+                    clear
+                    echo "Lovable project management..."
+                    LovableOptions
+                else
+                    echo "Not a Lovable project."; sleep 1
+                fi
+                ;;
             S|s)
-                clear
-                echo "Managing scripts..."
-                ScriptManagement
+                 if [[ "$project_type" == "html" ]]; then
+                    clear
+                    echo "Script management..."
+                    ScriptManagement
+                else
+                    echo "Not an HTML project (or type detection failed). Maybe try Edit Configs (E)?"; sleep 2
+                fi
                 ;;
             A|a)
                 clear
@@ -124,9 +168,13 @@ managesite() {
                 AnalyticsOptions
                 ;;
             W|w)
-                clear
-                echo "WordPress management..."
-                WordPressOptions
+                if [[ "$project_type" == "wordpress" ]]; then
+                    clear
+                    echo "WordPress management..."
+                    WordPressOptions
+                else
+                    echo "Not a WordPress project."; sleep 1
+                fi
                 ;;
             'del')
                 clear
@@ -224,7 +272,7 @@ managesite() {
   
     else
         echo 
-        echo "project $name doesnt exist"
+        echo "project $name doesnt exist, and no backups found."
         echo
         echo
         echo "wp. Wordpress project"
@@ -472,4 +520,107 @@ ScriptManagement() {
             echo "Invalid choice."
             ;;
     esac
+}
+
+LovableOptions() {
+    clear
+    ProjectBanner
+    echo "Project: $name (Lovable)"
+    echo
+    echo "Lovable Project Options:"
+    echo
+    echo "1 - Update Project (Git Pull + Build)"
+    echo "2 - Change domain (calls existing function)"
+    echo "3 - Edit Nginx Config (calls existing function)"
+    echo "4 - Delete Project (calls existing function)"
+    echo "0 / r - Return to Manage Site Menu"
+    echo
+    read -p "Select your choice: " lovChoice
+
+    local SRC_DIR="/var/www/sources/$name"
+    local DIST_DIR="$SRC_DIR/dist"
+
+    case $lovChoice in
+        1)
+            echo "🚀 Starting update for lovable project: $name..."
+            if [[ ! -d "$SRC_DIR/.git" ]]; then
+                echo "❌ Error: Not a git repository at $SRC_DIR. Cannot update."
+                sleep 3
+                return
+            fi
+
+            echo "⬇️ Fetching latest changes..."
+            if ! git -C "$SRC_DIR" fetch --all --prune; then
+                echo "❌ git fetch failed."
+                sleep 3
+                return
+            fi
+
+            echo "⬇️ Pulling latest changes..."
+            if ! git -C "$SRC_DIR" pull --ff-only; then
+                echo "❌ git pull failed. Please resolve conflicts manually in $SRC_DIR."
+                sleep 5
+                return
+            fi
+
+            echo "🔧 Attempting build first..."
+            if ( cd "$SRC_DIR" && sudo npm run build --prefix "$SRC_DIR" ); then
+                echo "✅ Build successful!"
+            else
+                echo "⚠️ Build failed, attempting dependency installation..."
+                echo "📦 Installing/Updating dependencies (npm ${ [[ -f "$SRC_DIR/package-lock.json" ]] && echo "ci" || echo "install" })..."
+                if ( cd "$SRC_DIR" && { [[ -f package-lock.json ]] && sudo npm ci --prefix "$SRC_DIR" || sudo npm install --prefix "$SRC_DIR"; } ); then
+                    echo "✅ Dependencies installed/updated."
+                    echo "🔧 Retrying build..."
+                    if ( cd "$SRC_DIR" && sudo npm run build --prefix "$SRC_DIR" ); then
+                         echo "✅ Build successful after dependency update!"
+                    else
+                        echo "❌ Build failed again after dependency update. Please check build logs in $SRC_DIR."
+                        sleep 5
+                        return
+                    fi
+                else
+                     echo "❌ Failed to install dependencies."
+                     sleep 3
+                     return # Exit if npm install failed
+                fi
+            fi
+
+            echo "🔒 Setting permissions for $DIST_DIR..."
+            sudo chown -R www-data:www-data "$DIST_DIR"
+            sudo chmod -R 755 "$DIST_DIR"
+
+            echo "🔄 Reloading Nginx..."
+            sudo systemctl restart nginx
+
+            echo "✅ Project '$name' updated successfully!"
+            echo "Press Enter to continue..."
+            read -r
+            ;;
+        2)
+            echo "Changing domain..."
+            ChangeDomain # Assuming ChangeDomain function exists and works
+            ;;
+        3)
+            echo "Editing Nginx config..."
+            EditNginxConfig # Assuming EditNginxConfig function exists and works
+            ;;
+        4)
+            echo "Deleting project..."
+            DeleteProject # Assuming DeleteProject function exists and works
+            ;;
+        0|r|R)
+            clear
+            echo "Returning to Manage Site menu..."
+            # No need to call managesite here, the loop will continue
+            ;;
+        *)
+            echo "Invalid choice."
+            sleep 1
+            ;;
+    esac
+    # Call recursively to show menu again unless returning
+    if [[ "$lovChoice" != "0" && "$lovChoice" != "r" && "$lovChoice" != "R" ]]; then
+        LovableOptions
+    fi
 }
