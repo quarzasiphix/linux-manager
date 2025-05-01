@@ -361,3 +361,105 @@ EOF
 
     rm /var/$name
 }
+
+# Function to delete a project (generic)
+DeleteProject() {
+    echo -e " \e[31mWARNING: Permanent Deletion!\e[0m "
+    echo
+    echo "This will attempt to remove the following for project '$name':"
+    echo "  - Nginx configuration (enabled/available/disabled)"
+    echo "  - Log directory (/var/www/logs/$name)"
+    
+    # Determine paths based on likely type
+    local project_type="unknown"
+    local site_dir="/var/www/sites/$name"
+    local source_dir="/var/www/sources/$name"
+    local nginx_conf_avail="/etc/nginx/sites-available/$name.nginx"
+    local nginx_conf_enabled="/etc/nginx/sites-enabled/$name.nginx"
+    local nginx_conf_disabled="/etc/nginx/disabled/$name.nginx"
+    local log_dir="/var/www/logs/$name"
+    
+    if [[ -d "$source_dir" ]]; then
+        project_type="lovable"
+        echo "  - Source directory ($source_dir)"
+    elif [[ -f "$site_dir/wp-config.php" || -d "$site_dir" ]]; then # Assume WP or HTML if site dir exists
+        project_type="site_based" # Generic type for WP/HTML
+        echo "  - Site directory ($site_dir)"
+    else
+         echo "  (Could not detect specific site/source directory, will only remove Nginx/logs)"
+    fi
+    echo
+    echo "This action cannot be undone. Consider creating a backup first."
+    echo "Backups in /var/www/backups/$name will NOT be deleted by this action."
+    echo "WordPress databases will NOT be deleted by this action."
+    echo
+    read -p "Type 'delete $name' to confirm: " confirm_input
+
+    if [[ "$confirm_input" == "delete $name" ]]; then
+        echo
+        echo "Proceeding with deletion of project '$name'..."
+        echo
+        local nginx_restarted=false
+
+        # Remove Nginx files
+        if sudo rm -f "$nginx_conf_enabled"; then
+            echo "  - Removed enabled Nginx symlink."
+            nginx_restarted=true
+        fi
+         if sudo rm -f "$nginx_conf_avail"; then
+            echo "  - Removed available Nginx config."
+            nginx_restarted=true # Need restart even if only available was removed
+        fi
+        if sudo rm -f "$nginx_conf_disabled"; then
+            echo "  - Removed disabled Nginx config."
+             nginx_restarted=true
+        fi
+
+        # Remove directories
+        if [[ "$project_type" == "lovable" && -d "$source_dir" ]]; then
+            if sudo rm -rf "$source_dir"; then
+                 echo "  - Removed source directory $source_dir"
+            else
+                 echo "  - Failed to remove source directory $source_dir"
+            fi
+        elif [[ "$project_type" == "site_based" && -d "$site_dir" ]]; then
+             if sudo rm -rf "$site_dir"; then
+                 echo "  - Removed site directory $site_dir"
+            else
+                 echo "  - Failed to remove site directory $site_dir"
+            fi
+        fi
+        
+        if [[ -d "$log_dir" ]]; then
+             if sudo rm -rf "$log_dir"; then
+                 echo "  - Removed log directory $log_dir"
+            else
+                 echo "  - Failed to remove log directory $log_dir"
+            fi
+        fi
+
+        # Restart Nginx if configs were touched
+        if [[ "$nginx_restarted" == true ]]; then
+            echo
+            echo "Restarting Nginx..."
+            sudo systemctl restart nginx
+            echo "Nginx restarted."
+        fi
+
+        echo
+        echo "Project '$name' deletion process finished."
+        # Unset project and return to main menu
+        IsSetProject=false 
+        echo "Returning to main menu..."
+        sleep 3
+    else
+        echo
+        echo "Deletion canceled. Confirmation input did not match."
+        echo "No changes made."
+        sleep 2
+    fi
+    # Ensure we break out of the managesite loop if deletion happened
+    if [[ "$IsSetProject" == false ]]; then
+        return # Exit the managesite context if deletion was successful
+    fi
+}
