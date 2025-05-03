@@ -38,9 +38,22 @@ FixAllPrivileges() {
 
     # Now recursively fix each site
     for site in /var/www/sites/*; do
-        [ -d "$site" ] || continue
+        [ -d "$site" ] || [ -L "$site" ] || continue
+
+        # If it's a symlink (lovable project)
+        if [ -L "$site" ]; then
+            target=$(readlink -f "$site")
+            # Set permissions on all parent dirs up to build/dist
+            parent_dir=$(dirname "$target")
+            sudo chown -R quarza:www-data "$parent_dir"
+            sudo chmod 755 "$parent_dir"
+            sudo chown -R quarza:www-data "$target"
+            sudo find "$target" -type d -exec chmod 755 {} \;
+            sudo find "$target" -type f -exec chmod 644 {} \;
+            sudo chown -h quarza:www-data "$site"
+            echo "  -> $site (Lovable/Node/React project symlink)"
         # Detect WordPress by presence of wp-config.php, wp-includes, or wp-admin
-        if [[ -f "$site/wp-config.php" || -d "$site/wp-includes" || -d "$site/wp-admin" ]]; then
+        elif [[ -f "$site/wp-config.php" || -d "$site/wp-includes" || -d "$site/wp-admin" ]]; then
             echo "  -> $site (WordPress)"
             FixWordPressPrivileges "$site"
         else
