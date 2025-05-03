@@ -26,23 +26,28 @@ n8n_panel() {
     read -p "Choose an option: " n8n_opt
     case "$n8n_opt" in
         1)
+            clear
             echo "Starting n8n with pm2..."
             export $(grep -v '^#' ~/.n8n/.env | xargs)
             pm2 start n8n --name n8n --time
             ;;
         2)
+            clear
             echo "Stopping n8n..."
             pm2 stop n8n
             ;;
         3)
+            clear
             echo "Restarting n8n..."
             pm2 restart n8n
             ;;
         4)
+            clear
             echo "Showing n8n log (press Ctrl+C to exit)..."
             pm2 logs n8n
             ;;
         5)
+            clear
             echo
             pm2 status n8n
             echo
@@ -53,6 +58,7 @@ n8n_panel() {
             IsSetProject="false"
             ;;
         *)
+            clear
             echo "Invalid option"
             ;;
     esac
