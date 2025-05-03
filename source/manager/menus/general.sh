@@ -11,6 +11,8 @@ general() {
     echo "5. Backup All Active"
     echo "6. Create New Lovable Project (Git + npm build)"
     echo
+    echo "N) n8n Management Panel"
+    echo
     echo "S) Safety Panel"
     echo
     echo "conf. Edit configs"
@@ -146,6 +148,10 @@ general() {
         'S'|'s')
             clear
             IsSetProject="safe"
+            ;;
+        'N'|'n')
+            clear
+            IsSetProject="n8n"
             ;;
         *)
             clear

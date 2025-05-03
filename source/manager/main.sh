@@ -12,6 +12,7 @@ sdir="/var/www/scripts/manager"
 . $sdir/server/stuff.sh
 . $sdir/server/banner.sh
 . $sdir/server/stuff.sh
+. $sdir/server/n8n.sh
 
 . $sdir/site/manage.sh
 . $sdir/site/setupwp.sh
@@ -83,6 +84,10 @@ main () {
 
         while [ "$IsSetProject" == "safe" ]; do
         SafetyPanel
+        done
+
+        while [ "$IsSetProject" == "n8n" ]; do
+        n8n_panel
         done
     done
 }

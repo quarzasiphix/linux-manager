@@ -4,6 +4,7 @@ server
 banner
 graphlogs
 stuff
+n8n
 
 site
 backup

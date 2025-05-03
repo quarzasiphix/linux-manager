@@ -1,1 +1,1 @@
-1.7.3.3 (lovable update)
+1.7.3.4 (n8n update)
