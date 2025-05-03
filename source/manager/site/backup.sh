@@ -67,7 +67,7 @@ BackupWP() {
 
     echo
     sudo mkdir -p "$tempdir"
-    sudo chmod -R 777 "$tempdir" > /dev/null 2>&1
+    sudo chmod -R 750 "$tempdir" > /dev/null 2>&1
 
     # Perform MySQL database backup.
     sudo mysqldump -u root --single-transaction "$name" > "$tempdir/$name.sql"

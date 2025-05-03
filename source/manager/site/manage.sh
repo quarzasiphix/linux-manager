@@ -433,7 +433,9 @@ DeleteProject() {
 
         # Remove directories safely
         safe_delete_dir "/var/www/sites/$name"
-        safe_delete_dir "/var/www/sources/$name"
+        if [[ "$project_type" == "lovable" ]]; then
+            safe_delete_dir "/var/www/sources/$name"
+        fi
         safe_delete_dir "/var/www/logs/$name"
 
         sudo systemctl restart nginx && log_action "Restarted Nginx after deletion"
