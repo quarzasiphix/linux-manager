@@ -23,6 +23,7 @@ n8n_panel() {
     case "$n8n_opt" in
         1)
             echo "Starting n8n with pm2..."
+            export $(grep -v '^#' ~/.n8n/.env | xargs)
             pm2 start n8n --name n8n --time
             ;;
         2)
