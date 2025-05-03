@@ -44,7 +44,7 @@ server {
     access_log $LOG_DIR/access.nginx;
 
     location / {
-        try_files \\\$uri \\\$uri/ =404; # Ensure backslash before $uri is escaped for tee
+        try_files \\\$uri \\\$uri/ /index.html; # SPA routing for Vite/React
     }
 }
 EOT
