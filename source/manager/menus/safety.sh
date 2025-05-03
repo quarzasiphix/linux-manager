@@ -140,31 +140,33 @@ ShowClamAVLog() {
 
 # Main Safety Panel Menu
 SafetyPanel() {
-    while true; do
-        clear
-        echo "====== SAFETY PANEL ======"
-        echo "1) Malware scan"
-        echo "2) Show new files since date"
-        echo "3) Fix all privileges"
-        echo "4) Show world-writable files"
-        echo "5) Disable ALL websites"
-        echo "6) ClamAV malware scan"
-        echo "7) Show Fail2ban log"
-        echo "8) Show ClamAV scan log"
-        echo "9) Back"
-        echo "=========================="
-        read -p "Choose an option: " opt
-        case "$opt" in
-            1) MalwareScan; read -p "Press Enter to continue..." ;;
-            2) ShowNewFiles; read -p "Press Enter to continue..." ;;
-            3) FixAllPrivileges; read -p "Press Enter to continue..." ;;
-            4) sudo find /var/www/sites/ -type f -perm -o+w | tee /tmp/world_writable.txt; read -p "Press Enter to continue..." ;;
-            5) DisableAllWebsites; read -p "Press Enter to continue..." ;;
-            6) ClamAVScan; read -p "Press Enter to continue..." ;;
-            7) ShowFail2banLog; read -p "Press Enter to continue..." ;;
-            8) ShowClamAVLog; read -p "Press Enter to continue..." ;;
-            9) break ;;
-            *) echo "Invalid option"; sleep 1 ;;
-        esac
-    done
+    clear
+    ProjectBanner
+    echo
+    echo
+    echo "====== SAFETY PANEL ======"
+    echo
+    echo "1) Malware scan"
+    echo "2) Show new files since date"
+    echo "3) Fix all privileges"
+    echo "4) Show world-writable files"
+    echo "5) Disable ALL websites"
+    echo "6) ClamAV malware scan"
+    echo "7) Show Fail2ban log"
+    echo "8) Show ClamAV scan log"
+    echo "9) Back"
+    echo "=========================="
+    read -p "Choose an option: " opt
+    case "$opt" in
+        1) MalwareScan; read -p "Press Enter to continue..." ;;
+        2) ShowNewFiles; read -p "Press Enter to continue..." ;;
+        3) FixAllPrivileges; read -p "Press Enter to continue..." ;;
+        4) sudo find /var/www/sites/ -type f -perm -o+w | tee /tmp/world_writable.txt; read -p "Press Enter to continue..." ;;
+        5) DisableAllWebsites; read -p "Press Enter to continue..." ;;
+        6) ClamAVScan; read -p "Press Enter to continue..." ;;
+        7) ShowFail2banLog; read -p "Press Enter to continue..." ;;
+        8) ShowClamAVLog; read -p "Press Enter to continue..." ;;
+        9) break ;;
+        *) echo "Invalid option"; sleep 1 ;;
+    esac
 } 
