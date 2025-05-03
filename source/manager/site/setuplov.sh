@@ -81,8 +81,8 @@ EOT
             echo "(Using npm ci --verbose)"
             sudo npm ci --prefix "$PROJ_DIR" --verbose || { echo "❌ npm ci failed"; exit 1; } 
         else 
-            echo "(Using npm install --verbose)"
-            sudo npm install --prefix "$PROJ_DIR" --verbose || { echo "❌ npm install failed"; exit 1; }
+            echo "(Using npm install)"
+            sudo npm install --prefix "$PROJ_DIR" || { echo "❌ npm install failed"; exit 1; }
         fi; 
       } ) || return 1 # Propagate failure from subshell
 
