@@ -1,8 +1,38 @@
 SetupLov() {
+    # Check if REPO_URL is set
+    if [[ -z "$REPO_URL" ]]; then
+        echo "❌ Error: REPO_URL variable not set before calling SetupLov. Exiting."
+        return 1
+    fi
+
+    # Derive project name from Git URL
+    name=$(basename -s .git "$REPO_URL")
+
+    # Validate project name
+    if ! [[ "$name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+        echo "❌ Invalid project name derived from URL: '$name'"
+        echo "Project names must only contain letters, numbers, - and _"
+        return 1
+    fi
+
+    # Check if the repo is accessible (public or you have access)
+    if ! git ls-remote "$REPO_URL" &>/dev/null; then
+        echo -e "\e[31m❌ Unaccessible GitHub repo: $REPO_URL"
+        echo "Check if the repository is private or if your SSH key/token is configured."
+        echo "Cancelling setup."
+        return 1
+    fi
+
+    # Prompt for domain and validate
+    read -rp "Domain for this site (e.g. example.com): " DOMAIN
+    if [[ -z $DOMAIN || ! "$DOMAIN" =~ ^[a-zA-Z0-9.-]+$ ]]; then
+        echo "❌ Domain cannot be empty or invalid"
+        return 1
+    fi
+
     # Args & derived paths
     # local REPO_URL # REPO_URL is now expected to be set by the caller (general.sh)
     # Use the project name set by the caller (derived from URL)
-    local DOMAIN
     local SRC_ROOT="/var/www/sources" # Changed from /var/www/sites/sources
     local PROJ_DIR="$SRC_ROOT/$name"
     local DIST_DIR="$PROJ_DIR/dist" # Standard build output dir
@@ -15,29 +45,12 @@ SetupLov() {
     local NGX_ENABLED="/etc/nginx/sites-enabled/$name.nginx"
     local first_time=false
 
-    # Check if REPO_URL is actually set by the caller (basic guard)
-    if [[ -z "$REPO_URL" ]]; then
-        echo "❌ Error: REPO_URL variable not set before calling SetupLov. Exiting."
-        return 1
-    fi
-
-    # Check if the repo is accessible (public or you have access)
-    if ! git ls-remote "$REPO_URL" &>/dev/null; then
-        echo -e "\e[31m❌ Unaccessible GitHub repo: $REPO_URL"
-        echo "Check if the repository is private or if your SSH key/token is configured."
-        echo "Cancelling setup."
-        return 1
-    fi
-
     # 1. Nginx vhost check / create
     if [[ -f "$NGX_CONF" ]]; then
         current_domain=$(awk '/^\\s*server_name/ {print $2}' "$NGX_CONF" | sed 's/[; ]//g')
         echo "ℹ️  Existing vhost found → $NGX_CONF"
         echo "    server_name: $current_domain (skipping vhost creation)"
     else
-        read -rp "Domain for this site (e.g. example.com): " DOMAIN
-        [[ -z $DOMAIN ]] && { echo "❌ Domain cannot be empty"; exit 1; }
-
         sudo mkdir -p "$LOG_DIR"
         sudo tee "$NGX_CONF" >/dev/null <<EOT
 server {
