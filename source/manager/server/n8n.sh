@@ -30,8 +30,11 @@ n8n_panel() {
         1)
             clear
             echo "Starting n8n with pm2..."
-            export $(grep -v '^#' ~/.n8n/.env | xargs)
-            pm2 start n8n --name n8n --time
+            if [ ! -f "$HOME/.n8n/ecosystem.config.js" ]; then
+                echo "ecosystem.config.js not found, generating..."
+                generate_n8n_ecosystem
+            fi
+            pm2 start "$HOME/.n8n/ecosystem.config.js"
             ;;
         2)
             clear
@@ -64,4 +67,43 @@ n8n_panel() {
             echo "Invalid option"
             ;;
     esac
-} 
+}
+
+generate_n8n_ecosystem() {
+    local envfile="$HOME/.n8n/.env"
+    local ecofile="$HOME/.n8n/ecosystem.config.js"
+
+    # Ensure .env exists
+    if [ ! -f "$envfile" ]; then
+        echo "No $envfile found. Please create your n8n .env file first."
+        return 1
+    fi
+
+    # Start writing the ecosystem file
+    cat > "$ecofile" <<EOF
+module.exports = {
+  apps : [{
+    name: "n8n",
+    script: "n8n",
+    env: {
+EOF
+
+    # Add all non-comment, non-empty lines from .env as JS env vars
+    grep -v '^#' "$envfile" | grep -v '^\s*$' | while IFS='=' read -r key value; do
+        # Escape double quotes in value
+        value_escaped=$(echo "$value" | sed 's/"/\\"/g')
+        echo "      $key: \"$value_escaped\"," >> "$ecofile"
+    done
+
+    # Close the JS object
+    cat >> "$ecofile" <<EOF
+    }
+  }]
+}
+EOF
+
+    echo "n8n PM2 ecosystem file created at $ecofile"
+}
+
+# After installing n8n and pm2
+generate_n8n_ecosystem 
