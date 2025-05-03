@@ -4,16 +4,18 @@ n8n_panel() {
     echo "====== n8n MANAGEMENT PANEL ======"
     echo
 
-    # Get n8n status from pm2
-    n8n_status=$(pm2 info n8n 2>/dev/null | awk -F': ' '/status/ {print $2}' | head -n1)
+    # Get n8n status from pm2 using jq for robust parsing
+    n8n_status=$(pm2 jlist | jq -r '.[] | select(.name=="n8n") | .pm2_env.status')
     if [[ "$n8n_status" == "online" ]]; then
         echo -e "n8n status: \e[32mONLINE\e[0m"
     elif [[ "$n8n_status" == "stopped" ]]; then
         echo -e "n8n status: \e[33mSTOPPED\e[0m"
     elif [[ "$n8n_status" == "errored" ]]; then
         echo -e "n8n status: \e[31mERRORED\e[0m"
-    else
+    elif [[ -z "$n8n_status" ]]; then
         echo -e "n8n status: \e[31mNOT RUNNING\e[0m"
+    else
+        echo -e "n8n status: \e[31mUNKNOWN ($n8n_status)\e[0m"
     fi
     echo
     echo "1) Start n8n"

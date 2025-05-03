@@ -116,7 +116,7 @@ EOT
     chmod +x wp-cli.phar
     sudo mv wp-cli.phar /usr/local/bin/wp
 
-    sudo apt install ufw goaccess npm node screen unzip neofetch zip trash-cli nginx curl mariadb-server mariadb-client php-sqlite3 php-gd php-mbstring php-pdo-sqlite php-fpm php-cli php-soap php-zip php-xml php-dom php-curl php-mysqli fail2ban
+    sudo apt install ufw goaccess npm jq node screen unzip neofetch zip trash-cli nginx curl mariadb-server mariadb-client php-sqlite3 php-gd php-mbstring php-pdo-sqlite php-fpm php-cli php-soap php-zip php-xml php-dom php-curl php-mysqli fail2ban
     npm install -g n8n
     npm install -g pm2
 }
