@@ -58,32 +58,34 @@ current_version=$(cat $ddir/version.txt)
 echo -e "version: \e[32m$current_version\e[0m"
 # Read each line from the file
 
-while IFS= read -r line; do
+while read script; do
+    [ -z "$script" ] && continue
+    echo "Downloading: '$script'"
     # Check if the line contains "server"
-    if [[ "$line" == "server" ]]; then
+    if [[ "$script" == "server" ]]; then
         current_array="server"
-    elif [[ "$line" == "site" ]]; then
+    elif [[ "$script" == "site" ]]; then
         current_array="site"
-    elif [[ "$line" == "menus" ]]; then
+    elif [[ "$script" == "menus" ]]; then
         current_array="menus"
     else
         # Add the line to the current array
         if [ "$current_array" == "general" ]; then
             echo
-            echo "downloading general script $line..."
-            sudo curl -o "$ddir/$line.sh" "$url/$line.sh" > /dev/null 2>&1
-            sudo chmod +x "$ddir/$line.sh"
-            echo "done downloading $line"
+            echo "downloading general script $script..."
+            sudo curl -o "$ddir/$script.sh" "$url/$script.sh" > /dev/null 2>&1
+            sudo chmod +x "$ddir/$script.sh"
+            echo "done downloading $script"
             echo
-            general+=("$line")
+            general+=("$script")
         else 
             echo
-            echo "downloading $current_array script $line..."
-            sudo curl -o "$ddir/$current_array/$line.sh" "$url/$current_array/$line.sh" > /dev/null
-            sudo chmod +x "$ddir/$current_array/$line.sh"
-            echo "done downloading $line"
+            echo "downloading $current_array script $script..."
+            sudo curl -o "$ddir/$current_array/$script.sh" "$url/$current_array/$script.sh" > /dev/null
+            sudo chmod +x "$ddir/$current_array/$script.sh"
+            echo "done downloading $script"
             echo
-            server+=("$line")
+            server+=("$script")
         fi
     fi
 done < "$file"
