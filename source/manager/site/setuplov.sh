@@ -1,18 +1,18 @@
 SetupLov() {
     # Args & derived paths
     # local REPO_URL # REPO_URL is now expected to be set by the caller (general.sh)
-    local NAME=$name # Use the project name set by the caller (derived from URL)
+    # Use the project name set by the caller (derived from URL)
     local DOMAIN
     local SRC_ROOT="/var/www/sources" # Changed from /var/www/sites/sources
-    local PROJ_DIR="$SRC_ROOT/$NAME"
+    local PROJ_DIR="$SRC_ROOT/$name"
     local DIST_DIR="$PROJ_DIR/dist" # Standard build output dir
     # BUILD_DIR removed since we're using DIST_DIR as the build output directory
-    local SITE_LINK="/var/www/sites/$NAME"
+    local SITE_LINK="/var/www/sites/$name"
 
-    local LOG_DIR="/var/www/logs/$NAME"
+    local LOG_DIR="/var/www/logs/$name"
     local NGX_AVAIL="/etc/nginx/sites-available"
-    local NGX_CONF="$NGX_AVAIL/$NAME.nginx"
-    local NGX_ENABLED="/etc/nginx/sites-enabled/$NAME.nginx"
+    local NGX_CONF="$NGX_AVAIL/$name.nginx"
+    local NGX_ENABLED="/etc/nginx/sites-enabled/$name.nginx"
     local first_time=false
 
     # Check if REPO_URL is actually set by the caller (basic guard)
@@ -106,7 +106,7 @@ EOT
     echo "🔄 Reloading Nginx configuration..."
     sudo systemctl restart nginx || { echo "❌ Nginx restart failed"; return 1; }
 
-    echo -e "\n✅ Lovable site '$NAME' setup complete!"
+    echo -e "\n✅ Lovable site '$name' setup complete!"
     echo "   Source: $PROJ_DIR"
     echo "   Built : $DIST_DIR"
     [[ -f "$NGX_CONF" ]] && echo "   Vhost : $NGX_CONF"
@@ -127,7 +127,7 @@ EOT
     sudo find "$DIST_DIR" -type f -exec chmod 644 {} \;
 
     # After setup, set project as selected and open manager
-    export name="$NAME"
+    export name="$name"
     IsSetProject=true
     SetProject
 }
