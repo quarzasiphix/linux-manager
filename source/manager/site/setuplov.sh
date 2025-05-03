@@ -78,8 +78,8 @@ EOT
     # Run npm commands in a subshell to avoid changing the script's directory
     ( cd "$PROJ_DIR" && { 
         if [[ -f package-lock.json ]]; then 
-            echo "(Using npm ci --verbose)"
-            sudo npm ci --prefix "$PROJ_DIR" --verbose || { echo "❌ npm ci failed"; exit 1; } 
+            echo "(Using npm ci)"
+            sudo npm ci --prefix "$PROJ_DIR" || { echo "❌ npm ci failed"; exit 1; } 
         else 
             echo "(Using npm install)"
             sudo npm install --prefix "$PROJ_DIR" || { echo "❌ npm install failed"; exit 1; }
@@ -137,6 +137,15 @@ UpdateLov() {
 
     cd "$source_dir" || { echo "Failed to cd to $source_dir"; return 1; }
 
+    echo "Checking for updates..."
+    git fetch origin > /dev/null 2>&1
+    LOCAL=$(git rev-parse @)
+    REMOTE=$(git rev-parse @{u})
+    if [ "$LOCAL" = "$REMOTE" ]; then
+        echo -e "\e[32mNo updates available. Project is up to date.\e[0m"
+        return 0
+    fi
+
     echo "Pulling latest changes from git..."
     if ! git pull; then
         echo "Git pull failed. Please check the remote repository."
@@ -145,9 +154,9 @@ UpdateLov() {
 
     echo "Installing npm dependencies..."
     if [[ -f package-lock.json ]]; then
-        sudo npm ci --prefix "$source_dir" --verbose || { echo "npm ci failed."; return 1; }
+        sudo npm ci --prefix "$source_dir" || { echo "npm ci failed."; return 1; }
     else
-        sudo npm install --prefix "$source_dir"|| { echo "npm install failed."; return 1; }
+        sudo npm install --prefix "$source_dir" || { echo "npm install failed."; return 1; }
     fi
 
     echo "Building the project..."
