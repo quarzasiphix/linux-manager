@@ -67,7 +67,7 @@ server {
     access_log $LOG_DIR/access.nginx;
 
     location / {
-        try_files \$uri \$uri/ /index.html # SPA routing for Vite/React
+        try_files \$uri \$uri/ /index.html; # SPA routing for Vite/React
     }
 }
 EOT
