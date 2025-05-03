@@ -1,8 +1,11 @@
 SetupLov() {
-    # Check if REPO_URL is set
+    # Check if REPO_URL is set, prompt if not
     if [[ -z "$REPO_URL" ]]; then
-        echo "❌ Error: REPO_URL variable not set before calling SetupLov. Exiting."
-        return 1
+        read -rp "Enter Git repository URL: " REPO_URL
+        if [[ -z "$REPO_URL" ]]; then
+            echo "❌ Git URL cannot be empty. Cancelling."
+            return 1
+        fi
     fi
 
     # Derive project name from Git URL
@@ -60,12 +63,11 @@ server {
     root $DIST_DIR; # Point Nginx root to the build output directory
     index index.html;
 
-    error_page 404 /index.html;
     error_log  $LOG_DIR/error.nginx;
     access_log $LOG_DIR/access.nginx;
 
     location / {
-        try_files \\\$uri \\\$uri/ /index.html; # SPA routing for Vite/React
+        try_files \$uri \$uri/ /index.html # SPA routing for Vite/React
     }
 }
 EOT
