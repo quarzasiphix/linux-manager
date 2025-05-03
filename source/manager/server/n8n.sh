@@ -4,11 +4,16 @@ n8n_panel() {
     echo "====== n8n MANAGEMENT PANEL ======"
     echo
 
-    # Check n8n status via pm2
-    if pm2 list | grep -q -w n8n; then
-        echo -e "n8n status: \e[32mRUNNING\e[0m"
+    # Get n8n status from pm2
+    n8n_status=$(pm2 info n8n 2>/dev/null | awk -F': ' '/status/ {print $2}' | head -n1)
+    if [[ "$n8n_status" == "online" ]]; then
+        echo -e "n8n status: \e[32mONLINE\e[0m"
+    elif [[ "$n8n_status" == "stopped" ]]; then
+        echo -e "n8n status: \e[33mSTOPPED\e[0m"
+    elif [[ "$n8n_status" == "errored" ]]; then
+        echo -e "n8n status: \e[31mERRORED\e[0m"
     else
-        echo -e "n8n status: \e[31mSTOPPED\e[0m"
+        echo -e "n8n status: \e[31mNOT RUNNING\e[0m"
     fi
     echo
     echo "1) Start n8n"
