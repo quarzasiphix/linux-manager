@@ -337,7 +337,7 @@ EditSiteConfig() {
             ;;
         2)
             echo "Editing nginx config..."
-            EditNginxConfig
+            EditConf # Changed from EditNginxConfig to EditConf which is defined above
             ;;
         3)
             echo "Editing index.html..."
