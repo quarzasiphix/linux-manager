@@ -21,6 +21,14 @@ SetupLov() {
         return 1
     fi
 
+    # Check if the repo is accessible (public or you have access)
+    if ! git ls-remote "$REPO_URL" &>/dev/null; then
+        echo -e "\e[31m❌ Unaccessible GitHub repo: $REPO_URL"
+        echo "Check if the repository is private or if your SSH key/token is configured."
+        echo "Cancelling setup."
+        return 1
+    fi
+
     # 1. Nginx vhost check / create
     if [[ -f "$NGX_CONF" ]]; then
         current_domain=$(awk '/^\\s*server_name/ {print $2}' "$NGX_CONF" | sed 's/[; ]//g')
@@ -119,8 +127,8 @@ EOT
     sudo find "$DIST_DIR" -type f -exec chmod 644 {} \;
 
     # After setup, set project as selected and open manager
-    IsSetProject=true
     export name="$NAME"
+    IsSetProject=true
     SetProject
 }
 
