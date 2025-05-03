@@ -43,7 +43,7 @@ FixAllPrivileges() {
         # If it's a symlink (lovable project)
         if [ -L "$site" ]; then
             target=$(readlink -f "$site")
-            # Set permissions on all parent dirs up to build/dist
+            # Set permissions on all parent dirs up to dist (Vite) or build (CRA)
             parent_dir=$(dirname "$target")
             sudo chown -R quarza:www-data "$parent_dir"
             sudo chmod 755 "$parent_dir"
@@ -179,7 +179,10 @@ SafetyPanel() {
         6) ClamAVScan; read -p "Press Enter to continue..." ;;
         7) ShowFail2banLog; read -p "Press Enter to continue..." ;;
         8) ShowClamAVLog; read -p "Press Enter to continue..." ;;
-        9) break ;;
+        9)             
+            clear
+            IsSetProject="false"
+            ;; 
         *) echo "Invalid option"; sleep 1 ;;
     esac
 } 
