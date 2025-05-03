@@ -260,9 +260,10 @@ managesite() {
             echo
             SetupLov
             ;;
-        'no')
-            clear
+        'no' | '0') # Treat 0 as a string
             IsSetProject=false
+            clear
+            return # Exit the current function/menu
             ;;
     esac
   
@@ -299,9 +300,10 @@ managesite() {
                 echo "setting up lovable project.."
                 SetupLov
                 ;;
-            'no' | 0) 
+            'no' | '0') # Treat 0 as a string
                 IsSetProject=false
                 clear
+                return # Exit the current function/menu
                 ;;
             *)
                 echo "Invalid choice. cancelling"

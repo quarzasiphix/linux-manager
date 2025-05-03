@@ -145,7 +145,7 @@ general() {
             ;;
         'S'|'s')
             clear
-            $IsSetProject="safety"
+            IsSetProject="safe"
             ;;
         *)
             clear

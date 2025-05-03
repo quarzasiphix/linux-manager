@@ -147,7 +147,7 @@ UpdateLov() {
     if [[ -f package-lock.json ]]; then
         sudo npm ci --prefix "$source_dir" --verbose || { echo "npm ci failed."; return 1; }
     else
-        sudo npm install --prefix "$source_dir" --verbose || { echo "npm install failed."; return 1; }
+        sudo npm install --prefix "$source_dir"|| { echo "npm install failed."; return 1; }
     fi
 
     echo "Building the project..."

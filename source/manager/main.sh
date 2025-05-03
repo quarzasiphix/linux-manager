@@ -81,7 +81,7 @@ main () {
         configurator
         done
 
-        while [ "$IsSetProject" == "safety" ]; do
+        while [ "$IsSetProject" == "safe" ]; do
         safety
         done
     done
