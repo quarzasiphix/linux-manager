@@ -118,54 +118,54 @@ EOT
     sudo find "$BUILD_DIR" -type d -exec chmod 755 {} \;
     sudo find "$BUILD_DIR" -type f -exec chmod 644 {} \;
 
-    echo "Press Enter to continue..."
-    read -r
+    # After setup, set project as selected and open manager
+    IsSetProject=true
+    export name="$NAME"
+    SetProject
 }
 
 UpdateLov() {
-    source_dir="/var/www/sites/sources/$name"
-    project_dir="/var/www/sites/$name"
-    git_url_file="$source_dir/.giturl"
+    local SRC_ROOT="/var/www/sources"
+    local source_dir="$SRC_ROOT/$name"
+    local build_dir="$source_dir/build"
+    local site_link="/var/www/sites/$name"
 
-    if [ ! -d "$source_dir" ]; then
-        echo "Source directory $source_dir does not exist. Cannot update."
+    if [ ! -d "$source_dir/.git" ]; then
+        echo "Error: $source_dir is not a git repository."
         return 1
     fi
 
-    if [ ! -f "$git_url_file" ]; then
-        echo "Git URL file not found. Please reinitialize the Lov project."
-        return 1
-    fi
+    cd "$source_dir" || { echo "Failed to cd to $source_dir"; return 1; }
 
-    git_url=$(cat "$git_url_file")
-
-    cd "$source_dir" || { echo "Failed to change directory to $source_dir."; return 1; }
-
-    echo "Pulling latest changes from repository ($git_url)..."
+    echo "Pulling latest changes from git..."
     if ! git pull; then
-        echo "Git pull failed. The stored Git URL ($git_url) might be invalid."
-        read -p "Enter new Git repository URL: " new_url
-        if [ -z "$new_url" ]; then
-            echo "No new URL provided. Aborting update."
-            return 1
-        fi
-        git remote set-url origin "$new_url"
-        echo "$new_url" | sudo tee "$git_url_file" > /dev/null
-        git pull || { echo "Git pull failed even after updating remote URL."; return 1; }
+        echo "Git pull failed. Please check the remote repository."
+        return 1
     fi
 
     echo "Installing npm dependencies..."
-    npm install || { echo "npm install failed."; return 1; }
+    if [[ -f package-lock.json ]]; then
+        sudo npm ci --prefix "$source_dir" --verbose || { echo "npm ci failed."; return 1; }
+    else
+        sudo npm install --prefix "$source_dir" --verbose || { echo "npm install failed."; return 1; }
+    fi
 
-    echo "Building the React project..."
-    npm run build || { echo "Build failed."; return 1; }
+    echo "Building the project..."
+    sudo npm run build --prefix "$source_dir" || { echo "Build failed."; return 1; }
 
-    echo "Deploying updated build to $project_dir..."
-    sudo rm -rf "$project_dir"/*
-    sudo cp -R "$source_dir/build/"* "$project_dir/" || { echo "Failed to deploy build files."; return 1; }
+    # Update symlink
+    echo "Updating symlink in $site_link to point to $build_dir..."
+    sudo rm -rf "$site_link"
+    sudo ln -s "$build_dir" "$site_link"
+    sudo chown -h quarza:www-data "$site_link"
 
-    sudo chown -R quarza:www-data "$project_dir"
-    sudo chmod -R 755 "$project_dir"
+    # Set permissions for build output
+    sudo chown -R quarza:www-data "$build_dir"
+    sudo find "$build_dir" -type d -exec chmod 755 {} \;
+    sudo find "$build_dir" -type f -exec chmod 644 {} \;
 
-    echo "Project $name updated successfully."
+    echo "Reloading Nginx configuration..."
+    sudo systemctl reload nginx
+
+    echo "Project $name updated and deployed successfully."
 }

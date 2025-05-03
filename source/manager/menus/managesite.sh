@@ -538,92 +538,10 @@ LovableOptions() {
 
     case $lovChoice in
         1)
-            echo "🚀 Starting update for lovable project: $name..."
-            if [[ ! -d "$SRC_DIR/.git" ]]; then
-                echo "❌ Error: Not a git repository at $SRC_DIR. Cannot update."
-                sleep 3
-                return
-            fi
-
-            echo "⬇️ Fetching latest changes..."
-            # Attempt fetch, capture stderr
-            local fetch_stderr
-            if ! fetch_stderr=$(git -C "$SRC_DIR" fetch --all --prune 2>&1); then
-                # Check for dubious ownership error
-                if echo "$fetch_stderr" | grep -q "detected dubious ownership"; then
-                    echo "🛡️ Detected dubious ownership. Attempting to add to safe directories..."
-                    # Extract the directory path from the error message
-                    local safe_dir=$(echo "$fetch_stderr" | sed -n 's/.*directory \'\([^\']*\)\'.*/\1/p') 
-                    if [[ -z "$safe_dir" ]]; then # Fallback if sed fails
-                       safe_dir="$SRC_DIR"
-                    fi
-                    
-                    echo "Running: sudo git config --global --add safe.directory \"$safe_dir\""
-                    if sudo git config --global --add safe.directory "$safe_dir"; then
-                        echo "✅ Added $safe_dir to global Git safe directories. Retrying fetch..."
-                        # Retry fetch
-                        if ! git -C "$SRC_DIR" fetch --all --prune; then
-                             echo "❌ git fetch failed even after adding safe directory."
-                             sleep 3
-                             return
-                        fi
-                        echo "✅ Fetch successful after adding safe directory."
-                    else
-                        echo "❌ Failed to add $safe_dir to safe directories. Please run the command manually."
-                        echo "   Command: sudo git config --global --add safe.directory \"$safe_dir\""
-                        sleep 5
-                        return 
-                    fi
-                else
-                    # Different fetch error
-                    echo "❌ git fetch failed. Error below:"
-                    echo "$fetch_stderr" # Print the captured error
-                    sleep 3
-                    return
-                fi
-            fi
-
-            echo "⬇️ Pulling latest changes..."
-            if ! git -C "$SRC_DIR" pull --ff-only; then
-                echo "❌ git pull failed. Please resolve conflicts manually in $SRC_DIR."
-                sleep 5
-                return
-            fi
-
-            echo "🔧 Attempting build first..."
-            if ( cd "$SRC_DIR" && sudo npm run build --prefix "$SRC_DIR" ); then
-                echo "✅ Build successful!"
-            else
-                echo "⚠️ Build failed, attempting dependency installation..."
-                echo "📦 Installing/Updating dependencies (npm ${ [[ -f "$SRC_DIR/package-lock.json" ]] && echo "ci" || echo "install" })..."
-                if ( cd "$SRC_DIR" && { [[ -f package-lock.json ]] && sudo npm ci --prefix "$SRC_DIR" || sudo npm install --prefix "$SRC_DIR"; } ); then
-                    echo "✅ Dependencies installed/updated."
-                    echo "🔧 Retrying build..."
-                    if ( cd "$SRC_DIR" && sudo npm run build --prefix "$SRC_DIR" ); then
-                         echo "✅ Build successful after dependency update!"
-                    else
-                        echo "❌ Build failed again after dependency update. Please check build logs in $SRC_DIR."
-                        sleep 5
-                        return
-                    fi
-                else
-                     echo "❌ Failed to install dependencies."
-                     sleep 3
-                     return # Exit if npm install failed
-                fi
-            fi
-
-            echo "🔒 Setting permissions for $DIST_DIR..."
-            sudo chown -R quarza:www-data "$DIST_DIR"
-            sudo chmod -R 755 "$DIST_DIR"
-
-            echo "🔄 Reloading Nginx..."
-            sudo systemctl restart nginx
-
-            echo "✅ Project '$name' updated successfully!"
-            echo "Press Enter to continue..."
-            read -r
-            ;;
+            clear
+            echo "Updating project $name..."
+            UpdateLov
+            read -p "Press Enter to continue..." ;;
         2)
             echo "Changing domain..."
             ChangeDomain # Assuming ChangeDomain function exists and works

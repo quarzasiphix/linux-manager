@@ -66,7 +66,6 @@ general() {
             if [[ -z "$REPO_URL" ]]; then
                  echo "❌ Git URL cannot be empty."
                  sleep 2
-                 # Skip the rest of the case and return to the menu loop
                  continue 
             fi
             
@@ -82,19 +81,22 @@ general() {
                 echo "❌ Could not derive project name from URL."
                 echo
                 sleep 2
-            # Basic check: prevent overwriting existing source or config by simplistic check
             elif [[ -d "/var/www/sources/$name" || -f "/etc/nginx/sites-available/$name.nginx" ]]; then
                 echo
-                echo "❌ Project '$name' already exists (source dir or nginx config found)."
-                echo    
-                sleep 3
+                echo "ℹ️ Project '$name' already exists. Opening project manager panel..."
+                IsSetProject=true
+                export name
+                SetProject
             else
                 echo
                 echo "🚀 Starting setup for new lovable project: $name..."
                 echo
                 # Call the setup function - name and REPO_URL are now set
                 SetupLov
-                # SetupLov already has a 'Press Enter to continue', so no extra pause needed
+                # After setup, set project as selected and open manager
+                IsSetProject=true
+                export name
+                SetProject
             fi
             # Return to general menu after setup attempt
             ;;
