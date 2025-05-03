@@ -6,6 +6,8 @@ SetupLov() {
     local SRC_ROOT="/var/www/sources" # Changed from /var/www/sites/sources
     local PROJ_DIR="$SRC_ROOT/$NAME"
     local DIST_DIR="$PROJ_DIR/dist" # Standard build output dir
+    local BUILD_DIR="$PROJ_DIR/build"
+    local SITE_LINK="/var/www/sites/$NAME"
 
     local LOG_DIR="/var/www/logs/$NAME"
     local NGX_AVAIL="/etc/nginx/sites-available"
@@ -105,6 +107,16 @@ EOT
     # Set ownership for web server access if needed (adjust if build dir is different) - MOVED earlier, after build.
     # sudo chown -R quarza:www-data "$DIST_DIR"
     # sudo chmod -R 755 "$DIST_DIR"
+
+    # Remove old site and symlink new build
+    sudo rm -rf "$SITE_LINK"
+    sudo ln -s "$BUILD_DIR" "$SITE_LINK"
+    sudo chown -h quarza:www-data "$SITE_LINK"
+
+    # Set permissions for build output
+    sudo chown -R quarza:www-data "$BUILD_DIR"
+    sudo find "$BUILD_DIR" -type d -exec chmod 755 {} \;
+    sudo find "$BUILD_DIR" -type f -exec chmod 644 {} \;
 
     echo "Press Enter to continue..."
     read -r

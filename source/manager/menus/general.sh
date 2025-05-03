@@ -143,7 +143,7 @@ general() {
             ;;
         'S'|'s')
             clear
-            SafetyPanel
+            $IsSetProject="safety"
             ;;
         *)
             clear
