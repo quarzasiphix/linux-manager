@@ -9,6 +9,10 @@ SetupWP() {
     fi
     # Get domain
     read -p "Enter domain: " domain
+    if [[ ! "$domain" =~ ^[a-zA-Z0-9.-]+$ ]]; then
+        echo "Invalid domain name."
+        return 1
+    fi
     echo
 
     # Get database password
@@ -27,7 +31,6 @@ SetupWP() {
     sudo mkdir "/var/www/backups/temp-old"
     sudo mv "$dir" "/var/www/backups/temp-old"
     sudo mkdir "$dir"
-    echo "$password" | sudo tee "$dir/password.txt" > /dev/null
     echo
     echo "extracting wordpress files... "
     echo
@@ -58,8 +61,10 @@ PHP
     sudo chmod 600 "$dir/wp-config.php" > /dev/null
 
     echo
-    sudo chown -R www-data:www-data "$dir"
-    sudo chmod -R 755 "$dir"
+    sudo chown -R quarza:www-data "$dir"
+    sudo find "$dir" -type d -exec chmod 755 {} \;
+    sudo find "$dir" -type f -exec chmod 644 {} \;
+    sudo chmod 640 "$dir/wp-config.php"
 
     echo
     echo "Setting up Nginx"
@@ -88,9 +93,9 @@ PHP
         }
 
         location ~* /uploads/.*\.php$ {
-            return 503;
+            deny all;
         }
-
+        
         location ~ \.php$ {
             include snippets/fastcgi-php.conf;
             fastcgi_pass unix:/run/php/php8.2-fpm.sock;
@@ -139,9 +144,9 @@ EOT
     echo "Setting permissions"
     echo 
 
-    sudo chown -R www-data:www-data "$dir"
-    sudo chmod 644 	"$dir/wp-admin/index.php" > /dev/null
-    sudo chmod -R 755 "$dir/wp-content/uploads" > /dev/null
+    sudo chown -R quarza:www-data "$dir"
+    sudo find "$dir" -type d -exec chmod 755 {} \;
+    sudo find "$dir" -type f -exec chmod 644 {} \;
 
     echo
     echo "initialising project with wp cli.."

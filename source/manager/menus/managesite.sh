@@ -614,7 +614,7 @@ LovableOptions() {
             fi
 
             echo "🔒 Setting permissions for $DIST_DIR..."
-            sudo chown -R www-data:www-data "$DIST_DIR"
+            sudo chown -R quarza:www-data "$DIST_DIR"
             sudo chmod -R 755 "$DIST_DIR"
 
             echo "🔄 Reloading Nginx..."

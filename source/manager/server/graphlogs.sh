@@ -29,7 +29,7 @@ GraphAllActive() {
 
         sudo mkdir $logdir/archive
 
-        sudo chown -R www-data:www-data $pubdir/logs > /dev/null 2>&1
+        sudo chown -R quarza:www-data $pubdir/logs > /dev/null 2>&1
         sudo chmod -R 755 $pubdir/logs > /dev/null 2>&1
 
         counter=1

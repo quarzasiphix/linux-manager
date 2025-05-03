@@ -3,6 +3,9 @@
 # Linux Server Setup Script (Cleaned & Revised)
 # ------------------------------------------------------------------
 
+set -euo pipefail
+IFS=$'\n\t'
+
 # --- Function: Setup GoAccess Configuration ---
 SetupGoaccess() {
     read -p "Domain for GoAccess: " godomain
@@ -113,7 +116,7 @@ EOT
     chmod +x wp-cli.phar
     sudo mv wp-cli.phar /usr/local/bin/wp
 
-    sudo apt install ufw goaccess screen unzip neofetch zip trash-cli nginx curl mariadb-server mariadb-client php-sqlite3 php-gd php-mbstring php-pdo-sqlite php-fpm php-cli php-soap php-zip php-xml php-dom php-curl php-mysqli
+    sudo apt install ufw goaccess screen unzip neofetch zip trash-cli nginx curl mariadb-server mariadb-client php-sqlite3 php-gd php-mbstring php-pdo-sqlite php-fpm php-cli php-soap php-zip php-xml php-dom php-curl php-mysqli fail2ban
 }
 
 # --- Function: Setup Disabled Site for Nginx ---
@@ -171,13 +174,13 @@ ConfigServer() {
     read -p "Enter the location of the server: " server_location
     local server_dir="/var/www/server"
     sudo mkdir -p "$server_dir"
-    sudo chmod 777 -R "$server_dir"
+    sudo chmod 755 -R "$server_dir"
 
     echo "$server_name" | sudo tee /var/www/server/name.txt > /dev/null
     echo "$server_location" | sudo tee /var/www/server/info.txt > /dev/null
 
     sudo mkdir -p /var/www/scripts
-    sudo chmod 777 -R /var/www/scripts
+    sudo chmod 755 -R /var/www/scripts
 
     # Create banner script with the server name embedded in the PS1 prompt
     sudo tee /var/www/scripts/banner.sh > /dev/null <<EOT
@@ -219,7 +222,14 @@ SetupDirs() {
     sudo mkdir -p /var/www/server
     sudo mkdir -p /var/www/sites/disabled
     sudo mkdir -p /var/www/sites/sources
-    sudo chmod -R 777 /var/www/
+    sudo mkdir -p /var/www/logs
+    sudo touch /var/www/logs/manager.log
+    sudo chown quarza:www-data /var/www/logs/manager.log
+    sudo chmod 640 /var/www/logs/manager.log
+    sudo chown -R quarza:www-data /var/www/
+    sudo chmod -R 755 /var/www/
+    sudo find /var/www/ -type f -exec chmod 644 {} \;
+    sudo find /var/www/ -type d -exec chmod 755 {} \;
 }
 
 # --- Main Script Execution ---
@@ -277,3 +287,14 @@ sudo chmod +x "$dwldir/download.sh"
 
 echo "Running download script..."
 "$dwldir/download.sh"
+
+# (Optional) Add a basic fail2ban config for sshd:
+sudo tee /etc/fail2ban/jail.d/sshd.local > /dev/null <<EOT
+[sshd]
+enabled = true
+port    = ssh
+logpath = %(sshd_log)s
+maxretry = 5
+EOT
+sudo systemctl enable fail2ban
+sudo systemctl restart fail2ban

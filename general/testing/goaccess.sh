@@ -11,7 +11,7 @@ sudo mkdir $pubdir > /dev/null 2>&1
 sudo mkdir $pubdir/logs > /dev/null 2>&1
 sudo mkdir $pubdir/logs/$name > /dev/null 2>&1
 
-sudo chown -R www-data:www-data $pubdir/logs > /dev/null 2>&1
+sudo chown -R quarza:www-data $pubdir/logs > /dev/null 2>&1
 sudo chmod -R 755 $pubdir/logs > /dev/null 2>&1
 
 counter=1

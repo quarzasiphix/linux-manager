@@ -7,6 +7,7 @@ sdir="/var/www/scripts/manager"
 . $sdir/menus/managesite.sh
 . $sdir/menus/general.sh
 . $sdir/menus/configurator.sh
+. $sdir/menus/safety.sh
 
 . $sdir/server/stuff.sh
 . $sdir/server/banner.sh

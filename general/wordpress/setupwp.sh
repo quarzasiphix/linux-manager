@@ -31,7 +31,7 @@ sudo mkdir "$dir"
 sudo tar -xvzf latest.tar.gz --strip-components=1 -C "$dir"
 
 # Set ownership
-sudo chown -R www-data:www-data "$dir"
+sudo chown -R quarza:www-data "$dir"
 
 # Set permissions
 sudo chmod -R 755 "$dir"

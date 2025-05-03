@@ -11,6 +11,10 @@ SetProject() {
     ProjectBanner
     # Ask user to type in a name
     read -p "Project name: " name
+    if ! validate_name "$name"; then
+        echo "Invalid project name. Only letters, numbers, - and _ allowed."
+        return 1
+    fi
     echo
     source="/var/www/sites/$name"
     GrabDomain
@@ -132,7 +136,9 @@ EnanbleDebug() {
 }
 
 EditConf() {
+    log_action "Editing Nginx config"
     sudo vim $nginxconfdir/$name.nginx
+    log_action "Edited Nginx config"
     clear
     echo
     echo "edited config for $name"
@@ -143,6 +149,7 @@ EditConf() {
 }
 
 EnableConf() {
+    log_action "Enabling site"
     echo 
     echo -e "\e[32m Enabling site... \e[0m"
     echo
@@ -154,10 +161,11 @@ EnableConf() {
     sudo systemctl restart nginx
     echo
     echo "Enabled! $name"
-    echo
+    log_action "Site enabled"
 }
 
 DisableConf() {
+    log_action "Disabling site"
     echo
     echo
     echo
@@ -175,6 +183,7 @@ DisableConf() {
     sudo systemctl restart nginx
     echo
     echo "Disabled! $name"
+    log_action "Site disabled"
 }
 
 GrabDomain() {
@@ -364,6 +373,13 @@ EOF
 
 # Function to delete a project (generic)
 DeleteProject() {
+    log_action "User requested deletion for project $name"
+    if [[ -z "$name" ]] || ! validate_name "$name"; then
+        log_action "Aborted deletion: invalid or empty project name"
+        echo "Invalid or empty project name. Aborting."
+        return 1
+    fi
+
     echo -e " \e[31mWARNING: Permanent Deletion!\e[0m "
     echo
     echo "This will attempt to remove the following for project '$name':"
@@ -396,70 +412,69 @@ DeleteProject() {
     read -p "Type 'delete $name' to confirm: " confirm_input
 
     if [[ "$confirm_input" == "delete $name" ]]; then
-        echo
-        echo "Proceeding with deletion of project '$name'..."
-        echo
-        local nginx_restarted=false
-
-        # Remove Nginx files
-        if sudo rm -f "$nginx_conf_enabled"; then
-            echo "  - Removed enabled Nginx symlink."
-            nginx_restarted=true
+        log_action "Confirmed deletion for $name"
+        # Backup before deletion (rollback point)
+        local backup_dir="/var/www/backups/$name-predelete-$(date +%s)"
+        sudo mkdir -p "$backup_dir"
+        if [[ -d "/var/www/sites/$name" ]]; then
+            sudo cp -a "/var/www/sites/$name" "$backup_dir/"
         fi
-         if sudo rm -f "$nginx_conf_avail"; then
-            echo "  - Removed available Nginx config."
-            nginx_restarted=true # Need restart even if only available was removed
-        fi
-        if sudo rm -f "$nginx_conf_disabled"; then
-            echo "  - Removed disabled Nginx config."
-             nginx_restarted=true
+        if [[ -d "/var/www/sources/$name" ]]; then
+            sudo cp -a "/var/www/sources/$name" "$backup_dir/"
         fi
 
-        # Remove directories
-        if [[ "$project_type" == "lovable" && -d "$source_dir" ]]; then
-            if sudo rm -rf "$source_dir"; then
-                 echo "  - Removed source directory $source_dir"
-            else
-                 echo "  - Failed to remove source directory $source_dir"
+        # Remove Nginx configs
+        for conf in "/etc/nginx/sites-enabled/$name.nginx" "/etc/nginx/sites-available/$name.nginx" "/etc/nginx/disabled/$name.nginx"; do
+            if [[ -f "$conf" ]]; then
+                sudo rm -f "$conf"
+                log_action "Removed Nginx config: $conf"
             fi
-        elif [[ "$project_type" == "site_based" && -d "$site_dir" ]]; then
-             if sudo rm -rf "$site_dir"; then
-                 echo "  - Removed site directory $site_dir"
-            else
-                 echo "  - Failed to remove site directory $site_dir"
-            fi
-        fi
-        
-        if [[ -d "$log_dir" ]]; then
-             if sudo rm -rf "$log_dir"; then
-                 echo "  - Removed log directory $log_dir"
-            else
-                 echo "  - Failed to remove log directory $log_dir"
-            fi
-        fi
+        done
 
-        # Restart Nginx if configs were touched
-        if [[ "$nginx_restarted" == true ]]; then
-            echo
-            echo "Restarting Nginx..."
-            sudo systemctl restart nginx
-            echo "Nginx restarted."
-        fi
+        # Remove directories safely
+        safe_delete_dir "/var/www/sites/$name"
+        safe_delete_dir "/var/www/sources/$name"
+        safe_delete_dir "/var/www/logs/$name"
 
-        echo
-        echo "Project '$name' deletion process finished."
-        # Unset project and return to main menu
-        IsSetProject=false 
-        echo "Returning to main menu..."
-        sleep 3
+        sudo systemctl restart nginx && log_action "Restarted Nginx after deletion"
+
+        log_action "Completed deletion for $name. Backup at $backup_dir"
+        echo "Project '$name' deleted. Backup at $backup_dir"
     else
-        echo
-        echo "Deletion canceled. Confirmation input did not match."
-        echo "No changes made."
-        sleep 2
+        log_action "Deletion cancelled for $name"
+        echo "Deletion cancelled."
     fi
-    # Ensure we break out of the managesite loop if deletion happened
-    if [[ "$IsSetProject" == false ]]; then
-        return # Exit the managesite context if deletion was successful
+}
+
+validate_name() {
+    [[ "$1" =~ ^[a-zA-Z0-9_-]+$ ]]
+}
+
+safe_delete_dir() {
+    local dir="$1"
+    if [[ -z "$dir" || "$dir" == "/" || "$dir" == "/var" || "$dir" == "/var/www" ]]; then
+        log_action "Refused to delete suspicious directory: $dir"
+        echo "Refusing to delete suspicious directory: $dir"
+        return 1
     fi
+    if [[ -d "$dir" ]]; then
+        sudo rm -rf "$dir"
+        log_action "Deleted directory: $dir"
+    else
+        log_action "Directory not found for deletion: $dir"
+    fi
+}
+
+log_action() {
+    local action="$1"
+    local project="${name:-N/A}"
+    local logfile="/var/www/logs/manager.log"
+    local user="${SUDO_USER:-$USER}"
+    local timestamp
+    timestamp="$(date '+%F %T')"
+    sudo mkdir -p /var/www/logs
+    sudo touch "$logfile"
+    sudo chown quarza:www-data "$logfile"
+    sudo chmod 640 "$logfile"
+    echo "$timestamp | user:$user | project:$project | $action" | sudo tee -a "$logfile" > /dev/null
 }

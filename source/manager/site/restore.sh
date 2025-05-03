@@ -1,12 +1,32 @@
 # this file holds the code for the backup script.
+safe_delete_dir() {
+    local dir="$1"
+    if [[ -z "$dir" || "$dir" == "/" || "$dir" == "/var" || "$dir" == "/var/www" ]]; then
+        log_action "Refused to delete suspicious directory: $dir"
+        echo "Refusing to delete suspicious directory: $dir"
+        return 1
+    fi
+    if [[ -d "$dir" ]]; then
+        sudo rm -rf "$dir"
+        log_action "Deleted directory: $dir"
+    else
+        log_action "Directory not found for deletion: $dir"
+    fi
+}
+
 RestoreWP() {
+    log_action "Starting restore for $name"
+    if [[ -z "$name" ]] || ! validate_name "$name"; then
+        log_action "Aborted restore: invalid or empty project name"
+        echo "Invalid or empty project name. Aborting."
+        return 1
+    fi
+
     echo
     backupdir="/var/www/backups/$name"
     dir="/var/www/sites/$name"
+    tmpdir=$(mktemp -d /var/www/backups/${name}-tmp-XXXXXXXX)
     
-    # Clean up temporary directory
-    sudo rm -rf "$backupdir/$name-temp" > /dev/null 2>&1
-
     # List backups and their sizes
     echo
     echo "Backups folder size for $name:"
@@ -30,7 +50,7 @@ RestoreWP() {
     echo
 
     # Unzip the backup file
-    sudo unzip "$backupdir/$backup" -d "$backupdir/" > /dev/null
+    sudo unzip "$backupdir/$backup" -d "$tmpdir" > /dev/null
     if [ $? -ne 0 ]; then
         echo "Error: Failed to unzip the backup file"
         return 1
@@ -41,7 +61,7 @@ RestoreWP() {
     echo
 
     # Remove old WordPress files and Nginx configuration
-    sudo trash -rf "$dir"
+    safe_delete_dir "$dir"
     sudo trash "/etc/nginx/sites-enabled/$name.nginx" > /dev/null 2>&1
 
     echo
@@ -49,10 +69,8 @@ RestoreWP() {
     echo
 
     # Move the backup files to their appropriate locations
-    sudo mv "$backupdir/var/www/backups/$name/$name-temp" "$backupdir/" > /dev/null 2>&1
-    sudo trash "$backupdir/var" > /dev/null 2>&1
-    sudo mv "$backupdir/$name-temp/$name" "/var/www/sites/"
-    sudo mv "$backupdir/$name-temp/$name.nginx" "/etc/nginx/sites-enabled/"
+    sudo mv "$tmpdir/$name" "/var/www/sites/"
+    sudo mv "$tmpdir/$name.nginx" "/etc/nginx/sites-enabled/"
     sudo mkdir -p "/var/www/logs/$name"
 
     echo
@@ -83,20 +101,23 @@ RestoreWP() {
     FLUSH PRIVILEGES;
 EOF
 
-    sudo mysql -u $name -p"$dbpass" $name < "$backupdir/$name-temp/$name.sql"
+    sudo mysql -u $name -p"$dbpass" $name < "$tmpdir/$name.sql"
     if [ $? -ne 0 ]; then
         echo "Error: Failed to restore the database"
         return 1
     fi
 
-    # Clean up temporary backup directory
-    sudo rm -rf "$backupdir/$name-temp" > /dev/null 2>&1
+    # Clean up
+    safe_delete_dir "$tmpdir"
 
     # Set ownership and permissions
+    sudo chown -R quarza:www-data /var/www/sites/$name
+    sudo find /var/www/sites/$name -type d -exec chmod 755 {} \;
+    sudo find /var/www/sites/$name -type f -exec chmod 644 {} \;
     sudo chmod -R 755 "$dir"
     sudo chmod 640 "$dir/wp-config.php" > /dev/null 2>&1
     sudo chmod -R 755 "$dir/wp-content/uploads" > /dev/null 2>&1
-    sudo chown -R www-data:www-data "$dir"
+    sudo chown -R quarza:www-data "$dir"
 
     # Restart Nginx to apply changes
     sudo systemctl restart nginx
@@ -105,6 +126,7 @@ EOF
         return 1
     fi
 
+    log_action "Completed restore for $name"
     echo
     echo "Restore complete"
     echo

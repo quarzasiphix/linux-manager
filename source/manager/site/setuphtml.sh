@@ -1,9 +1,26 @@
+safe_delete_dir() {
+    local dir="$1"
+    if [[ -z "$dir" || "$dir" == "/" || "$dir" == "/var" || "$dir" == "/var/www" ]]; then
+        log_action "Refused to delete suspicious directory: $dir"
+        echo "Refusing to delete suspicious directory: $dir"
+        return 1
+    fi
+    if [[ -d "$dir" ]]; then
+        sudo rm -rf "$dir"
+        log_action "Deleted directory: $dir"
+    else
+        log_action "Directory not found for deletion: $dir"
+    fi
+}
+
 SetupHtml() {
     read -p "Enter domain: " domain
     echo
 
     dir="/var/www/sites/$name"
     
+    safe_delete_dir "$dir"
+
     sudo mkdir "$dir"
 
     echo 
@@ -49,7 +66,9 @@ EOT
     echo
     echo "setting up nginx config"
     echo
-    sudo chown -R www-data:www-data "$dir"
+    sudo chown -R quarza:www-data "$dir"
+    sudo find "$dir" -type d -exec chmod 755 {} \;
+    sudo find "$dir" -type f -exec chmod 644 {} \;
     # Create Nginx configuration file
     nginx_log_dir="/var/www/logs/$name"
     sudo mkdir $nginx_log_dir > /dev/null
@@ -70,6 +89,10 @@ EOT
 
         location / {
             try_files \$uri \$uri/ /index.html /index.php?\$args;
+        }
+
+        location ~* /uploads/.*\.php$ {
+           deny all;
         }
 
         location ~ ^/(\.user.ini|\.htaccess|\.git|\.svn|\.project|LICENSE|README.md) {

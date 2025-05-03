@@ -11,6 +11,8 @@ general() {
     echo "5. Backup All Active"
     echo "6. Create New Lovable Project (Git + npm build)"
     echo
+    echo "S) Safety Panel"
+    echo
     echo "conf. Edit configs"
     echo "r. Restart nginx"
     echo
@@ -138,6 +140,10 @@ general() {
             else
                 echo "Cancelling reboot"
             fi
+            ;;
+        'S'|'s')
+            clear
+            SafetyPanel
             ;;
         *)
             clear

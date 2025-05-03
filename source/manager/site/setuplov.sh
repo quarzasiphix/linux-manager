@@ -69,7 +69,7 @@ EOT
         # Clone will be done as the user running the script (likely root if manager started with sudo)
         git clone "$REPO_URL" "$PROJ_DIR" || { echo "❌ git clone failed"; return 1; }
     fi
-    # REMOVED: sudo chown -R www-data:www-data "$PROJ_DIR" # Don't change ownership yet
+    # REMOVED: sudo chown -R quarza:www-data "$PROJ_DIR" # Don't change ownership yet
 
     # 3. Build
     echo "📦  Installing dependencies…"
@@ -88,8 +88,9 @@ EOT
     ( cd "$PROJ_DIR" && sudo npm run build --prefix "$PROJ_DIR" ) || { echo "❌ npm run build failed"; return 1; }
     # Chown the DIST dir AFTER build is successful
     echo "🔒 Setting permissions for $DIST_DIR..."
-    sudo chown -R www-data:www-data "$DIST_DIR" # Ensure web server owns build output
+    sudo chown -R quarza:www-data "$DIST_DIR" # Ensure web server owns build output
     sudo chmod -R 755 "$DIST_DIR"
+    sudo find "$DIST_DIR" -type f -exec chmod 644 {} \;
 
     # 4. Nginx reload/restart
     echo "🔄 Reloading Nginx configuration..."
@@ -102,7 +103,7 @@ EOT
     echo "   Domain: ${current_domain:-$DOMAIN}" # Show the domain used
 
     # Set ownership for web server access if needed (adjust if build dir is different) - MOVED earlier, after build.
-    # sudo chown -R www-data:www-data "$DIST_DIR"
+    # sudo chown -R quarza:www-data "$DIST_DIR"
     # sudo chmod -R 755 "$DIST_DIR"
 
     echo "Press Enter to continue..."
@@ -151,7 +152,7 @@ UpdateLov() {
     sudo rm -rf "$project_dir"/*
     sudo cp -R "$source_dir/build/"* "$project_dir/" || { echo "Failed to deploy build files."; return 1; }
 
-    sudo chown -R www-data:www-data "$project_dir"
+    sudo chown -R quarza:www-data "$project_dir"
     sudo chmod -R 755 "$project_dir"
 
     echo "Project $name updated successfully."

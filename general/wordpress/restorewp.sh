@@ -49,7 +49,7 @@ sudo rm -R "$backupdir/$name-temp" > /dev/null
 
 dir="/var/www/sites/$name"
 
-sudo chown -R www-data:www-data "$dir"
+sudo chown -R quarza:www-data "$dir"
 
 sudo chmod -R 755 $dir
 

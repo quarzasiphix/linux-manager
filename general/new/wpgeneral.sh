@@ -61,7 +61,7 @@ GraphLog() {
 
     sudo mkdir $logdir/archive
 
-    sudo chown -R www-data:www-data $pubdir/logs > /dev/null 2>&1
+    sudo chown -R quarza:www-data $pubdir/logs > /dev/null 2>&1
     sudo chmod -R 755 $pubdir/logs > /dev/null 2>&1
 
     counter=1
@@ -131,7 +131,7 @@ GraphAllActive() {
 
         sudo mkdir $logdir/archive
 
-        sudo chown -R www-data:www-data $pubdir/logs > /dev/null 2>&1
+        sudo chown -R quarza:www-data $pubdir/logs > /dev/null 2>&1
         sudo chmod -R 755 $pubdir/logs > /dev/null 2>&1
 
         counter=1
@@ -208,7 +208,7 @@ SetupWP() {
     sudo tar -xvzf latest.tar.gz --strip-components=1 -C "$dir" > /dev/null
     echo "finished extracting wp files.. setting up perms"
     echo
-    sudo chown -R www-data:www-data "$dir"
+    sudo chown -R quarza:www-data "$dir"
     sudo chmod -R 755 "$dir"
 
     echo
@@ -565,7 +565,7 @@ EOF
 
     sudo rm -R "$backupdir/$name-temp" > /dev/null
 
-    sudo chown -R www-data:www-data "$dir"
+    sudo chown -R quarza:www-data "$dir"
 
     sudo chmod -R 755 $dir
 

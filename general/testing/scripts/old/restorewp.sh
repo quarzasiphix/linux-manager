@@ -58,7 +58,7 @@ sudo mysql -u $name -p$dbpass $name < $backupdir/$name-temp/$name.sql
 
 sudo rm -R "$backupdir/$name-temp" > /dev/null
 
-sudo chown -R www-data:www-data "$dir"
+sudo chown -R quarza:www-data "$dir"
 
 sudo chmod -R 755 $dir
 
