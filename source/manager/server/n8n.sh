@@ -1,5 +1,4 @@
 n8n_panel() {
-    clear
     ProjectBanner
     echo
     echo "====== n8n MANAGEMENT PANEL ======"
