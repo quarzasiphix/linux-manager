@@ -6,7 +6,7 @@ SetupLov() {
     local SRC_ROOT="/var/www/sources" # Changed from /var/www/sites/sources
     local PROJ_DIR="$SRC_ROOT/$NAME"
     local DIST_DIR="$PROJ_DIR/dist" # Standard build output dir
-    local BUILD_DIR="$PROJ_DIR/build"
+    # BUILD_DIR removed since we're using DIST_DIR as the build output directory
     local SITE_LINK="/var/www/sites/$NAME"
 
     local LOG_DIR="/var/www/logs/$NAME"
@@ -110,13 +110,13 @@ EOT
 
     # Remove old site and symlink new build
     sudo rm -rf "$SITE_LINK"
-    sudo ln -s "$BUILD_DIR" "$SITE_LINK"
+    sudo ln -s "$DIST_DIR" "$SITE_LINK"
     sudo chown -h quarza:www-data "$SITE_LINK"
 
     # Set permissions for build output
-    sudo chown -R quarza:www-data "$BUILD_DIR"
-    sudo find "$BUILD_DIR" -type d -exec chmod 755 {} \;
-    sudo find "$BUILD_DIR" -type f -exec chmod 644 {} \;
+    sudo chown -R quarza:www-data "$DIST_DIR"
+    sudo find "$DIST_DIR" -type d -exec chmod 755 {} \;
+    sudo find "$DIST_DIR" -type f -exec chmod 644 {} \;
 
     # After setup, set project as selected and open manager
     IsSetProject=true
@@ -127,7 +127,7 @@ EOT
 UpdateLov() {
     local SRC_ROOT="/var/www/sources"
     local source_dir="$SRC_ROOT/$name"
-    local build_dir="$source_dir/build"
+    local build_dir="$source_dir/dist"
     local site_link="/var/www/sites/$name"
 
     if [ ! -d "$source_dir/.git" ]; then
