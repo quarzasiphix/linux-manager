@@ -69,8 +69,18 @@ RestoreBackup() {
     echo
 
     # Move the backup files to their appropriate locations
-    sudo mv "$tmpdir/$name" "/var/www/sites/"
-    sudo mv "$tmpdir/$name.nginx" "/etc/nginx/sites-enabled/"
+    if [ -d "$tmpdir/$name" ]; then
+        sudo mv "$tmpdir/$name" "/var/www/sites/"
+    else
+        echo "Error: Source directory $tmpdir/$name not found in backup."
+        return 1
+    fi
+    if [ -f "$tmpdir/$name.nginx" ]; then
+        sudo mv "$tmpdir/$name.nginx" "/etc/nginx/sites-enabled/"
+    else
+        echo "Error: Nginx config $tmpdir/$name.nginx not found in backup."
+        return 1
+    fi
     sudo mkdir -p "/var/www/logs/$name"
 
     echo

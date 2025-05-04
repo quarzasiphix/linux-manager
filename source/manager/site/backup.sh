@@ -59,7 +59,7 @@ CreateBackup() {
 
     if [ -d "$tempdir" ]; then
         echo "Temp dir size: "
-        du -sh "$tempdir"
+        sudo du -sh "$tempdir"
         echo
         echo "Moving existing temp directory to archive $(date +%F)"
         sudo mv "$tempdir" "$backupdir/archive/$(date +%F)/"
@@ -70,7 +70,7 @@ CreateBackup() {
     sudo chmod -R 750 "$tempdir" > /dev/null 2>&1
 
     # Perform MySQL database backup.
-    sudo mysqldump -u root --single-transaction "$name" > "$tempdir/$name.sql"
+    sudo mysqldump -u root --single-transaction "$name" | sudo tee "$tempdir/$name.sql" > /dev/null
 
     # Backup Nginx configuration.
     sudo cp "$nginx_config" "$tempdir/"
@@ -78,13 +78,13 @@ CreateBackup() {
     # Backup logs.
     sudo cp -R "/var/www/logs/$name" "$tempdir/logs/" > /dev/null 2>&1
     echo "Logs folder size: "
-    du -sh "/var/www/logs/$name"
+    sudo du -sh "/var/www/logs/$name"
 
     echo
     echo "Backing up source files"
     echo
     echo "Source folder size: "
-    du -sh "/var/www/sites/$name"
+    sudo du -sh "/var/www/sites/$name"
 
     # Backup WordPress files.
     sudo cp -R "/var/www/sites/$name" "$tempdir/$name" > /dev/null 2>&1
@@ -119,7 +119,7 @@ CreateBackup() {
     echo
     echo -e "\e[32mBackup completed. \e[0m Files are stored in $backupdir."
 
-    du -sh "$tempdir"
+    sudo du -sh "$tempdir"
     read -p "Remove temp directory? (yes/no): " _temps
     if [ "$_temps" = "yes" ]; then
         sudo trash "$tempdir"
@@ -180,7 +180,7 @@ backupAll() {
         echo "..."
         sudo cp -R "/var/www/logs/$names" "$tempdir/logs/" > /dev/null
         echo "Logs folder size: "
-        du -sh "/var/www/logs/$name"
+        sudo du -sh "/var/www/logs/$name"
 
         #echo "source folder size for $names: "
         #du -sh "/var/www/sites/$names"
@@ -189,7 +189,7 @@ backupAll() {
         echo "..."
         sudo cp -R "/var/www/sites/$names" "$tempdir/$names" > /dev/null
         echo "source folder size: "
-        du -sh "/var/www/sites/$name"
+        sudo du -sh "/var/www/sites/$name"
 
 
         # Copy existing backup
