@@ -229,7 +229,7 @@ managesite() {
             echo
             echo "Restoring $name"...
             echo
-            RestoreWP
+            RestoreBackup
             ;;
         'wp')
             clear
