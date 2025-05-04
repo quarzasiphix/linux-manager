@@ -92,8 +92,8 @@ managesite() {
 
 
         echo
-        echo "2 - Backup create"
-        echo "3 - Restore"
+        echo "2 - Backup this project"
+        echo "3 - Restore this project"
         echo
         # Show type-specific menu options
         echo "E/e - Edit General Configs (Domain, Nginx)"

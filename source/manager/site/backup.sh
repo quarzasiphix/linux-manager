@@ -48,7 +48,7 @@
    #     sudo mkdir "$tempdir"
    # fi
 
-BackupWP() {
+CreateBackup() {
     nginx_config="/etc/nginx/sites-enabled/$name.nginx"
     backupdir="/var/www/backups/$name"
     tempdir="$backupdir/$name-temp"

@@ -14,7 +14,7 @@ safe_delete_dir() {
     fi
 }
 
-RestoreWP() {
+RestoreBackup() {
     log_action "Starting restore for $name"
     if [[ -z "$name" ]] || ! validate_name "$name"; then
         log_action "Aborted restore: invalid or empty project name"
