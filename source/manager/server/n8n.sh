@@ -48,8 +48,10 @@ n8n_panel() {
             ;;
         4)
             clear
-            echo "Showing n8n log (press Ctrl+C to exit)..."
-            pm2 logs n8n
+            echo "Showing live n8n log. Press Enter to return to the menu..."
+            (pm2 logs n8n &)
+            read -p ""
+            pkill -f "pm2 logs n8n"
             ;;
         5)
             clear
