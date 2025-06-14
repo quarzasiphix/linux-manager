@@ -39,8 +39,22 @@ managesite() {
     echo
     echo "  Project: $name"
     echo
-    echo
-     
+
+    # — Auto‐generate SSL if this site is enabled but has no cert yet —
+    if [[ -f "$nginxconfdir/$name.nginx" ]]; then
+      domain=$(grep -oP 'server_name\s+\K[^;]+' "$nginxconfdir/$name.nginx")
+      if [[ -n "$domain" && ! -d "/etc/letsencrypt/live/$domain" ]]; then
+        echo
+        echo "🔒 Generating SSL cert for $domain…"
+        email=$(get_certbot_email)
+        sudo certbot --nginx \
+          --non‐interactive --agree-tos \
+          --email "$email" \
+          --redirect -d "$domain"
+        echo
+      fi
+    fi
+
     # Determine project type for menu display
     local project_type="unknown"
     if [[ -d "/var/www/sources/$name" ]]; then
@@ -141,8 +155,22 @@ managesite() {
                 ;;
             E|e)
                 clear
-                echo "Editing site configurations..."
-                EditSiteConfig
+                echo "Enabling site…"
+                sudo mv "$nginxdisabled/$name.nginx" "$nginxconfdir/"
+                sudo systemctl reload nginx
+
+                # → Auto‐obtain SSL if still missing
+                domain=$(grep -oP 'server_name\s+\K[^;]+' "$nginxconfdir/$name.nginx")
+                if [[ -n "$domain" && ! -d "/etc/letsencrypt/live/$domain" ]]; then
+                  echo
+                  echo "🔒 Obtaining SSL cert for $domain…"
+                  email=$(get_certbot_email)
+                  sudo certbot --nginx \
+                    --non‐interactive --agree-tos \
+                    --email "$email" \
+                    --redirect -d "$domain"
+                  echo
+                fi
                 ;;
             L|l)
                  if [[ "$project_type" == "lovable" ]]; then
@@ -277,7 +305,7 @@ managesite() {
         echo "lov. Setup a lovable project from git" 
         echo "no or 0 to exit"
         echo
-        read -p "setup new project for $name? "
+        read -p "setup new project for $name? " create
         case $create in
             'wp')
                 echo

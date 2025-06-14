@@ -100,17 +100,18 @@ CreateBackup() {
         echo "$counter backups made on $(date +%F)"
         echo
         echo "Zipping backup files"
-        sudo zip -r "${backupfile}-$counter.zip" "$tempdir" > /dev/null
-        sudo mv "${backupfile}-$counter.zip" "$backupdir/"
-        final_backupfile="${backupfile}-$counter.zip"
+        # zip from inside $backupdir to avoid absolute paths in the archive
+        filename="${name}-$(date +%F)-$counter.zip"
+        ( cd "$backupdir" && sudo zip -r "$filename" "$(basename "$tempdir")" ) > /dev/null
+        final_backupfile="$backupdir/$filename"
     else
         echo
         echo "First backup of today $(date +%F)"
         echo
         echo "Zipping backup files"
-        sudo zip -r "${backupfile}.zip" "$tempdir" > /dev/null
-        sudo mv "${backupfile}.zip" "$backupdir/"
-        final_backupfile="${backupfile}.zip"
+        filename="${name}-$(date +%F).zip"
+        ( cd "$backupdir" && sudo zip -r "$filename" "$(basename "$tempdir")" ) > /dev/null
+        final_backupfile="$backupdir/$filename"
     fi
 
     echo
@@ -121,8 +122,8 @@ CreateBackup() {
 
     sudo du -sh "$tempdir"
     read -p "Remove temp directory? (yes/no): " _temps
-    if [ "$_temps" = "yes" ]; then
-        sudo trash "$tempdir"
+    if [[ "$_temps" == "yes" ]]; then
+      safe_delete "$tempdir"
     fi
 
     read -p "Setup for goaccess download? (yes/no): " _public
@@ -200,16 +201,13 @@ backupAll() {
         done
 
         if [ -f "$backupdir/$names-$(date +%F).zip" ]; then
-            # If the file exists, copy it to the archive folder
-            #cp "$name-$(date +%F).zip" "$backupdir/archive"
-            #sudo mv "$backupdir/$name-$(date +%F).zip" "$backupdir/$name-$(date +%F)-$counter.zip
             echo
             echo "$counter backups made on $(date +%F) "
             echo
             echo "Zipping backup files"
-            echo
-            sudo zip -r "$names-$(date +%F)-$counter.zip" "$tempdir"  > /dev/null
-            sudo mv "$names-$(date +%F)-$counter.zip" "$backupdir/"
+            filename="$names-$(date +%F)-$counter.zip"
+            ( cd "$backupdir" && sudo zip -r "$filename" "$(basename "$tempdir")" ) > /dev/null
+            echo "Created $backupdir/$filename"
             echo 
             echo "Backup archive size for $names: "
             du -sh "$backupdir/$names-$(date +%F)-$counter.zip"
@@ -219,8 +217,9 @@ backupAll() {
             echo
             echo "Zipping backup files"
             echo
-            sudo zip -r "$names-$(date +%F).zip" "$tempdir"  > /dev/null
-            sudo mv "$names-$(date +%F).zip" "$backupdir/"
+            filename="$names-$(date +%F).zip"
+            ( cd "$backupdir" && sudo zip -r "$filename" "$(basename "$tempdir")" ) > /dev/null
+            echo "Created $backupdir/$filename"
             echo 
             echo "Backup archive size for $names: "
             du -sh "$backupdir/$names-$(date +%F).zip"

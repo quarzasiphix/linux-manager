@@ -105,4 +105,12 @@ EOT
     sudo ln -s "$nginx_config" "/etc/nginx/sites-enabled/$name.nginx" > /dev/null
 
     sudo systemctl restart nginx
+
+    # → Obtain SSL cert
+    if [ ! -d "/etc/letsencrypt/live/$domain" ]; then
+        echo "🔒 Obtaining SSL for $domain"
+        email=$(get_certbot_email)
+        sudo certbot --nginx --non-interactive --agree-tos \
+            --email "$email" --redirect -d "$domain"
+    fi
 }

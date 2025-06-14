@@ -256,3 +256,40 @@ GetMiscSites() {
 
     echo 
 }
+
+GrabDomain() {
+    if [[ -d "/var/www/sources/$name" ]]; then
+        echo "Project '$name' doesn't exist, and no backups found."
+        echo
+        # loop until a valid choice is made
+        while true; do
+          echo "Choose project type to create:"
+          echo "  wp    – WordPress project"
+          echo "  html  – Blank HTML project"
+          echo "  lov   – Lovable project (Git + build)"
+          echo "  no/0  – Cancel"
+          read -rp "Setup new project for '$name'? " opt
+          case "${opt,,}" in
+            wp)
+              SetupWP
+              break
+              ;;
+            html)
+              SetupHtml
+              break
+              ;;
+            lov)
+              SetupLov
+              break
+              ;;
+            no|0)
+              echo "Project creation canceled."
+              return 1
+              ;;
+            *)
+              echo "Invalid option: '$opt'. Please enter wp, html, lov or no/0."
+              ;;
+          esac
+        done
+    fi
+}

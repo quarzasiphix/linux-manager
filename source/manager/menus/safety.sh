@@ -151,6 +151,26 @@ ShowClamAVLog() {
     echo "========================================="
 }
 
+# --- Ensure every active site has a cert, or generate one ---
+CheckSSL() {
+  echo
+  echo "🔍 Checking SSL for active sites..."
+  for conf in /etc/nginx/sites-enabled/*.nginx; do
+    domain=$(grep -oP 'server_name\s+\K[^;]+' "$conf")
+    if [ -z "$domain" ]; then continue; fi
+    if [ -d "/etc/letsencrypt/live/$domain" ]; then
+      echo "✅ $domain"
+    else
+      echo "❌ No cert for $domain → obtaining..."
+      email=$(get_certbot_email)
+      sudo certbot --nginx --non-interactive --agree-tos \
+        --email "$email" --redirect -d "$domain"
+    fi
+  done
+  echo "Done."
+  read -p "Press Enter to continue…"
+}
+
 # Main Safety Panel Menu
 SafetyPanel() {
     clear
@@ -167,7 +187,8 @@ SafetyPanel() {
     echo "6) ClamAV malware scan"
     echo "7) Show Fail2ban log"
     echo "8) Show ClamAV scan log"
-    echo "9) Back"
+    echo "9) Check SSL certificates"
+    echo "10) Back"
     echo "=========================="
     read -p "Choose an option: " opt
     case "$opt" in
@@ -179,7 +200,8 @@ SafetyPanel() {
         6) ClamAVScan; read -p "Press Enter to continue..." ;;
         7) ShowFail2banLog; read -p "Press Enter to continue..." ;;
         8) ShowClamAVLog; read -p "Press Enter to continue..." ;;
-        9)             
+        9) CheckSSL; read -p "Press Enter to continue..." ;;
+        10)             
             clear
             IsSetProject="false"
             ;; 

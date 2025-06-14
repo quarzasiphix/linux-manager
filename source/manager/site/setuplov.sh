@@ -121,6 +121,14 @@ EOT
     echo "🔄 Reloading Nginx configuration..."
     sudo systemctl restart nginx || { echo "❌ Nginx restart failed"; return 1; }
 
+    # → Obtain SSL cert
+    if [[ -n "$DOMAIN" ]] && [ ! -d "/etc/letsencrypt/live/$DOMAIN" ]; then
+        echo "🔒 Obtaining SSL for $DOMAIN"
+        email=$(get_certbot_email)
+        sudo certbot --nginx --non-interactive --agree-tos \
+            --email "$email" --redirect -d "$DOMAIN"
+    fi
+
     echo -e "\n✅ Lovable site '$name' setup complete!"
     echo "   Source: $PROJ_DIR"
     echo "   Built : $DIST_DIR"

@@ -1,17 +1,15 @@
 # this file holds the code for the backup script.
-safe_delete_dir() {
-    local dir="$1"
-    if [[ -z "$dir" || "$dir" == "/" || "$dir" == "/var" || "$dir" == "/var/www" ]]; then
-        log_action "Refused to delete suspicious directory: $dir"
-        echo "Refusing to delete suspicious directory: $dir"
-        return 1
-    fi
-    if [[ -d "$dir" ]]; then
-        sudo rm -rf "$dir"
-        log_action "Deleted directory: $dir"
-    else
-        log_action "Directory not found for deletion: $dir"
-    fi
+
+# Helper to get stored email
+get_certbot_email() {
+  local f="/var/www/server/certbot_email.txt"
+  if [ -f "$f" ]; then
+    sudo cat "$f"
+  else
+    read -p "Email for Let's Encrypt notifications: " e
+    echo "$e" | sudo tee "$f" > /dev/null
+    echo "$e"
+  fi
 }
 
 RestoreBackup() {
@@ -60,9 +58,9 @@ RestoreBackup() {
     echo "Clearing previous files"
     echo
 
-    # Remove old WordPress files and Nginx configuration
-    safe_delete_dir "$dir"
-    sudo trash "/etc/nginx/sites-enabled/$name.nginx" > /dev/null 2>&1
+    # Remove old WordPress files and Nginx config safely
+    safe_delete "$dir"
+    safe_delete "/etc/nginx/sites-enabled/$name.nginx"
 
     echo
     echo "Moving WordPress files to directory"
@@ -118,7 +116,7 @@ EOF
     fi
 
     # Clean up
-    safe_delete_dir "$tmpdir"
+    safe_delete "$tmpdir"
 
     # Set ownership and permissions
     sudo chown -R quarza:www-data /var/www/sites/$name
@@ -134,6 +132,15 @@ EOF
     if [ $? -ne 0 ]; then
         echo "Error: Failed to restart Nginx"
         return 1
+    fi
+
+    # → Obtain SSL if missing
+    domain=$(grep -oP 'server_name\s+\K[^;]+' "/etc/nginx/sites-enabled/$name.nginx")
+    if [ -n "$domain" ] && [ ! -d "/etc/letsencrypt/live/$domain" ]; then
+      echo "🔒 Obtaining SSL for restored site $domain"
+      email=$(get_certbot_email)
+      sudo certbot --nginx --non-interactive --agree-tos \
+        --email "$email" --redirect -d "$domain"
     fi
 
     log_action "Completed restore for $name"
